@@ -1,0 +1,4 @@
+/.mypy_cache/
+/build/
+/dist/
+/nb_clean.egg-info/

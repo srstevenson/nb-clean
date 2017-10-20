@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+
+"""Clean Jupyter notebooks of execution counts and output for versioning."""
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+from typing import List
+
+import nbformat
+
+PROGRAM = Path(sys.argv[0]).name
+
+
+def error(message: str, code: int) -> None:
+    """Print error message to stderr and exit with code.
+
+    Parameters
+    ----------
+    message : str
+        Error message, printed to stderr.
+    code : int
+        Return code.
+
+    """
+    print(f'{PROGRAM}: error: {message}', file=sys.stderr)
+    sys.exit(code)
+
+
+def git(args: List[str]) -> str:
+    """Call a Git subcommand.
+
+    Parameters
+    ----------
+    args : list of str
+        Git subcommand.
+
+    Returns
+    -------
+    str
+        stdout from Git.
+
+    Examples
+    --------
+    >>> git(['rev-parse', '--git-dir'])
+    .git
+
+    """
+    process = subprocess.run(
+        ['git'] + args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+    if process.returncode == 128:
+        error('not in a Git repository', 64)
+
+    if process.returncode:
+        error(process.stderr, process.returncode)
+
+    return process.stdout.decode().strip()
+
+
+def configure_git(_: argparse.Namespace) -> None:
+    """Configure Git repository to use nb-clean filter.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line.
+
+    """
+    git(['config', 'filter.nb-clean.clean', 'nb-clean clean'])
+
+    git_dir = git(['rev-parse', '--git-dir'])
+    attrs = Path(git_dir) / 'info' / 'attributes'
+
+    if attrs.is_file() and 'filter=nb-clean' in attrs.read_text():
+        return
+
+    with attrs.open('a') as file:
+        file.write('\n*.ipynb filter=nb-clean\n')
+
+
+def clean(args: argparse.Namespace) -> None:
+    """Clean notebook of execution counts and output.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line.
+
+    """
+    notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
+
+    for cell in notebook.cells:
+        if cell['cell_type'] == 'code':
+            cell['execution_count'] = None
+            cell['outputs'] = []
+
+    nbformat.write(notebook, args.output)
+
+
+def main() -> None:
+    """Parse command line arguments and call corresponding function."""
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
+    subparsers = parser.add_subparsers(dest='subcommand')
+    subparsers.required = True  # type: ignore
+
+    configure_parser = subparsers.add_parser(
+        'configure-git',
+        help='configure Git filter to clean notebooks before staging')
+    configure_parser.set_defaults(func=configure_git)
+
+    clean_parser = subparsers.add_parser(
+        'clean',
+        help='clean notebook of cell execution counts and outputs')
+    clean_parser.add_argument(
+        '-i',
+        '--input',
+        nargs='?',
+        type=argparse.FileType('r'),
+        default=sys.stdin,
+        help='input file')
+    clean_parser.add_argument(
+        '-o',
+        '--output',
+        nargs='?',
+        type=argparse.FileType('w'),
+        default=sys.stdout,
+        help='output file')
+    clean_parser.set_defaults(func=clean)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == '__main__':
+    main()
