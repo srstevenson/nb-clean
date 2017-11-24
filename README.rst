@@ -1,6 +1,9 @@
 nb-clean
 ========
 
+.. image:: https://img.shields.io/travis/srstevenson/nb-clean.svg?maxAge=2592000
+	   :target: https://travis-ci.org/srstevenson/nb-clean
+
 .. image:: https://img.shields.io/github/tag/srstevenson/nb-clean.svg?maxAge=2592000
 	   :target: https://github.com/srstevenson/nb-clean/releases
 
