@@ -9,7 +9,8 @@ format:
 	yapf -i $(NAME)
 
 upload: check
-	python setup.py sdist bdist_wheel upload --sign
+	python setup.py sdist bdist_wheel
+	twine upload -s dist/*
 
 clean:
 	$(RM) -r $(wildcard *.egg-info *.pyc) build dist
