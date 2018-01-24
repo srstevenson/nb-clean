@@ -9,7 +9,7 @@ def read_long_description():
     """Read from README.rst file in root of source directory."""
     root = Path(__file__).resolve().parent
     readme = root / 'README.rst'
-    return readme.read_text()
+    return readme.read_text()  # pylint: disable=no-member
 
 
 setup(
