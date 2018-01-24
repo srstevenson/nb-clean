@@ -40,7 +40,12 @@ notebooks before they are staged, run the following from the working tree:
     nb-clean configure-git
 
 ``nb-clean`` will configure a filter in the Git repository in which it is run,
-and will not mutate your global or system Git configuration.
+and will not mutate your global or system Git configuration. To remove the
+filter, run:
+
+.. code-block:: bash
+
+    nb-clean unconfigure-git
 
 Aside from usage from a filter in a Git repository, you can also clean up a
 Jupyter notebook manually with:
