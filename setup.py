@@ -14,7 +14,7 @@ def read_long_description():
 
 setup(
     name='nb-clean',
-    version='1.0.1',
+    version='1.1.0',
     description='Clean Jupyter notebooks for versioning',
     long_description=read_long_description(),
     url='https://github.com/srstevenson/nb-clean',
