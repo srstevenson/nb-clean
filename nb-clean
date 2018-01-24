@@ -89,12 +89,12 @@ def configure_git(_: argparse.Namespace) -> None:
     """
     git(['config', 'filter.nb-clean.clean', 'nb-clean clean'])
 
-    attrs = attributes_path()
+    attributes = attributes_path()
 
-    if attrs.is_file() and ATTRIBUTE in attrs.read_text():
+    if attributes.is_file() and ATTRIBUTE in attributes.read_text():
         return
 
-    with attrs.open('a') as file:
+    with attributes.open('a') as file:
         file.write(f'\n{ATTRIBUTE}\n')
 
 
@@ -107,13 +107,13 @@ def unconfigure_git(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    attrs = attributes_path()
+    attributes = attributes_path()
 
-    if attrs.is_file():
-        original_contents = attrs.read_text().split('\n')
+    if attributes.is_file():
+        original_contents = attributes.read_text().split('\n')
         revised_contents = [line for line in original_contents
                             if line != ATTRIBUTE]
-        attrs.write_text('\n'.join(revised_contents))
+        attributes.write_text('\n'.join(revised_contents))
 
     git(['config', '--remove-section', 'filter.nb-clean'])
 
