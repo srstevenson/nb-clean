@@ -60,7 +60,7 @@ def git(args: List[str]) -> str:
     return process.stdout.decode().strip()
 
 
-def attributes_path():
+def attributes_path() -> Path:
     """Get the attributes file path for the current Git repository.
 
     Returns
