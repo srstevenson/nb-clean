@@ -52,7 +52,7 @@ Jupyter notebook manually with:
 Copyright
 ---------
 
-Copyright © 2017 `Scott Stevenson`_.
+Copyright © 2017-2018 `Scott Stevenson`_.
 
 ``nb-clean`` is distributed under the terms of the `ISC licence`_.
 
