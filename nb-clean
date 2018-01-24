@@ -81,6 +81,27 @@ def configure_git(_: argparse.Namespace) -> None:
         file.write(f'\n{ATTRIBUTE}\n')
 
 
+def unconfigure_git(_: argparse.Namespace) -> None:
+    """Remove nb-clean filter from the Git repository.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line.
+
+    """
+    git_dir = git(['rev-parse', '--git-dir'])
+    attrs = Path(git_dir) / 'info' / 'attributes'
+
+    if attrs.is_file():
+        original_contents = attrs.read_text().split('\n')
+        revised_contents = [line for line in original_contents
+                            if line != ATTRIBUTE]
+        attrs.write_text('\n'.join(revised_contents))
+
+    git(['config', '--remove-section', 'filter.nb-clean'])
+
+
 def clean(args: argparse.Namespace) -> None:
     """Clean notebook of execution counts and output.
 
@@ -110,6 +131,11 @@ def main() -> None:
         'configure-git',
         help='configure Git filter to clean notebooks before staging')
     configure_parser.set_defaults(func=configure_git)
+
+    unconfigure_parser = subparsers.add_parser(
+        'unconfigure-git',
+        help='remove Git filter that cleans notebooks before staging')
+    unconfigure_parser.set_defaults(func=unconfigure_git)
 
     clean_parser = subparsers.add_parser(
         'clean',
