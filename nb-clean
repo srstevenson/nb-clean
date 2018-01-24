@@ -60,6 +60,24 @@ def git(args: List[str]) -> str:
     return process.stdout.decode().strip()
 
 
+def attributes_path():
+    """Get the attributes file path for the current Git repository.
+
+    Returns
+    -------
+    Path
+        Path to the Git attributes file.
+
+    Examples
+    --------
+    >>> attributes_path()
+    PosixPath('.git/info/attributes')
+
+    """
+    git_dir = git(['rev-parse', '--git-dir'])
+    return Path(git_dir) / 'info' / 'attributes'
+
+
 def configure_git(_: argparse.Namespace) -> None:
     """Configure Git repository to use nb-clean filter.
 
@@ -71,8 +89,7 @@ def configure_git(_: argparse.Namespace) -> None:
     """
     git(['config', 'filter.nb-clean.clean', 'nb-clean clean'])
 
-    git_dir = git(['rev-parse', '--git-dir'])
-    attrs = Path(git_dir) / 'info' / 'attributes'
+    attrs = attributes_path()
 
     if attrs.is_file() and ATTRIBUTE in attrs.read_text():
         return
@@ -90,8 +107,7 @@ def unconfigure_git(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    git_dir = git(['rev-parse', '--git-dir'])
-    attrs = Path(git_dir) / 'info' / 'attributes'
+    attrs = attributes_path()
 
     if attrs.is_file():
         original_contents = attrs.read_text().split('\n')
