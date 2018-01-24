@@ -11,6 +11,7 @@ from typing import List
 import nbformat
 
 PROGRAM = Path(sys.argv[0]).name
+ATTRIBUTE = '*.ipynb filter=nb-clean'
 
 
 def error(message: str, code: int) -> None:
@@ -73,11 +74,11 @@ def configure_git(_: argparse.Namespace) -> None:
     git_dir = git(['rev-parse', '--git-dir'])
     attrs = Path(git_dir) / 'info' / 'attributes'
 
-    if attrs.is_file() and 'filter=nb-clean' in attrs.read_text():
+    if attrs.is_file() and ATTRIBUTE in attrs.read_text():
         return
 
     with attrs.open('a') as file:
-        file.write('\n*.ipynb filter=nb-clean\n')
+        file.write(f'\n{ATTRIBUTE}\n')
 
 
 def clean(args: argparse.Namespace) -> None:
