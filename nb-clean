@@ -6,7 +6,6 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
-from typing import List
 
 import nbformat
 
@@ -29,13 +28,13 @@ def error(message: str, code: int) -> None:
     sys.exit(code)
 
 
-def git(args: List[str]) -> str:
+def git(*args: str) -> str:
     """Call a Git subcommand.
 
     Parameters
     ----------
-    args : list of str
-        Git subcommand.
+    *args : str
+        Git subcommand and arguments.
 
     Returns
     -------
@@ -44,12 +43,12 @@ def git(args: List[str]) -> str:
 
     Examples
     --------
-    >>> git(['rev-parse', '--git-dir'])
+    >>> git('rev-parse', '--git-dir')
     .git
 
     """
     process = subprocess.run(
-        ['git'] + args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        ['git'] + list(args), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
     if process.returncode == 128:
         error('not in a Git repository', 64)
@@ -74,7 +73,7 @@ def attributes_path() -> Path:
     PosixPath('.git/info/attributes')
 
     """
-    git_dir = git(['rev-parse', '--git-dir'])
+    git_dir = git('rev-parse', '--git-dir')
     return Path(git_dir) / 'info' / 'attributes'
 
 
@@ -87,7 +86,7 @@ def configure_git(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    git(['config', 'filter.nb-clean.clean', 'nb-clean clean'])
+    git('config', 'filter.nb-clean.clean', 'nb-clean clean')
 
     attributes = attributes_path()
 
@@ -115,7 +114,7 @@ def unconfigure_git(_: argparse.Namespace) -> None:
                             if line != ATTRIBUTE]
         attributes.write_text('\n'.join(revised_contents))
 
-    git(['config', '--remove-section', 'filter.nb-clean'])
+    git('config', '--remove-section', 'filter.nb-clean')
 
 
 def clean(args: argparse.Namespace) -> None:
