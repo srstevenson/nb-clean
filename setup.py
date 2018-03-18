@@ -23,7 +23,7 @@ setup(
     license='ISC',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Natural Language :: English',
         'Operating System :: Unix',
