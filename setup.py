@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import setup
 
 
-def read_long_description():
+def read_long_description() -> str:
     """Read from README.rst file in root of source directory."""
     root = Path(__file__).resolve().parent
     readme = root / 'README.rst'
