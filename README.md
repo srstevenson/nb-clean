@@ -7,10 +7,10 @@ standalone tool outside Git or with other version control systems.
 
 ## Installation
 
-To install the latest release from [PyPI], use [pip]:
+To install the latest release from [PyPI], use [Pipenv]:
 
 ```bash
-pip install nb-clean
+pipenv install --dev nb-clean
 ```
 
 `nb-clean` requires Python 3.6 or later.
@@ -46,6 +46,6 @@ Copyright © 2017-2018 [Scott Stevenson].
 `nb-clean` is distributed under the terms of the [ISC licence].
 
 [ISC licence]: https://opensource.org/licenses/ISC
-[pip]: https://pip.pypa.io/
+[Pipenv]: https://docs.pipenv.org/
 [PyPI]: https://pypi.org/project/nb-clean/
 [Scott Stevenson]: https://scott.stevenson.io
