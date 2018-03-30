@@ -8,7 +8,7 @@ nb-clean
 	   :target: https://github.com/srstevenson/nb-clean/releases
 
 .. image:: https://img.shields.io/pypi/v/nb-clean.svg?maxAge=2592000
-	   :target: https://pypi.python.org/pypi/nb-clean/
+	   :target: https://pypi.org/project/nb-clean/
 
 ``nb-clean`` cleans Jupyter notebooks of cell execution counts and outputs,
 preparing them for committing to version control. It provides a Git filter to
@@ -27,7 +27,7 @@ To install the latest release from `PyPI`_, use `pip`_:
 ``nb-clean`` requires Python 3.6 or later.
 
 .. _`pip`: https://pip.pypa.io/
-.. _`PyPI`: https://pypi.python.org/pypi/nb-clean
+.. _`PyPI`: https://pypi.org/project/nb-clean/
 
 Usage
 -----
