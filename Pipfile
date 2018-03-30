@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+nbformat = "*"
+
+[dev-packages]
+"flake8" = "*"
+"flake8-builtins" = "*"
+"flake8-docstrings" = "*"
+"flake8-import-order" = "*"
+mypy = "*"
+pylint = "*"
+yapf = "*"
+wheel = "*"
+twine = "*"
+
+[requires]
+python_version = "3.6"

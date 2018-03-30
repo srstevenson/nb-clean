@@ -3,7 +3,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install -r requirements.txt
-  - pip install flake8 flake8-builtins flake8-docstrings flake8-import-order mypy pylint
+  - pip install pipenv
+  - pipenv install --dev
 script:
   - make check
