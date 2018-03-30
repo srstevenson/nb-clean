@@ -6,9 +6,9 @@ from setuptools import setup
 
 
 def read_long_description() -> str:
-    """Read from README.rst file in root of source directory."""
+    """Read from README.md file in root of source directory."""
     root = Path(__file__).resolve().parent
-    readme = root / 'README.rst'
+    readme = root / 'README.md'
     return readme.read_text(encoding='utf-8') # pylint: disable=no-member
 
 
@@ -17,6 +17,7 @@ setup(
     version='1.1.0',
     description='Clean Jupyter notebooks for versioning',
     long_description=read_long_description(),
+    long_description_content_type='text/markdown',
     url='https://github.com/srstevenson/nb-clean',
     author='Scott Stevenson',
     author_email='scott@stevenson.io',

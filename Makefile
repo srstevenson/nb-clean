@@ -10,7 +10,8 @@ format:
 
 upload: check
 	python setup.py sdist bdist_wheel
-	twine upload -s dist/*
+	twine upload -s dist/*.tar.gz
+	twine upload -s dist/*.whl
 
 clean:
 	$(RM) -r $(wildcard *.egg-info *.pyc) build dist
