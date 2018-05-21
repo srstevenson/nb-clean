@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Clean Jupyter notebooks of execution counts and output for versioning."""
+"""Clean Jupyter notebooks of execution counts, metadata, and output."""
 
 # pylint: disable=no-member
 
@@ -120,7 +120,7 @@ def unconfigure_git(_: argparse.Namespace) -> None:
 
 
 def clean(args: argparse.Namespace) -> None:
-    """Clean notebook of execution counts and output.
+    """Clean notebook of execution counts, metadata, and output.
 
     Parameters
     ----------
@@ -157,7 +157,7 @@ def main() -> None:
 
     clean_parser = subparsers.add_parser(
         'clean',
-        help='clean notebook of cell execution counts and outputs')
+        help='clean notebook of cell execution counts, metadata, and outputs')
     clean_parser.add_argument(
         '-i',
         '--input',
