@@ -131,6 +131,7 @@ def clean(args: argparse.Namespace) -> None:
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
 
     for cell in notebook.cells:
+        cell['metadata'] = {}
         if cell['cell_type'] == 'code':
             cell['execution_count'] = None
             cell['outputs'] = []
