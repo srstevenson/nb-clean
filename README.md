@@ -36,7 +36,7 @@ Aside from usage from a filter in a Git repository, you can also clean up a
 Jupyter notebook manually with:
 
 ```bash
-nb-clean clean -i original.ipynb -o clean.ipynb
+nb-clean clean -i original.ipynb -o cleaned.ipynb
 ```
 
 ## Copyright
