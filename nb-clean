@@ -12,7 +12,7 @@ from pathlib import Path
 import nbformat
 
 PROGRAM = Path(sys.argv[0]).name
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 ATTRIBUTE = '*.ipynb filter=nb-clean'
 
 

@@ -14,7 +14,7 @@ def read_long_description() -> str:
 
 setup(
     name='nb-clean',
-    version='1.1.0',
+    version='1.2.0',
     description='Clean Jupyter notebooks for versioning',
     long_description=read_long_description(),
     long_description_content_type='text/markdown',
