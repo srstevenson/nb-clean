@@ -12,6 +12,7 @@ from pathlib import Path
 import nbformat
 
 PROGRAM = Path(sys.argv[0]).name
+VERSION = '1.1.0'
 ATTRIBUTE = '*.ipynb filter=nb-clean'
 
 
@@ -79,6 +80,18 @@ def attributes_path() -> Path:
     return Path(git_dir) / 'info' / 'attributes'
 
 
+def print_version(_: argparse.Namespace) -> None:
+    """Print the version number.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line.
+
+    """
+    print(f'{PROGRAM} {VERSION}')
+
+
 def configure_git(_: argparse.Namespace) -> None:
     """Configure Git repository to use nb-clean filter.
 
@@ -144,6 +157,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     subparsers = parser.add_subparsers(dest='subcommand')
     subparsers.required = True  # type: ignore
+
+    version_parser = subparsers.add_parser(
+        'version', help='print version number')
+    version_parser.set_defaults(func=print_version)
 
     configure_parser = subparsers.add_parser(
         'configure-git',
