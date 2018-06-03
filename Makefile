@@ -1,9 +1,9 @@
 NAME = nb-clean
 
 check:
-	pipenv run mypy --disallow-untyped-defs --ignore-missing-imports $(NAME)
-	pipenv run flake8 $(NAME)
-	pipenv run pylint -d invalid-name -r n -s n $(NAME)
+	pipenv run mypy
+	pipenv run flake8
+	pipenv run pylint
 
 format:
 	pipenv run yapf -i $(NAME)
