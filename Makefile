@@ -1,7 +1,7 @@
 NAME = nb-clean
 
 check:
-	pipenv run mypy --ignore-missing-imports $(NAME)
+	pipenv run mypy --disallow-untyped-defs --ignore-missing-imports $(NAME)
 	pipenv run flake8 $(NAME)
 	pipenv run pylint -d invalid-name -r n -s n $(NAME)
 
