@@ -59,7 +59,8 @@ def git(*args: str) -> str:
     if process.returncode:
         error(process.stderr, process.returncode)
 
-    return process.stdout.decode().strip()
+    stdout: str = process.stdout.decode().strip()
+    return stdout
 
 
 def attributes_path() -> Path:
