@@ -156,7 +156,7 @@ def main() -> None:
     """Parse command line arguments and call corresponding function."""
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
     subparsers = parser.add_subparsers(dest='subcommand')
-    subparsers.required = True  # type: ignore
+    subparsers.required = True
 
     version_parser = subparsers.add_parser(
         'version', help='print version number')
