@@ -23,5 +23,5 @@ python_version = "3.6"
 
 [scripts]
 flake8 = "flake8 nb-clean setup.py"
-mypy = "mypy --disallow-untyped-defs --ignore-missing-imports nb-clean setup.py"
+mypy = "mypy --ignore-missing-imports --strict nb-clean setup.py"
 pylint = "pylint -d invalid-name -r n -s n nb-clean setup.py"
