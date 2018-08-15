@@ -29,6 +29,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: Unix',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     scripts=['nb-clean'],
     install_requires=['nbformat'],
