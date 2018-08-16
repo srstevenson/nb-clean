@@ -11,3 +11,4 @@ script:
   - pipenv run mypy
   - pipenv run flake8
   - pipenv run pylint
+  - pipenv run isort
