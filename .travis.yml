@@ -9,4 +9,5 @@ install:
   - pipenv install --dev --skip-lock
 script:
   - pipenv run mypy
+  - pipenv run pylint
   - make check
