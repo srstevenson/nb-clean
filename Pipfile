@@ -26,4 +26,4 @@ python_version = "3.6"
 # `mypy.ini` configuration file.
 mypy = "mypy --strict nb-clean setup.py"
 flake8 = "flake8 nb-clean setup.py"
-pylint = "pylint -d invalid-name -r n -s n nb-clean setup.py"
+pylint = "pylint nb-clean setup.py"
