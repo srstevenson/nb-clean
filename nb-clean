@@ -2,8 +2,6 @@
 
 """Clean Jupyter notebooks of execution counts, metadata, and output."""
 
-# pylint: disable=no-member
-
 import argparse
 import subprocess
 import sys
