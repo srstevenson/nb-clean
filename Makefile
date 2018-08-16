@@ -2,7 +2,6 @@ NAME = nb-clean
 
 check:
 	pipenv run flake8
-	pipenv run pylint
 
 format:
 	pipenv run yapf -i $(NAME)
