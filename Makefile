@@ -1,7 +1,6 @@
 NAME = nb-clean
 
 check:
-	pipenv run mypy
 	pipenv run flake8
 	pipenv run pylint
 
