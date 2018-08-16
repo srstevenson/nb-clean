@@ -10,8 +10,8 @@ from pathlib import Path
 import nbformat
 
 PROGRAM = Path(sys.argv[0]).name
-VERSION = '1.2.0'
-ATTRIBUTE = '*.ipynb filter=nb-clean'
+VERSION = "1.2.0"
+ATTRIBUTE = "*.ipynb filter=nb-clean"
 
 
 def error(message: str, code: int) -> None:
@@ -25,7 +25,7 @@ def error(message: str, code: int) -> None:
         Return code.
 
     """
-    print(f'{PROGRAM}: error: {message}', file=sys.stderr)
+    print(f"{PROGRAM}: error: {message}", file=sys.stderr)
     sys.exit(code)
 
 
@@ -49,10 +49,11 @@ def git(*args: str) -> str:
 
     """
     process = subprocess.run(
-        ['git'] + list(args), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        ["git"] + list(args), stderr=subprocess.PIPE, stdout=subprocess.PIPE
+    )
 
     if process.returncode == 128:
-        error('not in a Git repository', 64)
+        error("not in a Git repository", 64)
 
     if process.returncode:
         error(process.stderr, process.returncode)
@@ -75,8 +76,8 @@ def attributes_path() -> Path:
     PosixPath('.git/info/attributes')
 
     """
-    git_dir = git('rev-parse', '--git-dir')
-    return Path(git_dir) / 'info' / 'attributes'
+    git_dir = git("rev-parse", "--git-dir")
+    return Path(git_dir) / "info" / "attributes"
 
 
 def print_version(_: argparse.Namespace) -> None:
@@ -88,7 +89,7 @@ def print_version(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    print(f'{PROGRAM} {VERSION}')
+    print(f"{PROGRAM} {VERSION}")
 
 
 def configure_git(_: argparse.Namespace) -> None:
@@ -100,15 +101,15 @@ def configure_git(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    git('config', 'filter.nb-clean.clean', 'nb-clean clean')
+    git("config", "filter.nb-clean.clean", "nb-clean clean")
 
     attributes = attributes_path()
 
     if attributes.is_file() and ATTRIBUTE in attributes.read_text():
         return
 
-    with attributes.open('a') as file:
-        file.write(f'\n{ATTRIBUTE}\n')
+    with attributes.open("a") as file:
+        file.write(f"\n{ATTRIBUTE}\n")
 
 
 def unconfigure_git(_: argparse.Namespace) -> None:
@@ -123,12 +124,13 @@ def unconfigure_git(_: argparse.Namespace) -> None:
     attributes = attributes_path()
 
     if attributes.is_file():
-        original_contents = attributes.read_text().split('\n')
-        revised_contents = [line for line in original_contents
-                            if line != ATTRIBUTE]
-        attributes.write_text('\n'.join(revised_contents))
+        original_contents = attributes.read_text().split("\n")
+        revised_contents = [
+            line for line in original_contents if line != ATTRIBUTE
+        ]
+        attributes.write_text("\n".join(revised_contents))
 
-    git('config', '--remove-section', 'filter.nb-clean')
+    git("config", "--remove-section", "filter.nb-clean")
 
 
 def clean(args: argparse.Namespace) -> None:
@@ -143,10 +145,10 @@ def clean(args: argparse.Namespace) -> None:
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
 
     for cell in notebook.cells:
-        cell['metadata'] = {}
-        if cell['cell_type'] == 'code':
-            cell['execution_count'] = None
-            cell['outputs'] = []
+        cell["metadata"] = {}
+        if cell["cell_type"] == "code":
+            cell["execution_count"] = None
+            cell["outputs"] = []
 
     nbformat.write(notebook, args.output)
 
@@ -154,45 +156,51 @@ def clean(args: argparse.Namespace) -> None:
 def main() -> None:
     """Parse command line arguments and call corresponding function."""
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
-    subparsers = parser.add_subparsers(dest='subcommand')
+    subparsers = parser.add_subparsers(dest="subcommand")
     subparsers.required = True
 
     version_parser = subparsers.add_parser(
-        'version', help='print version number')
+        "version", help="print version number"
+    )
     version_parser.set_defaults(func=print_version)
 
     configure_parser = subparsers.add_parser(
-        'configure-git',
-        help='configure Git filter to clean notebooks before staging')
+        "configure-git",
+        help="configure Git filter to clean notebooks before staging",
+    )
     configure_parser.set_defaults(func=configure_git)
 
     unconfigure_parser = subparsers.add_parser(
-        'unconfigure-git',
-        help='remove Git filter that cleans notebooks before staging')
+        "unconfigure-git",
+        help="remove Git filter that cleans notebooks before staging",
+    )
     unconfigure_parser.set_defaults(func=unconfigure_git)
 
     clean_parser = subparsers.add_parser(
-        'clean',
-        help='clean notebook of cell execution counts, metadata, and outputs')
+        "clean",
+        help="clean notebook of cell execution counts, metadata, and outputs",
+    )
     clean_parser.add_argument(
-        '-i',
-        '--input',
-        nargs='?',
-        type=argparse.FileType('r'),
+        "-i",
+        "--input",
+        nargs="?",
+        type=argparse.FileType("r"),
         default=sys.stdin,
-        help='input file')
+        help="input file",
+    )
     clean_parser.add_argument(
-        '-o',
-        '--output',
-        nargs='?',
-        type=argparse.FileType('w'),
+        "-o",
+        "--output",
+        nargs="?",
+        type=argparse.FileType("w"),
         default=sys.stdout,
-        help='output file')
+        help="output file",
+    )
     clean_parser.set_defaults(func=clean)
 
     args = parser.parse_args()
     args.func(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
