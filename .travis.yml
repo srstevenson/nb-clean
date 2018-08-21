@@ -6,7 +6,7 @@ python:
   - "3.7"
 install:
   - pip install pipenv
-  - pipenv install --dev --skip-lock
+  - pipenv install --dev --pre
 script:
   - pipenv run mypy
   - pipenv run flake8

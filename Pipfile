@@ -18,9 +18,6 @@ twine = "*"
 isort = "*"
 black = "*"
 
-[requires]
-python_version = "3.6"
-
 [scripts]
 # We pass `--strict` here as mypy does not support specifying it in the
 # `mypy.ini` configuration file.
