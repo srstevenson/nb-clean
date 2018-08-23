@@ -17,6 +17,7 @@ twine = "*"
 "flake8-bugbear" = "*"
 isort = "*"
 black = "*"
+"flake8-comprehensions" = "*"
 
 [scripts]
 # We pass `--strict` here as mypy does not support specifying it in the
@@ -28,3 +29,6 @@ isort = "isort -c -rc nb-clean setup.py"
 black = "black --check nb-clean setup.py"
 package = "python setup.py sdist bdist_wheel"
 upload = "twine upload -s dist/*.tar.gz dist/*.whl"
+
+[pipenv]
+allow_prereleases = true
