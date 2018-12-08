@@ -24,9 +24,9 @@ notebooks before they are staged, run the following from the working tree:
 nb-clean configure-git
 ```
 
-`nb-clean` will configure a filter in the Git repository in which it is run,
-and will not mutate your global or system Git configuration. To remove the
-filter, run:
+`nb-clean` will configure a filter in the Git repository in which it is run, and
+will not mutate your global or system Git configuration. To remove the filter,
+run:
 
 ```bash
 nb-clean unconfigure-git
@@ -45,7 +45,7 @@ Copyright © 2017-2018 [Scott Stevenson].
 
 `nb-clean` is distributed under the terms of the [ISC licence].
 
-[ISC licence]: https://opensource.org/licenses/ISC
-[Pipenv]: https://docs.pipenv.org/
-[PyPI]: https://pypi.org/project/nb-clean/
-[Scott Stevenson]: https://scott.stevenson.io
+[isc licence]: https://opensource.org/licenses/ISC
+[pipenv]: https://docs.pipenv.org/
+[pypi]: https://pypi.org/project/nb-clean/
+[scott stevenson]: https://scott.stevenson.io
