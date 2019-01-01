@@ -1,14 +1,4 @@
-[MASTER]
-
-# Do not pickle collected data for later comparisons.
-persistent=no
-
 [MESSAGES CONTROL]
 
 # Disable the message, report, category or checker with the given name.
 disable=invalid-name  # For nb-clean "module" name.
-
-[REPORTS]
-
-# Do not activate the evaluation score.
-score=no
