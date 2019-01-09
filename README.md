@@ -41,7 +41,7 @@ nb-clean clean -i original.ipynb -o cleaned.ipynb
 
 ## Copyright
 
-Copyright © 2017-2018 [Scott Stevenson].
+Copyright © 2017-2019 [Scott Stevenson].
 
 `nb-clean` is distributed under the terms of the [ISC licence].
 
