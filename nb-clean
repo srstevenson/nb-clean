@@ -3,13 +3,13 @@
 """Clean Jupyter notebooks of execution counts, metadata, and output."""
 
 import argparse
+import pathlib
 import subprocess
 import sys
-from pathlib import Path
 
 import nbformat
 
-PROGRAM = Path(sys.argv[0]).name
+PROGRAM = pathlib.Path(sys.argv[0]).name
 VERSION = "1.2.0"
 ATTRIBUTE = "*.ipynb filter=nb-clean"
 
@@ -62,12 +62,12 @@ def git(*args: str) -> str:
     return stdout
 
 
-def attributes_path() -> Path:
+def attributes_path() -> pathlib.Path:
     """Get the attributes file path for the current Git repository.
 
     Returns
     -------
-    Path
+    pathlib.Path
         Path to the Git attributes file.
 
     Examples
@@ -77,7 +77,7 @@ def attributes_path() -> Path:
 
     """
     git_dir = git("rev-parse", "--git-dir")
-    return Path(git_dir) / "info" / "attributes"
+    return pathlib.Path(git_dir) / "info" / "attributes"
 
 
 def print_version(_: argparse.Namespace) -> None:
