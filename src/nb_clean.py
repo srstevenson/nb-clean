@@ -7,7 +7,7 @@ import sys
 
 import nbformat
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 ATTRIBUTE = "*.ipynb filter=nb-clean"
 
 
