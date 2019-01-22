@@ -1,5 +1,6 @@
+*.egg-info/
 /.mypy_cache/
+/.nox/
 /build/
 /dist/
-/nb_clean.egg-info/
 __pycache__/

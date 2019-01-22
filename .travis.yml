@@ -4,11 +4,6 @@ python:
   - "3.6"
   - "3.7"
 install:
-  - pip install pipenv
-  - pipenv install --dev --pre
+  - pip install nox
 script:
-  - pipenv run mypy
-  - pipenv run flake8
-  - pipenv run pylint
-  - pipenv run isort
-  - pipenv run black
+  - nox
