@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Clean Jupyter notebooks of execution counts, metadata, and output."""
 
 import argparse
@@ -9,7 +7,6 @@ import sys
 
 import nbformat
 
-PROGRAM = pathlib.Path(sys.argv[0]).name
 VERSION = "1.2.0"
 ATTRIBUTE = "*.ipynb filter=nb-clean"
 
@@ -25,7 +22,7 @@ def error(message: str, code: int) -> None:
         Return code.
 
     """
-    print(f"{PROGRAM}: error: {message}", file=sys.stderr)
+    print(f"nb-clean: error: {message}", file=sys.stderr)
     sys.exit(code)
 
 
@@ -89,7 +86,7 @@ def print_version(_: argparse.Namespace) -> None:
         Arguments parsed from the command line.
 
     """
-    print(f"{PROGRAM} {VERSION}")
+    print(f"nb-clean {VERSION}")
 
 
 def configure_git(_: argparse.Namespace) -> None:

@@ -1,4 +1,4 @@
-# nb-clean [![Build status](https://img.shields.io/travis/srstevenson/nb-clean.svg?maxAge=2592000)](https://travis-ci.org/srstevenson/nb-clean) [![GitHub tag](https://img.shields.io/github/tag/srstevenson/nb-clean.svg?maxAge=2592000)](https://github.com/srstevenson/nb-clean/releases) [![PyPI release](https://img.shields.io/pypi/v/nb-clean.svg?maxAge=2592000)](https://pypi.org/project/nb-clean/)
+# nb-clean
 
 `nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, and
 outputs, preparing them for committing to version control. It provides a Git
@@ -7,13 +7,16 @@ used as a standalone tool outside Git or with other version control systems.
 
 ## Installation
 
-To install the latest release from [PyPI], use [Pipenv]:
+To install the latest release from [PyPI], use [pip]:
 
 ```bash
-pipenv install --dev nb-clean
+pip install nb-clean
 ```
 
-`nb-clean` requires Python 3.6 or later.
+Alternately, in Python projects using [Poetry] or [Pipenv] for dependency
+management, add `nb-clean` as a development dependency with
+`poetry add --dev nb-clean` or `pipenv install --dev nb-clean`. `nb-clean`
+requires Python 3.6 or later.
 
 ## Usage
 
@@ -46,6 +49,8 @@ Copyright © 2017-2019 [Scott Stevenson].
 `nb-clean` is distributed under the terms of the [ISC licence].
 
 [isc licence]: https://opensource.org/licenses/ISC
-[pipenv]: https://docs.pipenv.org/
+[pip]: https://pip.pypa.io/en/stable/
+[pipenv]: https://pipenv.readthedocs.io/en/latest/
+[poetry]: https://poetry.eustace.io/
 [pypi]: https://pypi.org/project/nb-clean/
 [scott stevenson]: https://scott.stevenson.io

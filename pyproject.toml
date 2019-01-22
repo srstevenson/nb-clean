@@ -1,3 +1,43 @@
 [tool.black]
 line-length = 79
 py36 = true
+
+[tool.poetry]
+name = "nb-clean"
+version = "1.2.0"
+description = "Clean Jupyter notebooks for versioning"
+authors = ["Scott Stevenson <scott@stevenson.io>"]
+license = "ISC"
+readme = "README.md"
+homepage = "https://github.com/srstevenson/nb-clean"
+repository = "https://github.com/srstevenson/nb-clean"
+keywords = ["jupyter", "notebook", "clean", "filter", "git"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+]
+include = ["LICENCE"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+nbformat = "^4.4"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.660.0"
+flake8 = "^3.6"
+flake8-builtins = "^1.4"
+flake8-bugbear = "^18.8"
+flake8-comprehensions = "^1.4"
+pylint = "^2.2"
+isort = "^4.3"
+flake8-docstrings = "^1.3"
+nox = "^2018.10"
+black = "=18.9b0"
+
+[tool.poetry.scripts]
+nb-clean = "nb_clean:main"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
