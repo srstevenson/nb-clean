@@ -77,27 +77,30 @@ def attributes_path() -> pathlib.Path:
     return pathlib.Path(git_dir) / "info" / "attributes"
 
 
-def print_version(_: argparse.Namespace) -> None:
+def print_version(args: argparse.Namespace) -> None:
     """Print the version number.
 
     Parameters
     ----------
     args : argparse.Namespace
-        Arguments parsed from the command line.
+        Unused.
 
     """
+    del args  # Unused.
     print(f"nb-clean {VERSION}")
 
 
-def configure_git(_: argparse.Namespace) -> None:
+def configure_git(args: argparse.Namespace) -> None:
     """Configure Git repository to use nb-clean filter.
 
     Parameters
     ----------
     args : argparse.Namespace
-        Arguments parsed from the command line.
+        Unused.
 
     """
+    del args  # Unused.
+
     git("config", "filter.nb-clean.clean", "nb-clean clean")
 
     attributes = attributes_path()
@@ -109,15 +112,17 @@ def configure_git(_: argparse.Namespace) -> None:
         file.write(f"\n{ATTRIBUTE}\n")
 
 
-def unconfigure_git(_: argparse.Namespace) -> None:
+def unconfigure_git(args: argparse.Namespace) -> None:
     """Remove nb-clean filter from the Git repository.
 
     Parameters
     ----------
     args : argparse.Namespace
-        Arguments parsed from the command line.
+        Unused.
 
     """
+    del args  # Unused.
+
     attributes = attributes_path()
 
     if attributes.is_file():
