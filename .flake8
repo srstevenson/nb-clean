@@ -1,0 +1,2 @@
+[flake8]
+per-file-ignores = noxfile.py: D001
