@@ -135,6 +135,36 @@ def unconfigure_git(args: argparse.Namespace) -> None:
     git("config", "--remove-section", "filter.nb-clean")
 
 
+def check(args: argparse.Namespace) -> None:
+    """Check a notebook is clean of execution counts, metadata, and output.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line.
+
+    """
+    notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
+    dirty = False
+
+    for index, cell in enumerate(notebook.cells):
+        prefix = f"{args.input.name} cell {index}"
+
+        if cell["metadata"]:
+            print(f"{prefix}: metadata")
+            dirty = True
+        if cell["cell_type"] == "code":
+            if cell["execution_count"]:
+                print(f"{prefix}: execution count")
+                dirty = True
+            if cell["outputs"]:
+                print(f"{prefix}: output")
+                dirty = True
+
+    if dirty:
+        sys.exit(1)
+
+
 def clean(args: argparse.Namespace) -> None:
     """Clean notebook of execution counts, metadata, and output.
 
@@ -177,6 +207,23 @@ def main() -> None:
         help="remove Git filter that cleans notebooks before staging",
     )
     unconfigure_parser.set_defaults(func=unconfigure_git)
+
+    check_parser = subparsers.add_parser(
+        "check",
+        help=(
+            "check a notebook is clean of cell execution counts, metadata,"
+            " and outputs"
+        ),
+    )
+    check_parser.add_argument(
+        "-i",
+        "--input",
+        nargs="?",
+        type=argparse.FileType("r"),
+        default=sys.stdin,
+        help="input file",
+    )
+    check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
         "clean",
