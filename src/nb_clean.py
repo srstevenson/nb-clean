@@ -1,4 +1,4 @@
-"""Clean Jupyter notebooks of execution counts, metadata, and output."""
+"""Clean Jupyter notebooks of execution counts, metadata, and outputs."""
 
 import argparse
 import pathlib
@@ -136,7 +136,7 @@ def unconfigure_git(args: argparse.Namespace) -> None:
 
 
 def check(args: argparse.Namespace) -> None:
-    """Check a notebook is clean of execution counts, metadata, and output.
+    """Check a notebook is clean of execution counts, metadata, and outputs.
 
     Parameters
     ----------
@@ -158,7 +158,7 @@ def check(args: argparse.Namespace) -> None:
                 print(f"{prefix}: execution count")
                 dirty = True
             if cell["outputs"]:
-                print(f"{prefix}: output")
+                print(f"{prefix}: outputs")
                 dirty = True
 
     if dirty:
@@ -166,7 +166,7 @@ def check(args: argparse.Namespace) -> None:
 
 
 def clean(args: argparse.Namespace) -> None:
-    """Clean notebook of execution counts, metadata, and output.
+    """Clean notebook of execution counts, metadata, and outputs.
 
     Parameters
     ----------
