@@ -5,44 +5,33 @@ import nox
 SOURCES = ["noxfile.py", "src"]
 
 
-def install_dependencies(session):
-    """Install Poetry and project dependencies."""
-    session.install("poetry")
-    session.run("poetry", "install")
-
-
 @nox.session
 def mypy(session):
     """Type check code with mypy."""
-    install_dependencies(session)
-    session.run("poetry", "run", "mypy", "--strict", "src")
+    session.run("mypy", "--strict", "src", external=True)
 
 
 @nox.session
 def flake8(session):
     """Lint code with Flake8."""
-    install_dependencies(session)
-    session.run("poetry", "run", "flake8", *SOURCES)
+    session.run("flake8", *SOURCES, external=True)
 
 
 @nox.session
 def pylint(session):
     """Lint code with Pylint."""
-    install_dependencies(session)
-    session.run("poetry", "run", "pylint", *SOURCES)
+    session.run("pylint", *SOURCES, external=True)
 
 
 @nox.session
 def isort(session):
     """Check import ordering with isort."""
-    install_dependencies(session)
     session.run(
-        "poetry", "run", "isort", "--check-only", "--recursive", *SOURCES
+        "isort", "--check-only", "--recursive", *SOURCES, external=True
     )
 
 
 @nox.session
 def black(session):
     """Check code formatting with black."""
-    install_dependencies(session)
-    session.run("poetry", "run", "black", "--check", *SOURCES)
+    session.run("black", "--check", *SOURCES, external=True)
