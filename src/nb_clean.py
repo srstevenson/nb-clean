@@ -46,7 +46,10 @@ def git(*args: str) -> str:
 
     """
     process = subprocess.run(
-        ["git"] + list(args), stderr=subprocess.PIPE, stdout=subprocess.PIPE
+        ["git"] + list(args),
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        check=False,
     )
 
     if process.returncode == 128:
