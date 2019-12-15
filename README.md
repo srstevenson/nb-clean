@@ -79,6 +79,6 @@ Copyright © 2017-2019 [Scott Stevenson].
 [isc licence]: https://opensource.org/licenses/ISC
 [pip]: https://pip.pypa.io/en/stable/
 [pipenv]: https://pipenv.readthedocs.io/en/latest/
-[poetry]: https://poetry.eustace.io/
+[poetry]: https://python-poetry.org/
 [pypi]: https://pypi.org/project/nb-clean/
 [scott stevenson]: https://scott.stevenson.io
