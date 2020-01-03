@@ -4,6 +4,7 @@ import argparse
 import pathlib
 import subprocess
 import sys
+from typing import NoReturn
 
 import nbformat
 
@@ -11,7 +12,7 @@ VERSION = "1.4.1"
 ATTRIBUTE = "*.ipynb filter=nb-clean"
 
 
-def error(message: str, code: int) -> None:
+def error(message: str, code: int) -> NoReturn:
     """Print error message to stderr and exit with code.
 
     Parameters
