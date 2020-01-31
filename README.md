@@ -12,7 +12,7 @@ your continuous integration pipelines.
 To install the latest release from [PyPI], use [pip]:
 
 ```bash
-pip install nb-clean
+python -m pip install nb-clean
 ```
 
 Alternately, in Python projects using [Poetry] or [Pipenv] for dependency
