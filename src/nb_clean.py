@@ -8,7 +8,7 @@ from typing import NoReturn
 
 import nbformat
 
-VERSION = "1.4.1"
+VERSION = "1.4.2"
 ATTRIBUTE = "*.ipynb filter=nb-clean"
 
 
