@@ -57,7 +57,7 @@ def git(*args: str) -> str:
         error("not in a Git repository", 64)
 
     if process.returncode:
-        error(process.stderr, process.returncode)
+        error(process.stderr.decode(), process.returncode)
 
     stdout: str = process.stdout.decode().strip()
     return stdout
