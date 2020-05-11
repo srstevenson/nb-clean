@@ -72,7 +72,7 @@ counts, metadata, and outputs it finds.
 
 ## Copyright
 
-Copyright © 2017-2019 [Scott Stevenson].
+Copyright © 2017-2020 [Scott Stevenson].
 
 `nb-clean` is distributed under the terms of the [ISC licence].
 
