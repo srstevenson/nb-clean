@@ -53,9 +53,6 @@ def git(*args: str) -> str:
         check=False,
     )
 
-    if process.returncode == 128:
-        error("not in a Git repository", 64)
-
     if process.returncode:
         error(process.stderr.decode(), process.returncode)
 
