@@ -1,11 +1,11 @@
 # nb-clean
 
-`nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, and
-outputs, preparing them for committing to version control. It provides a Git
-filter to automatically clean notebooks before they are staged, and can also be
-used as a standalone tool outside Git or with other version control systems. It
-can determine if a notebook is clean or not, which can be used as a check in
-your continuous integration pipelines.
+`nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, outputs,
+and (optionally) empty cells, preparing them for committing to version control.
+It provides a Git filter to automatically clean notebooks before they are
+staged, and can also be used as a standalone tool outside Git or with other
+version control systems. It can determine if a notebook is clean or not, which
+can be used as a check in your continuous integration pipelines.
 
 ## Installation
 
@@ -31,6 +31,13 @@ notebooks before they are staged, run the following from the working tree:
 nb-clean configure-git
 ```
 
+This will configure a filter to remove cell execution counts, metadata, and
+outputs. To also remove empty cells, use:
+
+```bash
+nb-clean configure-git --remove-empty
+```
+
 `nb-clean` will configure a filter in the Git repository in which it is run, and
 will not mutate your global or system Git configuration. To remove the filter,
 run:
@@ -52,6 +59,8 @@ or by passing the notebook contents on stdin:
 nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
+To also remove empty cells, add the `--remove--empty` flag.
+
 ### Checking
 
 You can check if a notebook is clean with:
@@ -66,9 +75,11 @@ or by passing the notebook contents on stdin:
 nb-clean check < notebook.ipynb
 ```
 
+To also check for empty cells, add the `--remove--empty` flag.
+
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
-counts, metadata, and outputs it finds.
+counts, metadata, outputs, and empty cells it finds.
 
 ## Copyright
 
