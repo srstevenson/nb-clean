@@ -97,12 +97,14 @@ def configure_git(args: argparse.Namespace) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Unused.
+        Arguments parsed from the command line. If args.remove_empty
+        is True, add a filter that will remove empty cells.
 
     """
-    del args  # Unused.
-
-    git("config", "filter.nb-clean.clean", "nb-clean clean")
+    if args.remove_empty:
+        git("config", "filter.nb-clean.clean", "nb-clean clean --remove-empty")
+    else:
+        git("config", "filter.nb-clean.clean", "nb-clean clean")
 
     attributes = attributes_path()
 
@@ -142,7 +144,8 @@ def check(args: argparse.Namespace) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Arguments parsed from the command line.
+        Arguments parsed from the command line. If args.remove_empty
+        is True, check for the presence of empty cells.
 
     """
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
@@ -151,6 +154,9 @@ def check(args: argparse.Namespace) -> None:
     for index, cell in enumerate(notebook.cells):
         prefix = f"{args.input.name} cell {index}"
 
+        if args.remove_empty and len(cell["source"]) == 0:
+            print(f"{prefix}: empty cell")
+            dirty = True
         if cell["metadata"]:
             print(f"{prefix}: metadata")
             dirty = True
@@ -172,10 +178,16 @@ def clean(args: argparse.Namespace) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Arguments parsed from the command line.
+        Arguments parsed from the command line. If args.remove_empty
+        is True, remove empty cells.
 
     """
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
+
+    if args.remove_empty:
+        notebook.cells = [
+            cell for cell in notebook.cells if len(cell["source"]) > 0
+        ]
 
     for cell in notebook.cells:
         cell["metadata"] = {}
@@ -201,6 +213,9 @@ def main() -> None:
         "configure-git",
         help="configure Git filter to clean notebooks before staging",
     )
+    configure_parser.add_argument(
+        "-e", "--remove-empty", action="store_true", help="remove empty cells"
+    )
     configure_parser.set_defaults(func=configure_git)
 
     unconfigure_parser = subparsers.add_parser(
@@ -224,6 +239,12 @@ def main() -> None:
         default=sys.stdin,
         help="input file",
     )
+    check_parser.add_argument(
+        "-e",
+        "--remove-empty",
+        action="store_true",
+        help="check for empty cells",
+    )
     check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
@@ -245,6 +266,9 @@ def main() -> None:
         type=argparse.FileType("w"),
         default=sys.stdout,
         help="output file",
+    )
+    clean_parser.add_argument(
+        "-e", "--remove-empty", action="store_true", help="remove empty cells"
     )
     clean_parser.set_defaults(func=clean)
 
