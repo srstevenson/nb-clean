@@ -20,7 +20,7 @@ def error(message: str, code: int) -> NoReturn:
     message : str
         Error message, printed to stderr.
     code : int
-        Return code.
+        Exit code.
 
     """
     print(f"nb-clean: error: {message}", file=sys.stderr)
@@ -28,7 +28,7 @@ def error(message: str, code: int) -> NoReturn:
 
 
 def git(*args: str) -> str:
-    """Call a Git subcommand.
+    """Call a Git subcommand with arguments.
 
     Parameters
     ----------
@@ -61,7 +61,7 @@ def git(*args: str) -> str:
 
 
 def attributes_path() -> pathlib.Path:
-    """Get the attributes file path for the current Git repository.
+    """Get path to the attributes file in the current Git repository.
 
     Returns
     -------
@@ -92,19 +92,26 @@ def print_version(args: argparse.Namespace) -> None:
 
 
 def configure_git(args: argparse.Namespace) -> None:
-    """Configure Git repository to use nb-clean filter.
+    """Add an nb-clean filter to the current Git repository.
 
     Parameters
     ----------
     args : argparse.Namespace
         Arguments parsed from the command line. If args.remove_empty
-        is True, add a filter that will remove empty cells.
+        is True, configure the filter to remove empty cells. If
+        args.preserve_metadata is True, configure the filter to preserve
+        cell metadata.
 
     """
+    command = ["nb-clean", "clean"]
+
     if args.remove_empty:
-        git("config", "filter.nb-clean.clean", "nb-clean clean --remove-empty")
-    else:
-        git("config", "filter.nb-clean.clean", "nb-clean clean")
+        command.append("--remove-empty")
+
+    if args.preserve_metadata:
+        command.append("--preserve-metadata")
+
+    git("config", "filter.nb-clean.clean", " ".join(command))
 
     attributes = attributes_path()
 
@@ -116,7 +123,7 @@ def configure_git(args: argparse.Namespace) -> None:
 
 
 def unconfigure_git(args: argparse.Namespace) -> None:
-    """Remove nb-clean filter from the Git repository.
+    """Remove any nb-clean filter from the current Git repository.
 
     Parameters
     ----------
@@ -139,13 +146,14 @@ def unconfigure_git(args: argparse.Namespace) -> None:
 
 
 def check(args: argparse.Namespace) -> None:
-    """Check a notebook is clean of execution counts, metadata, and outputs.
+    """Check notebook is clean of execution counts, metadata, and outputs.
 
     Parameters
     ----------
     args : argparse.Namespace
         Arguments parsed from the command line. If args.remove_empty
-        is True, check for the presence of empty cells.
+        is True, check for the presence of empty cells. If
+        args.preserve_metadata is True, don't check for cell metadata.
 
     """
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
@@ -157,7 +165,7 @@ def check(args: argparse.Namespace) -> None:
         if args.remove_empty and len(cell["source"]) == 0:
             print(f"{prefix}: empty cell")
             dirty = True
-        if cell["metadata"]:
+        if not args.preserve_metadata and cell["metadata"]:
             print(f"{prefix}: metadata")
             dirty = True
         if cell["cell_type"] == "code":
@@ -179,7 +187,8 @@ def clean(args: argparse.Namespace) -> None:
     ----------
     args : argparse.Namespace
         Arguments parsed from the command line. If args.remove_empty
-        is True, remove empty cells.
+        is True, remove empty cells. If args.preserve_metadata is True,
+        preserve cell metadata.
 
     """
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
@@ -190,7 +199,8 @@ def clean(args: argparse.Namespace) -> None:
         ]
 
     for cell in notebook.cells:
-        cell["metadata"] = {}
+        if not args.preserve_metadata:
+            cell["metadata"] = {}
         if cell["cell_type"] == "code":
             cell["execution_count"] = None
             cell["outputs"] = []
@@ -215,6 +225,12 @@ def main() -> None:
     )
     configure_parser.add_argument(
         "-e", "--remove-empty", action="store_true", help="remove empty cells"
+    )
+    configure_parser.add_argument(
+        "-m",
+        "--preserve-metadata",
+        action="store_true",
+        help="preserve cell metadata",
     )
     configure_parser.set_defaults(func=configure_git)
 
@@ -245,6 +261,12 @@ def main() -> None:
         action="store_true",
         help="check for empty cells",
     )
+    check_parser.add_argument(
+        "-m",
+        "--preserve-metadata",
+        action="store_true",
+        help="preserve cell metadata",
+    )
     check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
@@ -269,6 +291,12 @@ def main() -> None:
     )
     clean_parser.add_argument(
         "-e", "--remove-empty", action="store_true", help="remove empty cells"
+    )
+    clean_parser.add_argument(
+        "-m",
+        "--preserve-metadata",
+        action="store_true",
+        help="preserve cell metadata",
     )
     clean_parser.set_defaults(func=clean)
 

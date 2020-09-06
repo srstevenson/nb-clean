@@ -38,6 +38,13 @@ outputs. To also remove empty cells, use:
 nb-clean configure-git --remove-empty
 ```
 
+To preserve cell metadata, such as that required by tools such as [papermill],
+use:
+
+```bash
+nb-clean configure-git --preserve-metadata
+```
+
 `nb-clean` will configure a filter in the Git repository in which it is run, and
 will not mutate your global or system Git configuration. To remove the filter,
 run:
@@ -59,7 +66,8 @@ or by passing the notebook contents on stdin:
 nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
-To also remove empty cells, add the `--remove--empty` flag.
+To also remove empty cells, add the `--remove--empty` flag. To preserve cell
+metadata, add the `--preserve-metadata` flag.
 
 ### Checking
 
@@ -75,7 +83,8 @@ or by passing the notebook contents on stdin:
 nb-clean check < notebook.ipynb
 ```
 
-To also check for empty cells, add the `--remove--empty` flag.
+To also check for empty cells, add the `--remove--empty` flag. To ignore cell
+metadata, add the `--preserve-metadata` flag.
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
@@ -88,8 +97,9 @@ Copyright © 2017-2020 [Scott Stevenson].
 `nb-clean` is distributed under the terms of the [ISC licence].
 
 [isc licence]: https://opensource.org/licenses/ISC
-[pip]: https://pip.pypa.io/en/stable/
-[pipenv]: https://pipenv.readthedocs.io/en/latest/
+[papermill]: https://papermill.readthedocs.io/
+[pip]: https://pip.pypa.io/
+[pipenv]: https://pipenv.readthedocs.io/
 [poetry]: https://python-poetry.org/
 [pypi]: https://pypi.org/project/nb-clean/
 [scott stevenson]: https://scott.stevenson.io
