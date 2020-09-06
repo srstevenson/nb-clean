@@ -12,7 +12,7 @@ can be used as a check in your continuous integration pipelines.
 To install the latest release from [PyPI], use [pip]:
 
 ```bash
-python -m pip install nb-clean
+python3 -m pip install nb-clean
 ```
 
 Alternately, in Python projects using [Poetry] or [Pipenv] for dependency
