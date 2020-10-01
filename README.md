@@ -66,7 +66,7 @@ or by passing the notebook contents on stdin:
 nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
-To also remove empty cells, add the `--remove--empty` flag. To preserve cell
+To also remove empty cells, add the `--remove-empty` flag. To preserve cell
 metadata, add the `--preserve-metadata` flag.
 
 ### Checking
@@ -83,7 +83,7 @@ or by passing the notebook contents on stdin:
 nb-clean check < notebook.ipynb
 ```
 
-To also check for empty cells, add the `--remove--empty` flag. To ignore cell
+To also check for empty cells, add the `--remove-empty` flag. To ignore cell
 metadata, add the `--preserve-metadata` flag.
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
