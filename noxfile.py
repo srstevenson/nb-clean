@@ -26,9 +26,7 @@ def pylint(session):
 @nox.session
 def isort(session):
     """Check import ordering with isort."""
-    session.run(
-        "isort", "--check-only", "--recursive", *SOURCES, external=True
-    )
+    session.run("isort", "--check", *SOURCES, external=True)
 
 
 @nox.session
