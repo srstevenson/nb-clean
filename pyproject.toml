@@ -5,6 +5,9 @@ line-length = 79
 profile = "black"
 line_length = 79
 
+[tool.pylint."MESSAGES CONTROL"]
+disable = "duplicate-code"
+
 [tool.poetry]
 name = "nb-clean"
 version = "1.6.0"
@@ -34,9 +37,11 @@ mypy = "^0.782"
 nox = "^2020.8.22"
 pyint = "^1.1.0"
 pylint = "^2.6.0"
+pytest-mock = "^3.3.1"
+pytest-lazy-fixture = "^0.6.3"
 
 [tool.poetry.scripts]
-nb-clean = "nb_clean:main"
+nb-clean = "nb_clean.cli:main"
 
 [build-system]
 requires = ["poetry>=0.12"]

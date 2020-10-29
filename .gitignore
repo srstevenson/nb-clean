@@ -1,4 +1,5 @@
 *.egg-info/
+.ipynb_checkpoints/
 /.mypy_cache/
 /.nox/
 /build/
