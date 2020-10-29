@@ -2,13 +2,13 @@
 
 import nox
 
-SOURCES = ["noxfile.py", "src"]
+SOURCES = ["noxfile.py", "src", "tests"]
 
 
 @nox.session
 def mypy(session):
     """Type check code with mypy."""
-    session.run("mypy", "--strict", "src", external=True)
+    session.run("mypy", *SOURCES, external=True)
 
 
 @nox.session
@@ -33,3 +33,9 @@ def isort(session):
 def black(session):
     """Check code formatting with black."""
     session.run("black", "--check", *SOURCES, external=True)
+
+
+@nox.session
+def pytest(session):
+    """Run unit tests with pytest."""
+    session.run("pytest", "tests", external=True)
