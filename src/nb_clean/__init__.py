@@ -5,7 +5,7 @@ import subprocess
 
 import nbformat
 
-VERSION = "2.0.1"
+VERSION = "2.0.2"
 GIT_ATTRIBUTES_LINE = "*.ipynb filter=nb-clean"
 
 
