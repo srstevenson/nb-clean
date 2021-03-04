@@ -13,9 +13,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
-      - name: Install Poetry
-        run: python3 -m pip install poetry
+      - name: Install Poetry and coverage.py
+        run: python3 -m pip install poetry coverage
       - name: Install dependencies
         run: poetry install
       - name: Run Nox
         run: poetry run nox
+      - name: Upload test coverage report
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
