@@ -4,6 +4,7 @@ import argparse
 import io
 import pathlib
 import sys
+from typing import Iterable
 
 import nbformat
 import pytest
@@ -228,3 +229,33 @@ def test_clean_stdin(
         preserve_cell_metadata=False,
     )
     assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)
+
+
+@pytest.mark.parametrize(
+    "argv,function,inputs,remove_empty_cells,preserve_cell_metadata",
+    [
+        ("add-filter -e", "add_filter", [], True, False),
+        (
+            "check -m a.ipynb b.ipynb",
+            "check",
+            "a.ipynb b.ipynb".split(),
+            False,
+            True,
+        ),
+        ("clean -e a.ipynb", "clean", ["a.ipynb"], True, False),
+    ],
+)
+def test_parse_args(
+    argv: str,
+    function: str,
+    inputs: Iterable[str],
+    remove_empty_cells: bool,
+    preserve_cell_metadata: bool,
+) -> None:
+    """Test nb_clean.cli.parse_args."""
+    args = nb_clean.cli.parse_args(argv.split())
+    assert args.func == getattr(nb_clean.cli, function)
+    if inputs:
+        assert args.inputs == [pathlib.Path(path) for path in inputs]
+    assert args.remove_empty_cells is remove_empty_cells
+    assert args.preserve_cell_metadata is preserve_cell_metadata
