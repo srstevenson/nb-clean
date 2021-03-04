@@ -72,8 +72,7 @@ def test_add_git_filter(
     """Test nb_clean.add_git_filter."""
     mock_git = mocker.patch("nb_clean.git")
     mock_git_attributes_path = mocker.patch(
-        "nb_clean.git_attributes_path",
-        return_value=tmp_path / "attributes",
+        "nb_clean.git_attributes_path", return_value=tmp_path / "attributes"
     )
     nb_clean.add_git_filter(
         remove_empty_cells=remove_empty_cells,
@@ -86,6 +85,22 @@ def test_add_git_filter(
     assert (
         nb_clean.GIT_ATTRIBUTES_LINE in (tmp_path / "attributes").read_text()
     )
+
+
+def test_add_git_filter_idempotent(
+    mocker: MockerFixture, tmp_path: pathlib.Path
+) -> None:
+    """Test nb_clean.add_git_filter is idempotent."""
+    mocker.patch("nb_clean.git")
+    (tmp_path / "attributes").write_text(nb_clean.GIT_ATTRIBUTES_LINE)
+    mock_git_attributes_path = mocker.patch(
+        "nb_clean.git_attributes_path", return_value=tmp_path / "attributes"
+    )
+    nb_clean.add_git_filter()
+    mock_git_attributes_path.assert_called_once()
+    assert (
+        tmp_path / "attributes"
+    ).read_text() == nb_clean.GIT_ATTRIBUTES_LINE
 
 
 @pytest.mark.parametrize("filter_exists", [True, False])
