@@ -3,7 +3,7 @@
 import argparse
 import pathlib
 import sys
-from typing import NoReturn
+from typing import List, NoReturn
 
 import nbformat
 
@@ -136,12 +136,13 @@ def clean(args: argparse.Namespace) -> None:
         nbformat.write(notebook, output)
 
 
-def main() -> None:
+def parse_args(args: List[str]) -> argparse.Namespace:
     """Parse command line arguments and call corresponding function.
 
     Returns
     -------
-    None
+    argparse.Namespace
+        Parsed command line arguments.
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
@@ -231,5 +232,10 @@ def main() -> None:
     )
     clean_parser.set_defaults(func=clean)
 
-    args = parser.parse_args()
+    return parser.parse_args(args)
+
+
+def main() -> None:  # pragma: no cover
+    """Command line entrypoint."""
+    args = parse_args(sys.argv[1:])
     args.func(args)
