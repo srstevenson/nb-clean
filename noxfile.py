@@ -38,4 +38,4 @@ def black(session):
 @nox.session
 def pytest(session):
     """Run unit tests with pytest."""
-    session.run("pytest", "tests", external=True)
+    session.run("pytest", "--cov=nb_clean", "tests", external=True)
