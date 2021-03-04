@@ -114,7 +114,7 @@ that of `nb-clean` 2.0.0.
 
 ## Copyright
 
-Copyright © 2017-2020 [Scott Stevenson].
+Copyright © 2017-2021 [Scott Stevenson].
 
 `nb-clean` is distributed under the terms of the [ISC licence].
 
