@@ -1,5 +1,12 @@
 # nb-clean
 
+[![Licence](https://img.shields.io/github/license/srstevenson/nb-clean?label=Licence&color=blue)](https://github.com/srstevenson/nb-clean/blob/main/LICENCE)
+[![GitHub release](https://img.shields.io/github/v/release/srstevenson/nb-clean?label=GitHub)](https://github.com/srstevenson/nb-clean)
+[![PyPI version](https://img.shields.io/pypi/v/nb-clean?label=PyPI)](https://pypi.org/project/nb-clean/)
+[![Python versions](https://img.shields.io/pypi/pyversions/nb-clean?label=Python)](https://pypi.org/project/nb-clean/)
+[![CI status](https://github.com/srstevenson/nb-clean/workflows/CI/badge.svg)](https://github.com/srstevenson/nb-clean/actions)
+[![Coverage](https://img.shields.io/codecov/c/gh/srstevenson/nb-clean?label=Coverage)](https://codecov.io/gh/srstevenson/nb-clean)
+
 `nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, outputs,
 and (optionally) empty cells, preparing them for committing to version control.
 It provides a Git filter to automatically clean notebooks before they're staged,
