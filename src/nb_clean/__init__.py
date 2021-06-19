@@ -182,6 +182,13 @@ def check_notebook(
                 print(f"{prefix}: outputs")
                 is_clean = False
 
+    try:
+        language_version = notebook["metadata"]["language_info"]["version"]
+        print(f"Language version found: {language_version}")
+        is_clean = False
+    except KeyError:
+        pass
+
     return is_clean
 
 
