@@ -217,4 +217,9 @@ def clean_notebook(
             cell["execution_count"] = None
             cell["outputs"] = []
 
+    try:
+        del notebook["metadata"]["language_info"]["version"]
+    except KeyError:
+        pass
+
     return notebook
