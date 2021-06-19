@@ -12,6 +12,7 @@ import nb_clean
         # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore
         (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore
+        (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore
     ],
 )
 def test_check_notebook(
