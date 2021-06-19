@@ -12,6 +12,13 @@ def test_clean_notebook(
     """Test nb_clean.clean_notebook."""
     assert nb_clean.clean_notebook(dirty_notebook) == clean_notebook
 
+def test_clean_notebook_with_version(
+    dirty_notebook_with_version: nbformat.NotebookNode,
+    clean_notebook: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook."""
+    assert nb_clean.clean_notebook(dirty_notebook_with_version) == clean_notebook
+
 
 def test_clean_notebook_remove_empty_cells(
     clean_notebook_with_empty_cells: nbformat.NotebookNode,
