@@ -32,6 +32,11 @@ def dirty_notebook() -> nbformat.NotebookNode:
     """A dirty notebook."""
     return read_notebook("dirty.ipynb")
 
+@pytest.fixture
+def dirty_notebook_with_version() -> nbformat.NotebookNode:
+    """A dirty notebook with the python version."""
+    return read_notebook("dirty_with_version.ipynb")
+
 
 @pytest.fixture
 def clean_notebook() -> nbformat.NotebookNode:
