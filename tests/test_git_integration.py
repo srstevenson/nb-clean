@@ -45,7 +45,7 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
     """Test nb_clean.git_attributes_path."""
     mocker.patch("nb_clean.git", return_value="dir/.git")
     assert nb_clean.git_attributes_path() == pathlib.Path(
-        "dir/.git/info/attributes"
+        "dir", ".git", "info", "attributes"
     )
 
 

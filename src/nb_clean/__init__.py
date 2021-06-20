@@ -74,7 +74,7 @@ def git_attributes_path() -> pathlib.Path:
 
     """
     git_dir = git("rev-parse", "--git-dir")
-    return pathlib.Path(git_dir) / "info" / "attributes"
+    return pathlib.Path(git_dir, "info", "attributes")
 
 
 def add_git_filter(
