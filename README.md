@@ -1,4 +1,4 @@
-# nb-clean
+<p align="center"><img src="images/nb-clean.png" width=300></p>
 
 [![Licence](https://img.shields.io/github/license/srstevenson/nb-clean?label=Licence&color=blue)](https://github.com/srstevenson/nb-clean/blob/main/LICENCE)
 [![GitHub release](https://img.shields.io/github/v/release/srstevenson/nb-clean?label=GitHub)](https://github.com/srstevenson/nb-clean)
