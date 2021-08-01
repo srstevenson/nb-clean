@@ -4,5 +4,6 @@
 /.mypy_cache/
 /.nox/
 /build/
+/coverage.xml
 /dist/
 __pycache__/

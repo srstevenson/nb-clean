@@ -20,6 +20,8 @@ jobs:
         run: poetry install
       - name: Run Nox
         run: poetry run nox
+      - name: Create XML coverage report
+        run: poetry run coverage xml
       - name: Upload test coverage report
         uses: codecov/codecov-action@v2.0.2
         with:
