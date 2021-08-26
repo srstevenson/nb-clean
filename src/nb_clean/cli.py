@@ -45,6 +45,7 @@ def add_filter(args: argparse.Namespace) -> None:
         nb_clean.add_git_filter(
             remove_empty_cells=args.remove_empty_cells,
             preserve_cell_metadata=args.preserve_cell_metadata,
+            required=args.required,
         )
     except nb_clean.GitProcessError as exc:
         exit_with_error(exc.message, exc.return_code)
@@ -170,6 +171,12 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         "--preserve-cell-metadata",
         action="store_true",
         help="preserve cell metadata",
+    )
+    add_filter_parser.add_argument(
+        "-r",
+        "--required",
+        action="store_true",
+        help="require nb-clean pass before staging."
     )
     add_filter_parser.set_defaults(func=add_filter)
 

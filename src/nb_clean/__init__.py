@@ -78,7 +78,9 @@ def git_attributes_path() -> pathlib.Path:
 
 
 def add_git_filter(
-    remove_empty_cells: bool = False, preserve_cell_metadata: bool = False
+    remove_empty_cells: bool = False,
+    preserve_cell_metadata: bool = False,
+    required: bool = False,
 ) -> None:
     """Add a filter to clean notebooks to the current Git repository.
 
@@ -88,6 +90,8 @@ def add_git_filter(
         If True, remove empty cells.
     preserve_cell_metadata : bool, default False
         If True, preserve cell metadata.
+    required : bool, default False
+        If True, require nb-clean before staging.
 
     Returns
     -------
@@ -103,6 +107,7 @@ def add_git_filter(
         command.append("--preserve-cell-metadata")
 
     git("config", "filter.nb-clean.clean", " ".join(command))
+    git("config", "filter.nb-clean.required", str(required))
 
     attributes_path = git_attributes_path()
 
