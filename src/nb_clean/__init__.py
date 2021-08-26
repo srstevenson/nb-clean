@@ -108,6 +108,7 @@ def add_git_filter(
 
     git("config", "filter.nb-clean.clean", " ".join(command))
     git("config", "filter.nb-clean.required", str(required))
+    git("config", "filter.nb-clean.smudge", "cat")
 
     attributes_path = git_attributes_path()
 
