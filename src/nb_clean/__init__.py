@@ -108,11 +108,11 @@ def add_git_filter(
 
     if (
         attributes_path.is_file()
-        and GIT_ATTRIBUTES_LINE in attributes_path.read_text()
+        and GIT_ATTRIBUTES_LINE in attributes_path.read_text(encoding="UTF-8")
     ):
         return
 
-    with attributes_path.open("a") as file:
+    with attributes_path.open("a", encoding="UTF-8") as file:
         file.write(f"\n{GIT_ATTRIBUTES_LINE}\n")
 
 
@@ -127,11 +127,15 @@ def remove_git_filter() -> None:
     attributes_path = git_attributes_path()
 
     if attributes_path.is_file():
-        original_contents = attributes_path.read_text().split("\n")
+        original_contents = attributes_path.read_text(encoding="UTF-8").split(
+            "\n"
+        )
         revised_contents = [
             line for line in original_contents if line != GIT_ATTRIBUTES_LINE
         ]
-        attributes_path.write_text("\n".join(revised_contents))
+        attributes_path.write_text(
+            "\n".join(revised_contents), encoding="UTF-8"
+        )
 
     git("config", "--remove-section", "filter.nb-clean")
 
