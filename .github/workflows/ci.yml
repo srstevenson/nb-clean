@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Upgrade pip
+        run: python3 -m pip install --upgrade pip
+
       - name: Install Poetry and coverage.py
         run: python3 -m pip install poetry coverage
 
