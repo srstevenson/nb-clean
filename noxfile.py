@@ -60,7 +60,7 @@ def pyupgrade(session):
     # pyupgrade does not support passing directories as command line arguments
     # so we must construct a list of input filenames.
     session.run(
-        "pyupgrade", "--py36-plus", *list_source_files(), external=True
+        "pyupgrade", "--py37-plus", *list_source_files(), external=True
     )
 
 
