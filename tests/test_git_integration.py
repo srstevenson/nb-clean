@@ -19,10 +19,7 @@ def test_git(mocker: MockerFixture) -> None:
     )
     output = nb_clean.git("command", "--flag")
     mock_run.assert_called_once_with(
-        ["git", "command", "--flag"],
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        check=True,
+        ["git", "command", "--flag"], capture_output=True, check=True
     )
     assert output == "output string"
 

@@ -48,10 +48,7 @@ def git(*args: str) -> str:
     """
     try:
         process = subprocess.run(
-            ["git"] + list(args),
-            stderr=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            check=True,
+            ["git"] + list(args), capture_output=True, check=True
         )
     except subprocess.CalledProcessError as exc:
         raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc
