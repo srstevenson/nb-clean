@@ -5,6 +5,9 @@ line-length = 79
 profile = "black"
 line_length = 79
 
+[tool.mypy]
+ignore_missing_imports = true
+
 [tool.pylint."MESSAGES CONTROL"]
 disable = "duplicate-code"
 
