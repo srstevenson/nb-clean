@@ -40,7 +40,7 @@ black = {extras = ["jupyter"], version = "^21.12b0"}
 flake8 = "^4.0.1"
 isort = "^5.10.1"
 mypy = "^0.931"
-nox = "^2021.10.1"
+nox = "^2022.1.7"
 pylint = "^2.12.2"
 pytest-mock = "^3.7.0"
 pytest-lazy-fixture = "^0.6.3"
