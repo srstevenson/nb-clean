@@ -1,5 +1,6 @@
 """Clean Jupyter notebooks of execution counts, metadata, and outputs."""
 
+import contextlib
 import pathlib
 import subprocess
 
@@ -183,12 +184,10 @@ def check_notebook(
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    try:
+    with contextlib.suppress(KeyError):
         _ = notebook["metadata"]["language_info"]["version"]
         print(f"{filename} metadata: language_info.version")
         is_clean = False
-    except KeyError:
-        pass
 
     return is_clean
 
@@ -225,9 +224,7 @@ def clean_notebook(
             cell["execution_count"] = None
             cell["outputs"] = []
 
-    try:
+    with contextlib.suppress(KeyError):
         del notebook["metadata"]["language_info"]["version"]
-    except KeyError:
-        pass
 
     return notebook
