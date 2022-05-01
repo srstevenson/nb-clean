@@ -7,7 +7,7 @@ import nb_clean
 
 
 @pytest.mark.parametrize(
-    "notebook,is_clean",
+    ("notebook", "is_clean"),
     [
         # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore

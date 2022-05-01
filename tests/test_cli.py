@@ -72,7 +72,7 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.parametrize(
-    "notebook,clean",
+    ("notebook", "clean"),
     [
         # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore
@@ -113,7 +113,7 @@ def test_check_file(
 
 
 @pytest.mark.parametrize(
-    "notebook,clean",
+    ("notebook", "clean"),
     [
         # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore
@@ -232,7 +232,13 @@ def test_clean_stdin(
 
 
 @pytest.mark.parametrize(
-    "argv,function,inputs,remove_empty_cells,preserve_cell_metadata",
+    (
+        "argv",
+        "function",
+        "inputs",
+        "remove_empty_cells",
+        "preserve_cell_metadata",
+    ),
     [
         ("add-filter -e", "add_filter", [], True, False),
         (
