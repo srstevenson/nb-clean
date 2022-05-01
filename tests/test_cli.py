@@ -75,8 +75,8 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
     "notebook,clean",
     [
         # pylint: disable=no-member
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore
+        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[attr-defined]
+        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[attr-defined]
     ],
 )
 def test_check_file(
@@ -116,8 +116,8 @@ def test_check_file(
     "notebook,clean",
     [
         # pylint: disable=no-member
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore
+        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[attr-defined]
+        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[attr-defined]
     ],
 )
 def test_check_stdin(
