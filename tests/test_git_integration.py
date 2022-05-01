@@ -47,7 +47,7 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.parametrize(
-    "remove_empty_cells,preserve_cell_metadata,filter_command",
+    ("remove_empty_cells", "preserve_cell_metadata", "filter_command"),
     [
         (False, False, "nb-clean clean"),
         (True, False, "nb-clean clean --remove-empty-cells"),
