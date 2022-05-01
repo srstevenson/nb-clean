@@ -24,37 +24,37 @@ def list_source_files() -> List[str]:
 
 
 @nox.session
-def mypy(session):
+def mypy(session: nox.Session) -> None:
     """Type check code with mypy."""
     session.run("mypy", "--show-error-codes", *SOURCES, external=True)
 
 
 @nox.session
-def flake8(session):
+def flake8(session: nox.Session) -> None:
     """Lint code with Flake8."""
     session.run("flake8", *SOURCES, external=True)
 
 
 @nox.session
-def pylint(session):
+def pylint(session: nox.Session) -> None:
     """Lint code with Pylint."""
     session.run("pylint", *SOURCES, external=True)
 
 
 @nox.session
-def isort(session):
+def isort(session: nox.Session) -> None:
     """Check import ordering with isort."""
     session.run("isort", "--check", *SOURCES, external=True)
 
 
 @nox.session
-def black(session):
+def black(session: nox.Session) -> None:
     """Check code formatting with black."""
     session.run("black", "--check", *SOURCES, external=True)
 
 
 @nox.session
-def pyupgrade(session):
+def pyupgrade(session: nox.Session) -> None:
     """Check Python syntax with pyupgrade."""
 
     # pyupgrade does not support passing directories as command line arguments
@@ -65,6 +65,6 @@ def pyupgrade(session):
 
 
 @nox.session
-def pytest(session):
+def pytest(session: nox.Session) -> None:
     """Run unit tests with pytest."""
     session.run("pytest", "--cov=nb_clean", "tests", external=True)
