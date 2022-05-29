@@ -5,7 +5,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/nb-clean?label=PyPI)](https://pypi.org/project/nb-clean/)
 [![Python versions](https://img.shields.io/pypi/pyversions/nb-clean?label=Python)](https://pypi.org/project/nb-clean/)
 [![CI status](https://github.com/srstevenson/nb-clean/workflows/CI/badge.svg)](https://github.com/srstevenson/nb-clean/actions)
-[![Coverage](https://img.shields.io/codecov/c/gh/srstevenson/nb-clean?label=Coverage)](https://codecov.io/gh/srstevenson/nb-clean)
+[![Coverage](https://img.shields.io/codecov/c/gh/srstevenson/nb-clean?label=Coverage)](https://app.codecov.io/gh/srstevenson/nb-clean)
 
 `nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, outputs,
 and (optionally) empty cells, preparing them for committing to version control.
