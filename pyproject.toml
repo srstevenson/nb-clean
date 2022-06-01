@@ -39,7 +39,7 @@ nb-clean = "nb_clean.cli:main"
 black = {extras = ["jupyter"], version = "^22.3"}
 flake8 = "^4.0.1"
 isort = "^5.10.1"
-mypy = "^0.950"
+mypy = "^0.960"
 nox = "^2022.1.7"
 pylint = "^2.13.7"
 pytest-mock = "^3.7.0"
