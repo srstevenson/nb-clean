@@ -45,3 +45,14 @@ def test_clean_notebook_preserve_metadata(
         nb_clean.clean_notebook(dirty_notebook, preserve_cell_metadata=True)
         == clean_notebook_with_metadata
     )
+
+
+def test_clean_notebook_preserve_outputs(
+    dirty_notebook: nbformat.NotebookNode,
+    clean_notebook_with_outputs: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook when preserving cell outputs."""
+    assert (
+        nb_clean.clean_notebook(dirty_notebook, preserve_cell_outputs=True)
+        == clean_notebook_with_outputs
+    )

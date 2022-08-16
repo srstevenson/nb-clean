@@ -26,11 +26,15 @@ def test_add_filter(mocker: MockerFixture) -> None:
     mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
     nb_clean.cli.add_filter(
         argparse.Namespace(
-            remove_empty_cells=True, preserve_cell_metadata=False
+            remove_empty_cells=True,
+            preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
     mock_add_git_filter.assert_called_once_with(
-        remove_empty_cells=True, preserve_cell_metadata=False
+        remove_empty_cells=True,
+        preserve_cell_metadata=False,
+        preserve_cell_outputs=False,
     )
 
 
@@ -45,7 +49,9 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
     nb_clean.cli.add_filter(
         argparse.Namespace(
-            remove_empty_cells=True, preserve_cell_metadata=False
+            remove_empty_cells=True,
+            preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
     mock_exit_with_error.assert_called_once_with("error message", 42)
@@ -95,6 +101,7 @@ def test_check_file(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
             preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
     mock_read.assert_called_once_with(
@@ -104,6 +111,7 @@ def test_check_file(
         notebook,
         remove_empty_cells=False,
         preserve_cell_metadata=False,
+        preserve_cell_outputs=False,
         filename="notebook.ipynb",
     )
     if clean:
@@ -142,6 +150,7 @@ def test_check_stdin(
             inputs=[],
             remove_empty_cells=False,
             preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
     mock_read.assert_called_once_with(
@@ -151,6 +160,7 @@ def test_check_stdin(
         notebook,
         remove_empty_cells=False,
         preserve_cell_metadata=False,
+        preserve_cell_outputs=False,
         filename="stdin",
     )
     if clean:
@@ -178,6 +188,7 @@ def test_clean_file(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
             preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
 
@@ -188,6 +199,7 @@ def test_clean_file(
         dirty_notebook,
         remove_empty_cells=False,
         preserve_cell_metadata=False,
+        preserve_cell_outputs=False,
     )
     mock_write.assert_called_once_with(
         clean_notebook, pathlib.Path("notebook.ipynb")
@@ -217,6 +229,7 @@ def test_clean_stdin(
             inputs=[],
             remove_empty_cells=False,
             preserve_cell_metadata=False,
+            preserve_cell_outputs=False,
         )
     )
 
@@ -227,6 +240,7 @@ def test_clean_stdin(
         dirty_notebook,
         remove_empty_cells=False,
         preserve_cell_metadata=False,
+        preserve_cell_outputs=False,
     )
     assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)
 
@@ -238,25 +252,42 @@ def test_clean_stdin(
         "inputs",
         "remove_empty_cells",
         "preserve_cell_metadata",
+        "preserve_cell_outputs",
     ),
     [
-        ("add-filter -e", "add_filter", [], True, False),
         (
-            "check -m a.ipynb b.ipynb",
+            "add-filter -e",
+            "add_filter",
+            [],
+            True,
+            False,
+            False,
+        ),
+        (
+            "check -m -o a.ipynb b.ipynb",
             "check",
             "a.ipynb b.ipynb".split(),
             False,
             True,
+            True,
         ),
-        ("clean -e a.ipynb", "clean", ["a.ipynb"], True, False),
+        (
+            "clean -e -o a.ipynb",
+            "clean",
+            ["a.ipynb"],
+            True,
+            False,
+            True,
+        ),
     ],
 )
-def test_parse_args(
+def test_parse_args(  # pylint: disable=too-many-arguments
     argv: str,
     function: str,
     inputs: Iterable[str],
     remove_empty_cells: bool,
     preserve_cell_metadata: bool,
+    preserve_cell_outputs: bool,
 ) -> None:
     """Test nb_clean.cli.parse_args."""
     args = nb_clean.cli.parse_args(argv.split())
@@ -265,3 +296,4 @@ def test_parse_args(
         assert args.inputs == [pathlib.Path(path) for path in inputs]
     assert args.remove_empty_cells is remove_empty_cells
     assert args.preserve_cell_metadata is preserve_cell_metadata
+    assert args.preserve_cell_outputs is preserve_cell_outputs
