@@ -50,3 +50,18 @@ def test_check_notebook_preserve_metadata(
         )
         is preserve_cell_metadata
     )
+
+
+@pytest.mark.parametrize("preserve_cell_outputs", [True, False])
+def test_check_notebook_preserve_outputs(
+    clean_notebook_with_outputs: nbformat.NotebookNode,
+    preserve_cell_outputs: bool,
+) -> None:
+    """Test nb_clean.check_notebook when preserving cell outputs."""
+    assert (
+        nb_clean.check_notebook(
+            clean_notebook_with_outputs,
+            preserve_cell_outputs=preserve_cell_outputs,
+        )
+        is preserve_cell_outputs
+    )

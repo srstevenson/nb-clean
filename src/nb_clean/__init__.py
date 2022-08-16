@@ -76,7 +76,9 @@ def git_attributes_path() -> pathlib.Path:
 
 
 def add_git_filter(
-    remove_empty_cells: bool = False, preserve_cell_metadata: bool = False
+    remove_empty_cells: bool = False,
+    preserve_cell_metadata: bool = False,
+    preserve_cell_outputs: bool = False,
 ) -> None:
     """Add a filter to clean notebooks to the current Git repository.
 
@@ -86,6 +88,8 @@ def add_git_filter(
         If True, remove empty cells.
     preserve_cell_metadata : bool, default False
         If True, preserve cell metadata.
+    preserve_cell_outputs : bool, default False
+        If True, preserve cell outputs.
 
     Returns
     -------
@@ -99,6 +103,9 @@ def add_git_filter(
 
     if preserve_cell_metadata:
         command.append("--preserve-cell-metadata")
+
+    if preserve_cell_outputs:
+        command.append("--preserve-cell-outputs")
 
     git("config", "filter.nb-clean.clean", " ".join(command))
 
@@ -142,6 +149,7 @@ def check_notebook(
     notebook: nbformat.NotebookNode,
     remove_empty_cells: bool = False,
     preserve_cell_metadata: bool = False,
+    preserve_cell_outputs: bool = False,
     filename: str = "notebook",
 ) -> bool:
     """Check notebook is clean of execution counts, metadata, and outputs.
@@ -154,6 +162,8 @@ def check_notebook(
         If True, also check for the presence of empty cells.
     preserve_cell_metadata : bool, default False
         If True, don't check for cell metadata.
+    preserve_cell_outputs : bool, default False
+        If True, don't check for cell outputs.
     filename : str, default "notebook"
         Notebook filename to use in log messages.
 
@@ -180,7 +190,7 @@ def check_notebook(
             if cell["execution_count"]:
                 print(f"{prefix}: execution count")
                 is_clean = False
-            if cell["outputs"]:
+            if not preserve_cell_outputs and cell["outputs"]:
                 print(f"{prefix}: outputs")
                 is_clean = False
 
@@ -196,6 +206,7 @@ def clean_notebook(
     notebook: nbformat.NotebookNode,
     remove_empty_cells: bool = False,
     preserve_cell_metadata: bool = False,
+    preserve_cell_outputs: bool = False,
 ) -> nbformat.NotebookNode:
     """Clean notebook of execution counts, metadata, and outputs.
 
@@ -207,6 +218,8 @@ def clean_notebook(
         If True, remove empty cells.
     preserve_cell_metadata : bool, default False
         If True, preserve cell metadata.
+    preserve_cell_outputs : bool, default False
+        If True, preserve cell outputs.
 
     Returns
     -------
@@ -222,7 +235,8 @@ def clean_notebook(
             cell["metadata"] = {}
         if cell["cell_type"] == "code":
             cell["execution_count"] = None
-            cell["outputs"] = []
+            if not preserve_cell_outputs:
+                cell["outputs"] = []
 
     with contextlib.suppress(KeyError):
         del notebook["metadata"]["language_info"]["version"]

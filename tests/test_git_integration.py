@@ -47,23 +47,31 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.parametrize(
-    ("remove_empty_cells", "preserve_cell_metadata", "filter_command"),
+    (
+        "remove_empty_cells",
+        "preserve_cell_metadata",
+        "preserve_cell_outputs",
+        "filter_command",
+    ),
     [
-        (False, False, "nb-clean clean"),
-        (True, False, "nb-clean clean --remove-empty-cells"),
-        (False, True, "nb-clean clean --preserve-cell-metadata"),
+        (False, False, False, "nb-clean clean"),
+        (True, False, False, "nb-clean clean --remove-empty-cells"),
+        (False, True, False, "nb-clean clean --preserve-cell-metadata"),
+        (False, False, True, "nb-clean clean --preserve-cell-outputs"),
         (
             True,
             True,
-            "nb-clean clean --remove-empty-cells --preserve-cell-metadata",
+            True,
+            "nb-clean clean --remove-empty-cells --preserve-cell-metadata --preserve-cell-outputs",
         ),
     ],
 )
-def test_add_git_filter(
+def test_add_git_filter(  # pylint: disable=too-many-arguments
     mocker: MockerFixture,
     tmp_path: pathlib.Path,
     remove_empty_cells: bool,
     preserve_cell_metadata: bool,
+    preserve_cell_outputs: bool,
     filter_command: str,
 ) -> None:
     """Test nb_clean.add_git_filter."""
@@ -74,6 +82,7 @@ def test_add_git_filter(
     nb_clean.add_git_filter(
         remove_empty_cells=remove_empty_cells,
         preserve_cell_metadata=preserve_cell_metadata,
+        preserve_cell_outputs=preserve_cell_outputs,
     )
     mock_git.assert_called_once_with(
         "config", "filter.nb-clean.clean", filter_command
