@@ -27,6 +27,12 @@ To install the latest release from [PyPI], use [pip]:
 python3 -m pip install nb-clean
 ```
 
+`nb-clean` can be also be installed with [Conda]:
+
+```bash
+conda install -c conda-forge nb-clean
+```
+
 Alternately, in Python projects using [Poetry] or [Pipenv] for dependency
 management, add `nb-clean` as a development dependency with
 `poetry add --dev nb-clean` or `pipenv install --dev nb-clean`. `nb-clean`
@@ -133,6 +139,7 @@ Copyright © 2017-2022 [Scott Stevenson].
 
 `nb-clean` is distributed under the terms of the [ISC licence].
 
+[conda]: https://docs.conda.io/
 [isc licence]: https://opensource.org/licenses/ISC
 [papermill]: https://papermill.readthedocs.io/
 [pip]: https://pip.pypa.io/
