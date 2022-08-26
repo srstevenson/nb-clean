@@ -27,7 +27,7 @@ To install the latest release from [PyPI], use [pip]:
 python3 -m pip install nb-clean
 ```
 
-`nb-clean` can be also be installed with [Conda]:
+`nb-clean` can also be installed with [Conda]:
 
 ```bash
 conda install -c conda-forge nb-clean
@@ -76,8 +76,8 @@ won't mutate your global or system Git configuration. To remove the filter, run:
 nb-clean remove-filter
 ```
 
-Aside from usage from a filter in a Git repository, you can also clean up a
-Jupyter notebook with:
+Aside from usage from a filter in a Git repository, you can also clean a Jupyter
+notebook with:
 
 ```bash
 nb-clean clean notebook.ipynb
