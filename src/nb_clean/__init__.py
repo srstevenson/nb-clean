@@ -91,10 +91,6 @@ def add_git_filter(
     preserve_cell_outputs : bool, default False
         If True, preserve cell outputs.
 
-    Returns
-    -------
-    None
-
     """
     command = ["nb-clean", "clean"]
 
@@ -122,13 +118,7 @@ def add_git_filter(
 
 
 def remove_git_filter() -> None:
-    """Remove the nb-clean filter from the current Git repository.
-
-    Returns
-    -------
-    None
-
-    """
+    """Remove the nb-clean filter from the current Git repository."""
     attributes_path = git_attributes_path()
 
     if attributes_path.is_file():
