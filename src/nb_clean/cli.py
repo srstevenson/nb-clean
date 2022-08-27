@@ -36,10 +36,6 @@ def add_filter(args: argparse.Namespace) -> None:
         args.preserve_cell_metadata is True, configure the filter to
         preserve cell metadata.
 
-    Returns
-    -------
-    None
-
     """
     try:
         nb_clean.add_git_filter(
@@ -52,13 +48,7 @@ def add_filter(args: argparse.Namespace) -> None:
 
 
 def remove_filter() -> None:
-    """Remove the nb-clean filter from the current repository.
-
-    Returns
-    -------
-    None
-
-    """
+    """Remove the nb-clean filter from the current repository."""
     try:
         nb_clean.remove_git_filter()
     except nb_clean.GitProcessError as exc:
@@ -75,10 +65,6 @@ def check(args: argparse.Namespace) -> None:
         is True, check for the presence of empty cells. If
         args.preserve_cell_metadata is True, don't check for cell metadata. If
         args.preserve_cell_outputs is True, don't check for cell outputs.
-
-    Returns
-    -------
-    None
 
     """
 
@@ -118,10 +104,6 @@ def clean(args: argparse.Namespace) -> None:
         is True, check for empty cells. If args.preserve_cell_metadata is
         True, don't clean cell metadata. If args.preserve_cell_outputs is True,
         don't clean cell outputs.
-
-    Returns
-    -------
-    None
 
     """
     if args.inputs:
