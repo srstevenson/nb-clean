@@ -37,7 +37,7 @@ nb-clean = "nb_clean.cli:main"
 
 [tool.poetry.dev-dependencies]
 black = {extras = ["jupyter"], version = "^22.6"}
-flake8 = "^5.0.2"
+flake8 = "^5.0.4"
 isort = "^5.10.1"
 mypy = "^0.971"
 nox = "^2022.1.7"
