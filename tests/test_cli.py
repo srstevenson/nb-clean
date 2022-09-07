@@ -10,7 +10,23 @@ import nbformat
 import pytest
 from pytest_mock import MockerFixture
 
-import nb_clean
+import nb_clean.cli
+
+
+def test_expand_directories_with_files() -> None:
+    """Test expanding directories when only files are present."""
+    paths = [pathlib.Path("tests/notebooks/dirty.ipynb")]
+    assert nb_clean.cli.expand_directories(paths) == paths
+
+
+def test_expand_directories_recursively() -> None:
+    """Test recursive expansion of directories."""
+    input_paths = [pathlib.Path("tests")]
+    expanded_paths = nb_clean.cli.expand_directories(input_paths)
+    assert len(expanded_paths) > len(input_paths)
+    assert all(
+        path.is_file() and path.suffix == ".ipynb" for path in expanded_paths
+    )
 
 
 def test_exit_with_error(capsys, mocker: MockerFixture) -> None:
