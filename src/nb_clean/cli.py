@@ -3,11 +3,33 @@
 import argparse
 import pathlib
 import sys
-from typing import List, NoReturn
+from typing import List, NoReturn, TextIO, Union
 
 import nbformat
 
 import nb_clean
+
+
+def expand_directories(paths: List[pathlib.Path]) -> List[pathlib.Path]:
+    """Expand paths to directories into paths to notebooks contained within.
+
+    Parameters
+    ----------
+    paths : List[pathlib.Path]
+        Paths to expand, including directories.
+
+    Returns
+    -------
+    List[pathlib.Path]
+        Paths with directories expanded into notebooks contained within.
+    """
+    expanded: List[pathlib.Path] = []
+    for path in paths:
+        if path.is_dir():
+            expanded.extend(path.rglob("*.ipynb"))
+        else:
+            expanded.append(path)
+    return list(set(expanded))
 
 
 def exit_with_error(message: str, return_code: int) -> NoReturn:
@@ -69,7 +91,9 @@ def check(args: argparse.Namespace) -> None:
     """
 
     if args.inputs:
-        inputs = args.inputs
+        inputs: Union[List[pathlib.Path], List[TextIO]] = expand_directories(
+            args.inputs
+        )
     else:
         inputs = [sys.stdin]
 
@@ -107,7 +131,10 @@ def clean(args: argparse.Namespace) -> None:
 
     """
     if args.inputs:
-        outputs = inputs = args.inputs
+        inputs: Union[List[pathlib.Path], List[TextIO]] = expand_directories(
+            args.inputs
+        )
+        outputs = inputs
     else:
         inputs = [sys.stdin]
         outputs = [sys.stdout]
@@ -215,7 +242,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         nargs="*",
         metavar="PATH",
         type=pathlib.Path,
-        help="input file",
+        help="input path",
     )
     clean_parser.add_argument(
         "-e",
