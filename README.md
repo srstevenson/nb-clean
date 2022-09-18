@@ -9,10 +9,11 @@
 
 `nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, outputs,
 and (optionally) empty cells, preparing them for committing to version control.
-It provides a Git filter to automatically clean notebooks before they're staged,
-and can also be used with other version control systems, as a command line tool,
-and as a Python library. It can determine if a notebook is clean or not, which
-can be used as a check in your continuous integration pipelines.
+It provides both a Git filter and pre-commit hook to automatically clean
+notebooks before they're staged, and can also be used with other version control
+systems, as a command line tool, and as a Python library. It can determine if a
+notebook is clean or not, which can be used as a check in your continuous
+integration pipelines.
 
 :warning: _`nb-clean` 2.0.0 introduced a new command line interface to make
 cleaning notebooks in place easier. If you upgrade from a previous release,
@@ -33,14 +34,55 @@ python3 -m pip install nb-clean
 conda install -c conda-forge nb-clean
 ```
 
-Alternately, in Python projects using [Poetry] or [Pipenv] for dependency
-management, add `nb-clean` as a development dependency with
-`poetry add --dev nb-clean` or `pipenv install --dev nb-clean`. `nb-clean`
-requires Python 3.7 or later.
+In Python projects using [Poetry] or [Pipenv] for dependency management, add
+`nb-clean` as a development dependency with `poetry add --dev nb-clean` or
+`pipenv install --dev nb-clean`. `nb-clean` requires Python 3.7 or later.
 
 ## Usage
 
-### Cleaning
+### Checking
+
+You can check if a notebook is clean with:
+
+```bash
+nb-clean check notebook.ipynb
+```
+
+or by passing the notebook contents on standard input:
+
+```bash
+nb-clean check < notebook.ipynb
+```
+
+To also check for empty cells, add the `-e`/`--remove-empty-cells` flag. To
+ignore cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To ignore
+cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
+
+`nb-clean` will exit with status code 0 if the notebook is clean, and status
+code 1 if it is not. `nb-clean` will also print details of cell execution
+counts, metadata, outputs, and empty cells it finds.
+
+### Cleaning (interactive)
+
+You can clean a Jupyter notebook with:
+
+```bash
+nb-clean clean notebook.ipynb
+```
+
+This cleans the notebook in place. You can also pass the notebook content on
+standard input, in which case the cleaned notebook is written to standard
+output:
+
+```bash
+nb-clean clean < original.ipynb > cleaned.ipynb
+```
+
+To also remove empty cells, add the `-e`/`--remove-empty-cells` flag. To
+preserve cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To
+preserve cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
+
+### Cleaning (Git filter)
 
 To add a filter to an existing Git repository to automatically clean notebooks
 when they're staged, run the following from the working tree:
@@ -76,46 +118,45 @@ won't mutate your global or system Git configuration. To remove the filter, run:
 nb-clean remove-filter
 ```
 
-Aside from usage from a filter in a Git repository, you can also clean a Jupyter
-notebook with:
+### Cleaning (pre-commit hook)
 
-```bash
-nb-clean clean notebook.ipynb
+`nb-clean` can also be used as a [pre-commit] hook. You may prefer this to the
+Git filter if your project already uses the pre-commit framework.
+
+Note that the Git filter and pre-commit hook work differently, with different
+effects on your working directory. The pre-commit hook operates on the notebook
+on disk, cleaning the copy in your working directory. The Git filter cleans
+notebooks as they are added to the index, leaving the copy in your working
+directory dirty. This means cell outputs are still visible to you in your local
+Jupyter instance when using the Git filter, but not when using the pre-commit
+hook.
+
+After installing [pre-commit], add the `nb-clean` hook by adding the following
+snippet to `.pre-commit-config.yaml` in the root of your repository:
+
+```yaml
+repos:
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: ""
+    hooks:
+      - id: nb-clean
 ```
 
-This cleans the notebook in place. You can also pass the notebook content on
-standard input, in which case the cleaned notebook is written to standard
-output:
+You can pass additional arguments to `nb-clean` such as `--remove-empty-cells`
+with an `args` array as follows:
 
-```bash
-nb-clean clean < original.ipynb > cleaned.ipynb
+```yaml
+repos:
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: ""
+    hooks:
+      - id: nb-clean
+        args:
+          - --remove-empty-cells
 ```
 
-To also remove empty cells, add the `-e`/`--remove-empty-cells` flag. To
-preserve cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To
-preserve cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
-
-### Checking
-
-You can check if a notebook is clean with:
-
-```bash
-nb-clean check notebook.ipynb
-```
-
-or by passing the notebook contents on standard input:
-
-```bash
-nb-clean check < notebook.ipynb
-```
-
-To also check for empty cells, add the `-e`/`--remove-empty-cells` flag. To
-ignore cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To ignore
-cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
-
-`nb-clean` will exit with status code 0 if the notebook is clean, and status
-code 1 if it is not. `nb-clean` will also print details of cell execution
-counts, metadata, outputs, and empty cells it finds.
+Run `pre-commit install` to ensure the hook is installed, and
+`pre-commit autoupdate` to update the hook to the latest release of `nb-clean`.
 
 ### Migrating to `nb-clean` 2
 
@@ -147,5 +188,6 @@ Copyright © 2017-2022 [Scott Stevenson].
 [pip]: https://pip.pypa.io/
 [pipenv]: https://pipenv.readthedocs.io/
 [poetry]: https://python-poetry.org/
+[pre-commit]: https://pre-commit.com/
 [pypi]: https://pypi.org/project/nb-clean/
 [scott stevenson]: https://scott.stevenson.io
