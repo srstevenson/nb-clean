@@ -137,7 +137,7 @@ snippet to `.pre-commit-config.yaml` in the root of your repository:
 ```yaml
 repos:
   - repo: https://github.com/srstevenson/nb-clean
-    rev: ""
+    rev: "2.2.1"
     hooks:
       - id: nb-clean
 ```
@@ -148,7 +148,7 @@ with an `args` array as follows:
 ```yaml
 repos:
   - repo: https://github.com/srstevenson/nb-clean
-    rev: ""
+    rev: "2.2.1"
     hooks:
       - id: nb-clean
         args:
