@@ -113,14 +113,41 @@ def clean(args: argparse.Namespace) -> None:
         outputs = [sys.stdout]
 
     for input_, output in zip(inputs, outputs):
-        notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)
-        notebook = nb_clean.clean_notebook(
-            notebook,
-            remove_empty_cells=args.remove_empty_cells,
-            preserve_cell_metadata=args.preserve_cell_metadata,
-            preserve_cell_outputs=args.preserve_cell_outputs,
-        )
-        nbformat.write(notebook, output)
+        if input_.is_dir():
+            for input__ in input_.glob('*.ipynb'):
+                _clean(args, input__, input__)
+        else:
+            _clean(args, input_, output)
+
+
+def _clean(
+    args: argparse.Namespace,
+    file_path: pathlib.Path,
+    output: pathlib.Path
+) -> None:
+    """Clean single notebooks of execution counts, metadata, and outputs.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Arguments parsed from the command line. If args.remove_empty_cells
+        is True, check for empty cells. If args.preserve_cell_metadata is
+        True, don't clean cell metadata. If args.preserve_cell_outputs is True,
+        don't clean cell outputs.
+    file_path : pathlib.Path | sys.stdin
+        Path of the input notebook file
+    output : pathlib.Path | sys.stdout
+        Path of the output notebook file
+
+    """
+    notebook = nbformat.read(file_path, as_version=nbformat.NO_CONVERT)
+    notebook = nb_clean.clean_notebook(
+        notebook,
+        remove_empty_cells=args.remove_empty_cells,
+        preserve_cell_metadata=args.preserve_cell_metadata,
+        preserve_cell_outputs=args.preserve_cell_outputs,
+    )
+    nbformat.write(notebook, output)
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -215,7 +242,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         nargs="*",
         metavar="PATH",
         type=pathlib.Path,
-        help="input file",
+        help="input file or directory",
     )
     clean_parser.add_argument(
         "-e",
