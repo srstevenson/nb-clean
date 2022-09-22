@@ -113,10 +113,13 @@ def clean(args: argparse.Namespace) -> None:
         outputs = [sys.stdout]
 
     for input_, output in zip(inputs, outputs):
-        if input_.is_dir():
-            for input__ in input_.glob('*.ipynb'):
-                _clean(args, input__, input__)
-        else:
+        try:  # pathlib.Path
+            if input_.is_dir():
+                for input__ in input_.glob('*.ipynb'):
+                    _clean(args, input__, input__)
+            else:
+                _clean(args, input_, output)
+        except AttributeError:  # escape _io.TextIOWrapper
             _clean(args, input_, output)
 
 
