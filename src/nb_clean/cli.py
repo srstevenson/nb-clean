@@ -1,6 +1,7 @@
 """Command line interface to nb-clean."""
 
 import argparse
+import os
 import pathlib
 import sys
 from typing import List, NoReturn, TextIO, Union
@@ -102,7 +103,7 @@ def check(args: argparse.Namespace) -> None:
         if input_ is sys.stdin:
             name = "stdin"
         else:
-            name = input_.name
+            name = os.fspath(input_)  # type: ignore[arg-type]
 
         notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)
         is_clean = nb_clean.check_notebook(
