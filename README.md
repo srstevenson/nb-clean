@@ -55,8 +55,9 @@ nb-clean check < notebook.ipynb
 ```
 
 To also check for empty cells, add the `-e`/`--remove-empty-cells` flag. To
-ignore cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To ignore
-cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
+ignore cell metadata, add the `-m`/`--preserve-cell-metadata` flag, optionally
+with a selection of metadata fields to ignore. To ignore cell outputs, add the
+`-o`/`--preserve-cell-outputs` flag.
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
@@ -79,8 +80,9 @@ nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
 To also remove empty cells, add the `-e`/`--remove-empty-cells` flag. To
-preserve cell metadata, add the `-m`/`--preserve-cell-metadata` flag. To
-preserve cell outputs, add the `-o`/`--preserve-cell-outputs` flag.
+preserve cell metadata, add the `-m`/`--preserve-cell-metadata` flag, optionally
+with a selection of metadata fields to preserve. To preserve cell outputs, add
+the `-o`/`--preserve-cell-outputs` flag.
 
 ### Cleaning (Git filter)
 
@@ -103,6 +105,12 @@ use:
 
 ```bash
 nb-clean add-filter --preserve-cell-metadata
+```
+
+To preserve only specific cell metadata, e.g., `tags` and `special`, use:
+
+```bash
+nb-clean add-filter --preserve-cell-metadata tags special
 ```
 
 To preserve cell outputs, use:
@@ -142,8 +150,12 @@ repos:
       - id: nb-clean
 ```
 
-You can pass additional arguments to `nb-clean` such as `--remove-empty-cells`
-with an `args` array as follows:
+You can pass additional arguments to `nb-clean` with an `args` array. The
+following example shows how to preserve only two specific metadata fields. Note
+that, in the example, the final item `--` in the arg list is mandatory. The
+option `--preserve-cell-metadata` may take an arbitrary number of field
+arguments, and the `--` argument is needed to separate them from notebook
+filenames, which `pre-commit` will append to the list of arguments.
 
 ```yaml
 repos:
@@ -153,28 +165,41 @@ repos:
       - id: nb-clean
         args:
           - --remove-empty-cells
+          - --preserve-cell-metadata
+          - tags
+          - slideshow
+          - --
 ```
 
 Run `pre-commit install` to ensure the hook is installed, and
 `pre-commit autoupdate` to update the hook to the latest release of `nb-clean`.
 
+### Preserving all nbformat metadata
+
+To ignore or preserve specifically the metadata defined in the
+[`nbformat` documentation](https://nbformat.readthedocs.io/en/latest/format_description.html#cell-metadata),
+use the following options:
+`--preserve-cell-metadata collapsed scrolled deletable editable format name tags jupyter execution`.
+
 ### Migrating to `nb-clean` 2
 
 The following table maps from the command line interface of `nb-clean` 1.6.0 to
-that of `nb-clean` 2.0.0.
+that of `nb-clean` 2.4.0.
 
-| Description                             | `nb-clean` 1.6.0                                                    | `nb-clean` 2.0.0                                            |
-| --------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Clean notebook                          | `nb-clean clean -i/--input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                             |
-| Clean notebook (remove empty cells)     | `nb-clean clean -i/--input notebook.ipynb -e/--remove-empty`        | `nb-clean clean -e/--remove-empty-cells notebook.ipynb`     |
-| Clean notebook (preserve cell metadata) | `nb-clean clean -i/--input notebook.ipynb -m/--preserve-metadata`   | `nb-clean clean -m/--preserve-cell-metadata notebook.ipynb` |
-| Clean notebook (preserve cell outputs)  |                                                                     | `nb-clean clean -o/--preserve-cell-outputs notebook.ipynb`  |
-| Check notebook                          | `nb-clean check -i/--input notebook.ipynb`                          | `nb-clean check notebook.ipynb`                             |
-| Check notebook (remove empty cells)     | `nb-clean check -i/--input notebook.ipynb -e/--remove-empty`        | `nb-clean check -e/--remove-empty-cells notebook.ipynb`     |
-| Check notebook (preserve cell metadata) | `nb-clean check -i/--input notebook.ipynb -m/--preserve-metadata`   | `nb-clean check -m/--preserve-cell-metadata notebook.ipynb` |
-| Check notebook (preserve cell outputs)  |                                                                     | `nb-clean check -o/--preserve-cell-outputs notebook.ipynb`  |
-| Add Git filter to clean notebooks       | `nb-clean configure-git`                                            | `nb-clean add-filter`                                       |
-| Remove Git filter                       | `nb-clean unconfigure-git`                                          | `nb-clean remove-filter`                                    |
+| Description                                                  | `nb-clean` 1.6.0                                                    | `nb-clean` 2.4.0                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Clean notebook                                               | `nb-clean clean -i/--input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                                          |
+| Clean notebook (remove empty cells)                          | `nb-clean clean -i/--input notebook.ipynb -e/--remove-empty`        | `nb-clean clean notebook.ipynb -e/--remove-empty-cells`                  |
+| Clean notebook (preserve cell metadata)                      | `nb-clean clean -i/--input notebook.ipynb -m/--preserve-metadata`   | `nb-clean clean notebook.ipynb -m/--preserve-cell-metadata`              |
+| Clean notebook (preserve `tags` and `special` cell metadata) |                                                                     | `nb-clean clean notebook.ipynb -m/--preserve-cell-metadata tags special` |
+| Clean notebook (preserve cell outputs)                       |                                                                     | `nb-clean clean notebook.ipynb -o/--preserve-cell-outputs`               |
+| Check notebook                                               | `nb-clean check -i/--input notebook.ipynb`                          | `nb-clean check notebook.ipynb`                                          |
+| Check notebook (ignore non-empty cells)                      | `nb-clean check -i/--input notebook.ipynb -e/--remove-empty`        | `nb-clean check notebook.ipynb -e/--remove-empty-cells`                  |
+| Check notebook (ignore cell metadata)                        | `nb-clean check -i/--input notebook.ipynb -m/--preserve-metadata`   | `nb-clean check notebook.ipynb -m/--preserve-cell-metadata`              |
+| Check notebook (ignore `tags` and `special` cell metadata)   |                                                                     | `nb-clean check notebook.ipynb -m/--preserve-cell-metadata tags special` |
+| Check notebook (ignore cell outputs)                         |                                                                     | `nb-clean check notebook.ipynb -o/--preserve-cell-outputs`               |
+| Add Git filter to clean notebooks                            | `nb-clean configure-git`                                            | `nb-clean add-filter`                                                    |
+| Remove Git filter                                            | `nb-clean unconfigure-git`                                          | `nb-clean remove-filter`                                                 |
 
 ## Copyright
 

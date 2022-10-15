@@ -1,5 +1,7 @@
 """Tests for nb_clean.check_notebook."""
 
+from typing import Collection, Union
+
 import nbformat
 import pytest
 
@@ -28,28 +30,92 @@ def test_check_notebook_remove_empty_cells(
     remove_empty_cells: bool,
 ) -> None:
     """Test nb_clean.check_notebook when removing empty cells."""
-    assert (
-        nb_clean.check_notebook(
-            clean_notebook_with_empty_cells,
-            remove_empty_cells=remove_empty_cells,
-        )
-        is not remove_empty_cells
+    output = nb_clean.check_notebook(
+        clean_notebook_with_empty_cells,
+        remove_empty_cells=remove_empty_cells,
     )
+    assert output is not remove_empty_cells
 
 
-@pytest.mark.parametrize("preserve_cell_metadata", [True, False])
+@pytest.mark.parametrize(
+    "preserve_cell_metadata",
+    [
+        [],
+        ["tags"],
+        ["other"],
+        ["tags", "special"],
+        ["nbformat", "tags", "special"],
+        None,
+    ],
+)
 def test_check_notebook_preserve_metadata(
     clean_notebook_with_metadata: nbformat.NotebookNode,
-    preserve_cell_metadata: bool,
+    preserve_cell_metadata: Union[Collection[str], None],
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
-    assert (
-        nb_clean.check_notebook(
-            clean_notebook_with_metadata,
-            preserve_cell_metadata=preserve_cell_metadata,
-        )
-        is preserve_cell_metadata
+    expected = (preserve_cell_metadata is not None) and (
+        preserve_cell_metadata == []
+        or {"tags", "special", "nbclean"}.issubset(preserve_cell_metadata)
     )
+    output = nb_clean.check_notebook(
+        clean_notebook_with_metadata,
+        preserve_cell_metadata=preserve_cell_metadata,
+    )
+    assert output is expected
+
+
+@pytest.mark.parametrize(
+    "preserve_cell_metadata",
+    [
+        [],
+        ["tags"],
+        ["other"],
+        ["tags", "special"],
+        ["nbformat", "tags", "special"],
+        None,
+    ],
+)
+def test_check_notebook_preserve_metadata_tags(
+    clean_notebook_with_tags_metadata: nbformat.NotebookNode,
+    preserve_cell_metadata: Union[Collection[str], None],
+) -> None:
+    """Test nb_clean.check_notebook when preserving cell metadata."""
+    expected = (preserve_cell_metadata is not None) and (
+        preserve_cell_metadata == []
+        or {"tags"}.issubset(preserve_cell_metadata)
+    )
+    output = nb_clean.check_notebook(
+        clean_notebook_with_tags_metadata,
+        preserve_cell_metadata=preserve_cell_metadata,
+    )
+    assert output is expected
+
+
+@pytest.mark.parametrize(
+    "preserve_cell_metadata",
+    [
+        [],
+        ["tags"],
+        ["other"],
+        ["tags", "special"],
+        ["nbformat", "tags", "special"],
+        None,
+    ],
+)
+def test_check_notebook_preserve_metadata_tags_special(
+    clean_notebook_with_tags_special_metadata: nbformat.NotebookNode,
+    preserve_cell_metadata: Union[Collection[str], None],
+) -> None:
+    """Test nb_clean.check_notebook when preserving cell metadata."""
+    expected = (preserve_cell_metadata is not None) and (
+        preserve_cell_metadata == []
+        or {"tags", "special"}.issubset(preserve_cell_metadata)
+    )
+    output = nb_clean.check_notebook(
+        clean_notebook_with_tags_special_metadata,
+        preserve_cell_metadata=preserve_cell_metadata,
+    )
+    assert output is expected
 
 
 @pytest.mark.parametrize(
@@ -79,10 +145,8 @@ def test_check_notebook_preserve_outputs(
     is_clean: bool,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
-    assert (
-        nb_clean.check_notebook(
-            notebook,
-            preserve_cell_outputs=preserve_cell_outputs,
-        )
-        is is_clean
+    output = nb_clean.check_notebook(
+        notebook,
+        preserve_cell_outputs=preserve_cell_outputs,
     )
+    assert output is is_clean

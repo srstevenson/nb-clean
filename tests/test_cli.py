@@ -4,7 +4,7 @@ import argparse
 import io
 import pathlib
 import sys
-from typing import Iterable
+from typing import Collection, Iterable, Union
 
 import nbformat
 import pytest
@@ -43,13 +43,13 @@ def test_add_filter(mocker: MockerFixture) -> None:
     nb_clean.cli.add_filter(
         argparse.Namespace(
             remove_empty_cells=True,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
     mock_add_git_filter.assert_called_once_with(
         remove_empty_cells=True,
-        preserve_cell_metadata=False,
+        preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
 
@@ -66,7 +66,7 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     nb_clean.cli.add_filter(
         argparse.Namespace(
             remove_empty_cells=True,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
@@ -116,7 +116,7 @@ def test_check_file(
         argparse.Namespace(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
@@ -126,7 +126,7 @@ def test_check_file(
     mock_check_notebook.assert_called_once_with(
         notebook,
         remove_empty_cells=False,
-        preserve_cell_metadata=False,
+        preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         filename="notebook.ipynb",
     )
@@ -165,7 +165,7 @@ def test_check_stdin(
         argparse.Namespace(
             inputs=[],
             remove_empty_cells=False,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
@@ -175,7 +175,7 @@ def test_check_stdin(
     mock_check_notebook.assert_called_once_with(
         notebook,
         remove_empty_cells=False,
-        preserve_cell_metadata=False,
+        preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         filename="stdin",
     )
@@ -203,7 +203,7 @@ def test_clean_file(
         argparse.Namespace(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
@@ -214,7 +214,7 @@ def test_clean_file(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
-        preserve_cell_metadata=False,
+        preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
     mock_write.assert_called_once_with(
@@ -244,7 +244,7 @@ def test_clean_stdin(
         argparse.Namespace(
             inputs=[],
             remove_empty_cells=False,
-            preserve_cell_metadata=False,
+            preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
     )
@@ -255,7 +255,7 @@ def test_clean_stdin(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
-        preserve_cell_metadata=False,
+        preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
     assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)
@@ -276,7 +276,7 @@ def test_clean_stdin(
             "add_filter",
             [],
             True,
-            False,
+            None,
             False,
         ),
         (
@@ -284,7 +284,23 @@ def test_clean_stdin(
             "check",
             "a.ipynb b.ipynb".split(),
             False,
+            [],
             True,
+        ),
+        (
+            "check -m tags -o a.ipynb b.ipynb",
+            "check",
+            "a.ipynb b.ipynb".split(),
+            False,
+            ["tags"],
+            True,
+        ),
+        (
+            "check -m tags special -o a.ipynb b.ipynb",
+            "check",
+            "a.ipynb b.ipynb".split(),
+            False,
+            ["tags", "special"],
             True,
         ),
         (
@@ -292,7 +308,7 @@ def test_clean_stdin(
             "clean",
             ["a.ipynb"],
             True,
-            False,
+            None,
             True,
         ),
     ],
@@ -302,7 +318,7 @@ def test_parse_args(  # pylint: disable=too-many-arguments
     function: str,
     inputs: Iterable[str],
     remove_empty_cells: bool,
-    preserve_cell_metadata: bool,
+    preserve_cell_metadata: Union[Collection[str], None],
     preserve_cell_outputs: bool,
 ) -> None:
     """Test nb_clean.cli.parse_args."""
@@ -311,5 +327,5 @@ def test_parse_args(  # pylint: disable=too-many-arguments
     if inputs:
         assert args.inputs == [pathlib.Path(path) for path in inputs]
     assert args.remove_empty_cells is remove_empty_cells
-    assert args.preserve_cell_metadata is preserve_cell_metadata
+    assert args.preserve_cell_metadata == preserve_cell_metadata
     assert args.preserve_cell_outputs is preserve_cell_outputs

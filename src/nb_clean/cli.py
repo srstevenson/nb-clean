@@ -183,8 +183,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     add_filter_parser.add_argument(
         "-m",
         "--preserve-cell-metadata",
-        action="store_true",
-        help="preserve cell metadata",
+        default=None,
+        nargs="*",
+        help="preserve cell metadata, all unless fields are specified",
     )
     add_filter_parser.add_argument(
         "-o",
@@ -223,8 +224,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     check_parser.add_argument(
         "-m",
         "--preserve-cell-metadata",
-        action="store_true",
-        help="preserve cell metadata",
+        default=None,
+        nargs="*",
+        help="preserve cell metadata, all unless fields are specified",
     )
     check_parser.add_argument(
         "-o",
@@ -254,8 +256,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     clean_parser.add_argument(
         "-m",
         "--preserve-cell-metadata",
-        action="store_true",
-        help="preserve cell metadata",
+        default=None,
+        nargs="*",
+        help="preserve cell metadata, all unless fields are specified",
     )
     clean_parser.add_argument(
         "-o",

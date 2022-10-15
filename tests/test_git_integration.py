@@ -2,6 +2,7 @@
 
 import pathlib
 import subprocess
+from typing import Collection, Union
 from unittest.mock import Mock
 
 import pytest
@@ -54,13 +55,25 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         "filter_command",
     ),
     [
-        (False, False, False, "nb-clean clean"),
-        (True, False, False, "nb-clean clean --remove-empty-cells"),
-        (False, True, False, "nb-clean clean --preserve-cell-metadata"),
-        (False, False, True, "nb-clean clean --preserve-cell-outputs"),
+        (False, None, False, "nb-clean clean"),
+        (True, None, False, "nb-clean clean --remove-empty-cells"),
+        (False, [], False, "nb-clean clean --preserve-cell-metadata"),
+        (
+            False,
+            ["tags"],
+            False,
+            "nb-clean clean --preserve-cell-metadata tags",
+        ),
+        (
+            False,
+            ["tags", "special"],
+            False,
+            "nb-clean clean --preserve-cell-metadata tags special",
+        ),
+        (False, None, True, "nb-clean clean --preserve-cell-outputs"),
         (
             True,
-            True,
+            [],
             True,
             "nb-clean clean --remove-empty-cells --preserve-cell-metadata --preserve-cell-outputs",
         ),
@@ -70,7 +83,7 @@ def test_add_git_filter(  # pylint: disable=too-many-arguments
     mocker: MockerFixture,
     tmp_path: pathlib.Path,
     remove_empty_cells: bool,
-    preserve_cell_metadata: bool,
+    preserve_cell_metadata: Union[Collection[str], None],
     preserve_cell_outputs: bool,
     filter_command: str,
 ) -> None:
