@@ -180,7 +180,13 @@ def check_notebook(
             if cell["execution_count"]:
                 print(f"{prefix}: execution count")
                 is_clean = False
-            if not preserve_cell_outputs and cell["outputs"]:
+
+            if preserve_cell_outputs:
+                for output in cell["outputs"]:
+                    if output.get("execution_count") is not None:
+                        print(f"{prefix}: output execution count")
+                        is_clean = False
+            elif cell["outputs"]:
                 print(f"{prefix}: outputs")
                 is_clean = False
 
@@ -225,7 +231,11 @@ def clean_notebook(
             cell["metadata"] = {}
         if cell["cell_type"] == "code":
             cell["execution_count"] = None
-            if not preserve_cell_outputs:
+            if preserve_cell_outputs:
+                for output in cell["outputs"]:
+                    if "execution_count" in output:
+                        output["execution_count"] = None
+            else:
                 cell["outputs"] = []
 
     with contextlib.suppress(KeyError):
