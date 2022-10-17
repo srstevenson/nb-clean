@@ -25,14 +25,14 @@ def test_clean_notebook_with_version(
 
 def test_clean_notebook_remove_empty_cells(
     clean_notebook_with_empty_cells: nbformat.NotebookNode,
-    clean_notebook: nbformat.NotebookNode,
+    clean_notebook_without_empty_cells: nbformat.NotebookNode,
 ) -> None:
     """Test nb_clean.clean_notebook when removing empty cells."""
     assert (
         nb_clean.clean_notebook(
             clean_notebook_with_empty_cells, remove_empty_cells=True
         )
-        == clean_notebook
+        == clean_notebook_without_empty_cells
     )
 
 
