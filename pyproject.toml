@@ -9,7 +9,7 @@ line_length = 79
 ignore_missing_imports = true
 
 [tool.pylint."MESSAGES CONTROL"]
-disable = "duplicate-code"
+disable = ["duplicate-code", "line-too-long"]
 
 [tool.poetry]
 name = "nb-clean"
