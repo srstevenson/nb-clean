@@ -7,7 +7,7 @@ from typing import Collection, Union
 
 import nbformat
 
-VERSION = "2.0.2"
+VERSION = "2.4.0"
 GIT_ATTRIBUTES_LINE = "*.ipynb filter=nb-clean"
 
 
