@@ -49,7 +49,7 @@ def test_clean_notebook_remove_empty_cells(
 )
 def test_clean_notebook_preserve_metadata(
     dirty_notebook: nbformat.NotebookNode,
-    clean_notebook_with_metadata: nbformat.NotebookNode,
+    clean_notebook_with_cell_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str],
 ) -> None:
     """Test nb_clean.clean_notebook when preserving cell metadata."""
@@ -57,7 +57,7 @@ def test_clean_notebook_preserve_metadata(
         nb_clean.clean_notebook(
             dirty_notebook, preserve_cell_metadata=preserve_cell_metadata
         )
-        == clean_notebook_with_metadata
+        == clean_notebook_with_cell_metadata
     )
 
 
@@ -104,4 +104,15 @@ def test_clean_notebook_preserve_outputs(
     assert (
         nb_clean.clean_notebook(dirty_notebook, preserve_cell_outputs=True)
         == clean_notebook_with_outputs
+    )
+
+
+def test_clean_notebook_remove_notebook_metadata(
+    dirty_notebook: nbformat.NotebookNode,
+    clean_notebook_without_notebook_metadata: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook when preserving cell outputs."""
+    assert (
+        nb_clean.clean_notebook(dirty_notebook, remove_notebook_metadata=True)
+        == clean_notebook_without_notebook_metadata
     )

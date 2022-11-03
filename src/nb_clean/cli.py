@@ -145,6 +145,7 @@ def clean(args: argparse.Namespace) -> None:
         notebook = nb_clean.clean_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
+            remove_notebook_metadata=args.remove_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
         )
@@ -179,6 +180,12 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         "--remove-empty-cells",
         action="store_true",
         help="remove empty cells",
+    )
+    add_filter_parser.add_argument(
+        "-M",
+        "--remove-notebook-metadata",
+        action="store_true",
+        help="remove notebook metadata",
     )
     add_filter_parser.add_argument(
         "-m",
@@ -222,6 +229,12 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         help="check for empty cells",
     )
     check_parser.add_argument(
+        "-M",
+        "--remove-notebook-metadata",
+        action="store_true",
+        help="check for notebook metadata",
+    )
+    check_parser.add_argument(
         "-m",
         "--preserve-cell-metadata",
         default=None,
@@ -252,6 +265,12 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         "--remove-empty-cells",
         action="store_true",
         help="remove empty cells",
+    )
+    clean_parser.add_argument(
+        "-M",
+        "--remove-notebook-metadata",
+        action="store_true",
+        help="remove notebook metadata",
     )
     clean_parser.add_argument(
         "-m",

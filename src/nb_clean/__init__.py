@@ -147,6 +147,7 @@ def remove_git_filter() -> None:
 def check_notebook(
     notebook: nbformat.NotebookNode,
     remove_empty_cells: bool = False,
+    remove_notebook_metadata: bool = False,
     preserve_cell_metadata: Union[Collection[str], None] = None,
     preserve_cell_outputs: bool = False,
     filename: str = "notebook",
@@ -159,6 +160,8 @@ def check_notebook(
         The notebook.
     remove_empty_cells : bool, default False
         If True, also check for the presence of empty cells.
+    remove_notebook_metadata : bool, default False
+        If True, also check for the presence of non empty notebok metadata.
     preserve_cell_metadata : list of str or None, default None
         If None, check for all cell metadata.
         If [], don't check for any cell metadata.
@@ -210,10 +213,15 @@ def check_notebook(
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    with contextlib.suppress(KeyError):
-        _ = notebook["metadata"]["language_info"]["version"]
-        print(f"{filename} metadata: language_info.version")
-        is_clean = False
+    if remove_notebook_metadata:
+        if notebook.metadata:
+            print(f"{filename}: metadata")
+            is_clean = False
+    else:
+        with contextlib.suppress(KeyError):
+            _ = notebook["metadata"]["language_info"]["version"]
+            print(f"{filename} metadata: language_info.version")
+            is_clean = False
 
     return is_clean
 
@@ -221,6 +229,7 @@ def check_notebook(
 def clean_notebook(
     notebook: nbformat.NotebookNode,
     remove_empty_cells: bool = False,
+    remove_notebook_metadata: bool = False,
     preserve_cell_metadata: Union[Collection[str], None] = None,
     preserve_cell_outputs: bool = False,
 ) -> nbformat.NotebookNode:
@@ -232,6 +241,8 @@ def clean_notebook(
         The notebook.
     remove_empty_cells : bool, default False
         If True, remove empty cells.
+    remove_notebook_metadata : bool, default False
+        If True, remove notebook metada.
     preserve_cell_metadata : list of str or None, default None
         If None, clean all cell metadata.
         If [], preserve all cell metadata.
@@ -249,6 +260,12 @@ def clean_notebook(
     if remove_empty_cells:
         notebook.cells = [cell for cell in notebook.cells if cell["source"]]
 
+    if remove_notebook_metadata:
+        notebook.metadata = {}
+    else:
+        with contextlib.suppress(KeyError):
+            del notebook["metadata"]["language_info"]["version"]
+
     for cell in notebook.cells:
         if preserve_cell_metadata is None:
             cell["metadata"] = {}
@@ -262,12 +279,9 @@ def clean_notebook(
             cell["execution_count"] = None
             if preserve_cell_outputs:
                 for output in cell["outputs"]:
-                    if "execution_count" in output:
+                    if output.get("execution_count") is not None:
                         output["execution_count"] = None
             else:
                 cell["outputs"] = []
-
-    with contextlib.suppress(KeyError):
-        del notebook["metadata"]["language_info"]["version"]
 
     return notebook

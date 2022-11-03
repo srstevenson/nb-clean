@@ -203,6 +203,7 @@ def test_clean_file(
         argparse.Namespace(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
+            remove_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
@@ -214,6 +215,7 @@ def test_clean_file(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
+        remove_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
@@ -244,6 +246,7 @@ def test_clean_stdin(
         argparse.Namespace(
             inputs=[],
             remove_empty_cells=False,
+            remove_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
         )
@@ -255,6 +258,7 @@ def test_clean_stdin(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
+        remove_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
