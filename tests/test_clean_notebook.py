@@ -119,3 +119,29 @@ def test_clean_notebook_preserve_execution_counts(
         nb_clean.clean_notebook(dirty_notebook, preserve_execution_counts=True)
         == clean_notebook_with_counts
     )
+
+
+def test_clean_notebook_remove_all_notebook_metadata(
+    dirty_notebook: nbformat.NotebookNode,
+    clean_notebook_without_notebook_metadata: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook when removing all notebook metadata."""
+    assert (
+        nb_clean.clean_notebook(dirty_notebook, remove_all_notebook_metadata=True)
+        == clean_notebook_without_notebook_metadata
+    )
+
+
+def test_clean_notebook_exclusive_arguments(
+    dirty_notebook: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook with invalid arguments."""
+    with pytest.raises(
+        ValueError,
+        match="`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`",
+    ):
+        nb_clean.clean_notebook(
+            dirty_notebook,
+            remove_all_notebook_metadata=True,
+            preserve_notebook_metadata=True,
+        )

@@ -175,3 +175,51 @@ def test_check_notebook_preserve_execution_counts(
         notebook, preserve_execution_counts=preserve_execution_counts
     )
     assert output is is_clean
+
+
+@pytest.mark.parametrize(
+    ("notebook_name", "remove_all_notebook_metadata", "is_clean"),
+    [
+        ("clean_notebook_with_notebook_metadata", True, False),
+        ("clean_notebook_with_notebook_metadata", False, False),
+        ("clean_notebook_without_notebook_metadata", True, True),
+        ("clean_notebook_without_notebook_metadata", False, True),
+        ("clean_notebook", True, False),
+        ("clean_notebook", False, True),
+    ],
+)
+def test_check_notebook_remove_all_notebook_metadata(
+    notebook_name: str,
+    *,
+    remove_all_notebook_metadata: bool,
+    is_clean: bool,
+    request: pytest.FixtureRequest,
+) -> None:
+    """Test nb_clean.clean_notebook when removing all notebook metadata.
+
+    The test with `("clean_notebook_with_notebook_metadata", False, True)` is False due
+    to `clean_notebook_with_notebook_metadata` containing `language_info.version`
+    detected when `preserve_notebook_metadata=False`.
+    """
+    notebook = request.getfixturevalue(notebook_name)
+    assert (
+        nb_clean.check_notebook(
+            notebook, remove_all_notebook_metadata=remove_all_notebook_metadata
+        )
+        == is_clean
+    )
+
+
+def test_check_notebook_exclusive_arguments(
+    dirty_notebook: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.check_notebook with invalid arguments."""
+    with pytest.raises(
+        ValueError,
+        match="`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`",
+    ):
+        nb_clean.check_notebook(
+            dirty_notebook,
+            remove_all_notebook_metadata=True,
+            preserve_notebook_metadata=True,
+        )

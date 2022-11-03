@@ -69,6 +69,7 @@ def add_filter(args: argparse.Namespace) -> None:
     try:
         nb_clean.add_git_filter(
             remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
             preserve_execution_counts=args.preserve_execution_counts,
@@ -114,6 +115,7 @@ def check(args: argparse.Namespace) -> None:
         is_clean = nb_clean.check_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
             preserve_execution_counts=args.preserve_execution_counts,
@@ -152,6 +154,7 @@ def clean(args: argparse.Namespace) -> None:
         notebook = nb_clean.clean_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
             preserve_execution_counts=args.preserve_execution_counts,
@@ -180,6 +183,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
     )
     add_filter_parser.add_argument(
         "-e", "--remove-empty-cells", action="store_true", help="remove empty cells"
+    )
+    add_filter_parser.add_argument(
+        "-M",
+        "--remove-all-notebook-metadata",
+        action="store_true",
+        help="remove all notebook metadata",
     )
     add_filter_parser.add_argument(
         "-m",
@@ -227,6 +236,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         "-e", "--remove-empty-cells", action="store_true", help="check for empty cells"
     )
     check_parser.add_argument(
+        "-M",
+        "--remove-all-notebook-metadata",
+        action="store_true",
+        help="check for any notebook metadata",
+    )
+    check_parser.add_argument(
         "-m",
         "--preserve-cell-metadata",
         default=None,
@@ -261,6 +276,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
     )
     clean_parser.add_argument(
         "-e", "--remove-empty-cells", action="store_true", help="remove empty cells"
+    )
+    clean_parser.add_argument(
+        "-M",
+        "--remove-all-notebook-metadata",
+        action="store_true",
+        help="remove all notebook metadata",
     )
     clean_parser.add_argument(
         "-m",

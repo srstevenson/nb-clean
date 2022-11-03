@@ -45,6 +45,7 @@ def test_add_filter(mocker: MockerFixture) -> None:
     nb_clean.cli.add_filter(
         argparse.Namespace(
             remove_empty_cells=True,
+            remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -53,10 +54,34 @@ def test_add_filter(mocker: MockerFixture) -> None:
     )
     mock_add_git_filter.assert_called_once_with(
         remove_empty_cells=True,
+        remove_all_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         preserve_execution_counts=False,
         preserve_notebook_metadata=True,
+    )
+
+
+def test_add_filter_remove_all_notebook_metadata(mocker: MockerFixture) -> None:
+    """Test nb_clean.cli.add_filter with remove all notebook metadata."""
+    mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
+    nb_clean.cli.add_filter(
+        argparse.Namespace(
+            remove_empty_cells=True,
+            remove_all_notebook_metadata=True,
+            preserve_cell_metadata=None,
+            preserve_cell_outputs=False,
+            preserve_execution_counts=False,
+            preserve_notebook_metadata=False,
+        )
+    )
+    mock_add_git_filter.assert_called_once_with(
+        remove_empty_cells=True,
+        remove_all_notebook_metadata=True,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
 
 
@@ -70,6 +95,7 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     nb_clean.cli.add_filter(
         argparse.Namespace(
             remove_empty_cells=True,
+            remove_all_notebook_metadata=True,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -111,6 +137,7 @@ def test_check_file(
         argparse.Namespace(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
+            remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -123,6 +150,7 @@ def test_check_file(
     mock_check_notebook.assert_called_once_with(
         notebook,
         remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         preserve_execution_counts=False,
@@ -158,6 +186,7 @@ def test_check_stdin(
         argparse.Namespace(
             inputs=[],
             remove_empty_cells=False,
+            remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -168,6 +197,7 @@ def test_check_stdin(
     mock_check_notebook.assert_called_once_with(
         notebook,
         remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         preserve_execution_counts=False,
@@ -196,6 +226,7 @@ def test_clean_file(
         argparse.Namespace(
             inputs=[pathlib.Path("notebook.ipynb")],
             remove_empty_cells=False,
+            remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -209,6 +240,7 @@ def test_clean_file(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         preserve_execution_counts=False,
@@ -237,6 +269,7 @@ def test_clean_stdin(
         argparse.Namespace(
             inputs=[],
             remove_empty_cells=False,
+            remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
             preserve_execution_counts=False,
@@ -248,6 +281,7 @@ def test_clean_stdin(
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
         preserve_execution_counts=False,
@@ -262,17 +296,19 @@ def test_clean_stdin(
         "function",
         "inputs",
         "remove_empty_cells",
+        "remove_all_notebook_metadata",
         "preserve_cell_metadata",
         "preserve_cell_outputs",
         "preserve_execution_counts",
         "preserve_notebook_metadata",
     ),
     [
-        ("add-filter -e", "add_filter", [], True, None, False, False, False),
+        ("add-filter -e", "add_filter", [], True, False, None, False, False, False),
         (
             "check -m -o a.ipynb b.ipynb",
             "check",
             "a.ipynb b.ipynb".split(),
+            False,
             False,
             [],
             True,
@@ -284,6 +320,7 @@ def test_clean_stdin(
             "check",
             "a.ipynb b.ipynb".split(),
             False,
+            False,
             ["tags"],
             True,
             False,
@@ -294,13 +331,34 @@ def test_clean_stdin(
             "check",
             "a.ipynb b.ipynb".split(),
             False,
+            False,
             ["tags", "special"],
             True,
             False,
             False,
         ),
-        ("clean -e -o a.ipynb", "clean", ["a.ipynb"], True, None, True, False, False),
-        ("clean -e -c -o a.ipynb", "clean", ["a.ipynb"], True, None, True, True, False),
+        (
+            "clean -e -o a.ipynb",
+            "clean",
+            ["a.ipynb"],
+            True,
+            False,
+            None,
+            True,
+            False,
+            False,
+        ),
+        (
+            "clean -e -c -o a.ipynb",
+            "clean",
+            ["a.ipynb"],
+            True,
+            False,
+            None,
+            True,
+            True,
+            False,
+        ),
     ],
 )
 def test_parse_args(
@@ -309,6 +367,7 @@ def test_parse_args(
     inputs: Iterable[str],
     *,
     remove_empty_cells: bool,
+    remove_all_notebook_metadata: bool,
     preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     preserve_execution_counts: bool,
@@ -320,6 +379,7 @@ def test_parse_args(
     if inputs:
         assert args.inputs == [pathlib.Path(path) for path in inputs]
     assert args.remove_empty_cells is remove_empty_cells
+    assert args.remove_all_notebook_metadata is remove_all_notebook_metadata
     assert args.preserve_cell_metadata == preserve_cell_metadata
     assert args.preserve_cell_outputs is preserve_cell_outputs
     assert args.preserve_execution_counts is preserve_execution_counts
