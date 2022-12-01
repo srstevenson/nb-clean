@@ -692,7 +692,7 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
 name = "pyupgrade"
-version = "3.2.0"
+version = "3.2.3"
 description = "A tool to automatically upgrade syntax for newer versions."
 category = "dev"
 optional = false
@@ -832,7 +832,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4.0"
-content-hash = "1e1b8ef315254f9df2e5aaa838e9cd77c13fc3a361b65fec048a2f5834e6bbca"
+content-hash = "b695d1e6235fe3006b698327fa045875d8c49f4ab4b1b4536c693e97d4d0eb2d"
 
 [metadata.files]
 appnope = [
@@ -1190,8 +1190,8 @@ pytest-mock = [
     {file = "pytest_mock-3.10.0-py3-none-any.whl", hash = "sha256:f4c973eeae0282963eb293eb173ce91b091a79c1334455acfac9ddee8a1c784b"},
 ]
 pyupgrade = [
-    {file = "pyupgrade-3.2.0-py2.py3-none-any.whl", hash = "sha256:2aa6c40e49ea5a350e6e45b8c7847b1741aef274a35d4f0b2bf91731ec8ab796"},
-    {file = "pyupgrade-3.2.0.tar.gz", hash = "sha256:70e1ac1e6b34a90fb21f5cada1907ef035b12dfc1d9f13cefd367acf3b530310"},
+    {file = "pyupgrade-3.2.3-py2.py3-none-any.whl", hash = "sha256:f831c56b44c3fe70273303fe5a28f89e9c23d5e91b0fabb34153c11cdddd0ee1"},
+    {file = "pyupgrade-3.2.3.tar.gz", hash = "sha256:bfded7b81c478dcabb356fe6a1877dd8729ec9b70669c5d2d669f81d0e076cac"},
 ]
 pywin32 = [
     {file = "pywin32-302-cp310-cp310-win32.whl", hash = "sha256:251b7a9367355ccd1a4cd69cd8dd24bd57b29ad83edb2957cfa30f7ed9941efa"},
