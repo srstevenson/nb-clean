@@ -442,7 +442,7 @@ test = ["check-manifest", "pep440", "pre-commit", "pytest", "testpath"]
 
 [[package]]
 name = "nox"
-version = "2022.8.7"
+version = "2022.11.21"
 description = "Flexible test automation."
 category = "dev"
 optional = false
@@ -453,7 +453,6 @@ argcomplete = ">=1.9.4,<3.0"
 colorlog = ">=2.6.1,<7.0.0"
 importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 packaging = ">=20.9"
-py = ">=1.4,<2.0.0"
 typing-extensions = {version = ">=3.7.4", markers = "python_version < \"3.8\""}
 virtualenv = ">=14"
 
@@ -832,7 +831,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4.0"
-content-hash = "b695d1e6235fe3006b698327fa045875d8c49f4ab4b1b4536c693e97d4d0eb2d"
+content-hash = "288aaac848d4fea21bf166fbb9790a4ce1e7552f3f818596674c072b0fc20266"
 
 [metadata.files]
 appnope = [
@@ -1087,8 +1086,8 @@ nbformat = [
     {file = "nbformat-5.7.0.tar.gz", hash = "sha256:1d4760c15c1a04269ef5caf375be8b98dd2f696e5eb9e603ec2bf091f9b0d3f3"},
 ]
 nox = [
-    {file = "nox-2022.8.7-py3-none-any.whl", hash = "sha256:96cca88779e08282a699d672258ec01eb7c792d35bbbf538c723172bce23212c"},
-    {file = "nox-2022.8.7.tar.gz", hash = "sha256:1b894940551dc5c389f9271d197ca5d655d40bdc6ccf93ed6880e4042760a34b"},
+    {file = "nox-2022.11.21-py3-none-any.whl", hash = "sha256:0e41a990e290e274cb205a976c4c97ee3c5234441a8132c8c3fd9ea3c22149eb"},
+    {file = "nox-2022.11.21.tar.gz", hash = "sha256:e21c31de0711d1274ca585a2c5fde36b1aa962005ba8e9322bf5eeed16dcd684"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
