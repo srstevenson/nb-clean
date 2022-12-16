@@ -78,6 +78,7 @@ def git_attributes_path() -> pathlib.Path:
 
 def add_git_filter(
     remove_empty_cells: bool = False,
+    remove_notebook_metadata: bool = False,
     preserve_cell_metadata: Union[Collection[str], None] = None,
     preserve_cell_outputs: bool = False,
 ) -> None:
@@ -111,6 +112,9 @@ def add_git_filter(
 
     if preserve_cell_outputs:
         command.append("--preserve-cell-outputs")
+
+    if remove_notebook_metadata:
+        command.append("--remove-notebook-metadata")
 
     git("config", "filter.nb-clean.clean", " ".join(command))
 
