@@ -63,6 +63,7 @@ def add_filter(args: argparse.Namespace) -> None:
     try:
         nb_clean.add_git_filter(
             remove_empty_cells=args.remove_empty_cells,
+            remove_notebook_metadata=args.remove_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
         )
@@ -109,6 +110,7 @@ def check(args: argparse.Namespace) -> None:
         is_clean = nb_clean.check_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
+            remove_notebook_metadata=args.remove_notebook_metadata,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
             filename=name,
