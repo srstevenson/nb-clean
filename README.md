@@ -119,8 +119,7 @@ To preserve cell outputs, use:
 nb-clean add-filter --preserve-cell-outputs
 ```
 
-By default, `nb-clean` did not clean notebook metadata. To clean notebook
-metadata, use:
+To clean notebook metadata, use:
 
 ```bash
 nb-clean add-filter --remove-notebook-metadata
