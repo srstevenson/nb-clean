@@ -165,7 +165,7 @@ def check_notebook(
     remove_empty_cells : bool, default False
         If True, also check for the presence of empty cells.
     remove_notebook_metadata : bool, default False
-        If True, also check for the presence of nonempty notebok metadata.
+        If True, also check for the presence of nonempty notebook metadata.
     preserve_cell_metadata : list of str or None, default None
         If None, check for all cell metadata.
         If [], don't check for any cell metadata.
