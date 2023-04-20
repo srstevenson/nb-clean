@@ -1,6 +1,6 @@
 - id: nb-clean
   name: nb-clean
-  entry: "nb-clean clean"
+  entry: nb-clean clean
   language: python
   types_or: [jupyter]
-  minimum_pre_commit_version: "2.9.2"
+  minimum_pre_commit_version: 2.9.2
