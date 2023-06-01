@@ -44,7 +44,7 @@ nox = "^2023.4.22"
 pylint = "^2.13.9"
 pytest-mock = "^3.10.0"
 pytest-lazy-fixture = "^0.6.3"
-pytest-cov = "^4.0.0"
+pytest-cov = "^4.1.0"
 pyupgrade = "^3.3.2"
 flake8-pytest-style = "^1.6.0"
 
