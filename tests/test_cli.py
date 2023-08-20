@@ -97,8 +97,8 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
     ("notebook", "clean"),
     [
         # pylint: disable=no-member
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[attr-defined]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[attr-defined]
+        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
+        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
     ],
 )
 def test_check_file(
@@ -140,14 +140,12 @@ def test_check_file(
     ("notebook", "clean"),
     [
         # pylint: disable=no-member
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[attr-defined]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[attr-defined]
+        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
+        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
     ],
 )
 def test_check_stdin(
-    mocker: MockerFixture,
-    notebook: nbformat.NotebookNode,
-    clean: bool,
+    mocker: MockerFixture, notebook: nbformat.NotebookNode, clean: bool
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
     mocker.patch(
@@ -271,14 +269,7 @@ def test_clean_stdin(
         "preserve_cell_outputs",
     ),
     [
-        (
-            "add-filter -e",
-            "add_filter",
-            [],
-            True,
-            None,
-            False,
-        ),
+        ("add-filter -e", "add_filter", [], True, None, False),
         (
             "check -m -o a.ipynb b.ipynb",
             "check",
@@ -303,14 +294,7 @@ def test_clean_stdin(
             ["tags", "special"],
             True,
         ),
-        (
-            "clean -e -o a.ipynb",
-            "clean",
-            ["a.ipynb"],
-            True,
-            None,
-            True,
-        ),
+        ("clean -e -o a.ipynb", "clean", ["a.ipynb"], True, None, True),
     ],
 )
 def test_parse_args(  # pylint: disable=too-many-arguments

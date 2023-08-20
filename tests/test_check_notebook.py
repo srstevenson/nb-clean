@@ -12,9 +12,9 @@ import nb_clean
     ("notebook", "is_clean"),
     [
         # pylint: disable=no-member
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[attr-defined]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[attr-defined]
-        (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore[attr-defined]
+        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
+        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
+        (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore[operator]
     ],
 )
 def test_check_notebook(
@@ -31,8 +31,7 @@ def test_check_notebook_remove_empty_cells(
 ) -> None:
     """Test nb_clean.check_notebook when removing empty cells."""
     output = nb_clean.check_notebook(
-        clean_notebook_with_empty_cells,
-        remove_empty_cells=remove_empty_cells,
+        clean_notebook_with_empty_cells, remove_empty_cells=remove_empty_cells
     )
     assert output is not remove_empty_cells
 
@@ -123,17 +122,17 @@ def test_check_notebook_preserve_metadata_tags_special(
     [
         # pylint: disable=no-member
         (
-            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[attr-defined]
+            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[operator]
             True,
             True,
         ),
         (
-            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[attr-defined]
+            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[operator]
             False,
             False,
         ),
         (
-            pytest.lazy_fixture("clean_notebook_with_outputs_with_counts"),  # type: ignore[attr-defined]
+            pytest.lazy_fixture("clean_notebook_with_outputs_with_counts"),  # type: ignore[operator]
             True,
             False,
         ),
@@ -146,7 +145,6 @@ def test_check_notebook_preserve_outputs(
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
     output = nb_clean.check_notebook(
-        notebook,
-        preserve_cell_outputs=preserve_cell_outputs,
+        notebook, preserve_cell_outputs=preserve_cell_outputs
     )
     assert output is is_clean
