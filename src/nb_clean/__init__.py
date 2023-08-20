@@ -1,29 +1,34 @@
 """Clean Jupyter notebooks of execution counts, metadata, and outputs."""
 
+from __future__ import annotations
+
 import contextlib
 import pathlib
 import subprocess
-from typing import Collection, Union
+from typing import TYPE_CHECKING, Collection
 
-import nbformat
+if TYPE_CHECKING:
+    import nbformat
+    from typing_extensions import Self
 
 VERSION = "2.4.0"
 GIT_ATTRIBUTES_LINE = "*.ipynb filter=nb-clean"
 
 
 class GitProcessError(Exception):
-    """Exception for errors executing Git.
+    """Exception for errors executing Git."""
 
-    Parameters
-    ----------
-    message : str
-        Error message.
-    return_code : int
-        Return code.
+    def __init__(self: Self, message: str, return_code: int) -> None:
+        """Exception for errors executing Git.
 
-    """
+        Parameters
+        ----------
+        message : str
+            Error message.
+        return_code : int
+            Return code.
 
-    def __init__(self, message: str, return_code: int) -> None:
+        """
         super().__init__(message)
         self.message = message
         self.return_code = return_code
@@ -49,7 +54,7 @@ def git(*args: str) -> str:
 
     """
     try:
-        process = subprocess.run(["git"] + list(args), capture_output=True, check=True)
+        process = subprocess.run(["git", *list(args)], capture_output=True, check=True)
     except subprocess.CalledProcessError as exc:
         raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc
 
@@ -75,8 +80,9 @@ def git_attributes_path() -> pathlib.Path:
 
 
 def add_git_filter(
+    *,
     remove_empty_cells: bool = False,
-    preserve_cell_metadata: Union[Collection[str], None] = None,
+    preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
 ) -> None:
     """Add a filter to clean notebooks to the current Git repository.
@@ -139,8 +145,9 @@ def remove_git_filter() -> None:
 
 def check_notebook(
     notebook: nbformat.NotebookNode,
+    *,
     remove_empty_cells: bool = False,
-    preserve_cell_metadata: Union[Collection[str], None] = None,
+    preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
     filename: str = "notebook",
 ) -> bool:
@@ -168,8 +175,6 @@ def check_notebook(
         True if the notebook is clean, False otherwise.
 
     """
-    # pylint: disable=too-many-branches
-
     is_clean = True
 
     for index, cell in enumerate(notebook.cells):
@@ -213,8 +218,9 @@ def check_notebook(
 
 def clean_notebook(
     notebook: nbformat.NotebookNode,
+    *,
     remove_empty_cells: bool = False,
-    preserve_cell_metadata: Union[Collection[str], None] = None,
+    preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
 ) -> nbformat.NotebookNode:
     """Clean notebook of execution counts, metadata, and outputs.

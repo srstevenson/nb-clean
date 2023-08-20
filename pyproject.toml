@@ -24,16 +24,13 @@ nb-clean = "nb_clean.cli:main"
 
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["jupyter"], version = ">=23.3"}
-flake8 = ">=5.0.4"
-flake8-pytest-style = ">=1.6.0"
-isort = ">=5.11.5"
 mypy = ">=1.4"
-nox = ">=2023.4.22"
-pylint = ">=2.13.9"
+poethepoet = ">=0.22.0"
+pytest = ">=7.2.1"
 pytest-cov = ">=4.1.0"
 pytest-lazy-fixture = ">=0.6.3"
 pytest-mock = ">=3.11.1"
-pyupgrade = ">=3.3.2"
+ruff = ">=0.0.285"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -42,8 +39,11 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 skip-magic-trailing-comma = true
 
-[tool.isort]
-profile = "black"
+[tool.coverage.report]
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
 
 [tool.mypy]
 check_untyped_defs = true
@@ -59,5 +59,89 @@ warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
-[tool.pylint."MESSAGES CONTROL"]
-disable = ["duplicate-code", "line-too-long"]
+[tool.poe.tasks]
+_ruff_fix = "ruff --fix ."
+_black = "black ."
+fmt = ["_ruff_fix", "_black"]
+
+_black_check = "black --check ."
+_ruff = "ruff ."
+_mypy = "mypy ."
+lint = ["_black_check", "_ruff", "_mypy"]
+
+test = "pytest tests"
+check = ["lint", "test"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=nb_clean --cov-report=term-missing"
+
+[tool.ruff]
+target-version = "py38"
+select = [
+  "A",
+  "ANN",
+  "ARG",
+  "ASYNC",
+  "B",
+  "BLE",
+  "C4",
+  "C90",
+  "CPY",
+  "D",
+  "DTZ",
+  "E",
+  "EM",
+  "ERA",
+  "EXE",
+  "F",
+  "FA",
+  "FBT",
+  "FIX",
+  "FLY",
+  "G",
+  "I",
+  "ICN",
+  "INT",
+  "ISC",
+  "N",
+  "NPY",
+  "PD",
+  "PERF",
+  "PGH",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "RUF",
+  "S",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T10",
+  "T20",
+  "TCH",
+  "TD",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+  "YTT",
+]
+ignore = [
+  "C901",
+  "D203",
+  "D213",
+  "E501",
+  "PLR0912",
+  "PLR0913",
+  "PLR2004",
+  "RET504",
+  "S101",
+  "S603",
+  "S607",
+  "T201",
+]

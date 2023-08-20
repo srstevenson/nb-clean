@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  nox:
-    name: Run Nox
+  checks:
+    name: Run checks
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,8 +29,8 @@ jobs:
           python3 -m pip install coverage poetry
           poetry install
 
-      - name: Run Nox
-        run: poetry run nox
+      - name: Run checks
+        run: poetry run poe check
 
       - name: Create XML coverage report
         run: poetry run coverage xml

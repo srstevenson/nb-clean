@@ -1,17 +1,20 @@
 """Tests for nb_clean.cli."""
 
+from __future__ import annotations
+
 import argparse
 import io
 import pathlib
 import sys
-from typing import Collection, Iterable, Union
-
-import nbformat
-import pytest
-from _pytest.capture import CaptureFixture
-from pytest_mock import MockerFixture
+from typing import TYPE_CHECKING, Collection, Iterable
 
 import nb_clean.cli
+import nbformat
+import pytest
+
+if TYPE_CHECKING:
+    from _pytest.capture import CaptureFixture
+    from pytest_mock import MockerFixture
 
 
 def test_expand_directories_with_files() -> None:
@@ -91,13 +94,12 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
 @pytest.mark.parametrize(
     ("notebook", "clean"),
     [
-        # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
         (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
     ],
 )
 def test_check_file(
-    mocker: MockerFixture, notebook: nbformat.NotebookNode, clean: bool
+    mocker: MockerFixture, notebook: nbformat.NotebookNode, *, clean: bool
 ) -> None:
     """Test nb_clean.cli.check when input is file."""
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
@@ -130,13 +132,12 @@ def test_check_file(
 @pytest.mark.parametrize(
     ("notebook", "clean"),
     [
-        # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
         (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
     ],
 )
 def test_check_stdin(
-    mocker: MockerFixture, notebook: nbformat.NotebookNode, clean: bool
+    mocker: MockerFixture, notebook: nbformat.NotebookNode, *, clean: bool
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
     mocker.patch(
@@ -273,12 +274,13 @@ def test_clean_stdin(
         ("clean -e -o a.ipynb", "clean", ["a.ipynb"], True, None, True),
     ],
 )
-def test_parse_args(  # pylint: disable=too-many-arguments
+def test_parse_args(
     argv: str,
     function: str,
     inputs: Iterable[str],
+    *,
     remove_empty_cells: bool,
-    preserve_cell_metadata: Union[Collection[str], None],
+    preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
 ) -> None:
     """Test nb_clean.cli.parse_args."""

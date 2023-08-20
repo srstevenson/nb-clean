@@ -1,14 +1,17 @@
 """Tests for nb-clean's Git integration."""
 
+from __future__ import annotations
+
 import pathlib
 import subprocess
-from typing import Collection, Union
+from typing import TYPE_CHECKING, Collection
 from unittest.mock import Mock
 
-import pytest
-from pytest_mock import MockerFixture
-
 import nb_clean
+import pytest
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 def test_git(mocker: MockerFixture) -> None:
@@ -72,11 +75,12 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         ),
     ],
 )
-def test_add_git_filter(  # pylint: disable=too-many-arguments
+def test_add_git_filter(
     mocker: MockerFixture,
     tmp_path: pathlib.Path,
+    *,
     remove_empty_cells: bool,
-    preserve_cell_metadata: Union[Collection[str], None],
+    preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     filter_command: str,
 ) -> None:
@@ -111,7 +115,7 @@ def test_add_git_filter_idempotent(
 
 @pytest.mark.parametrize("filter_exists", [True, False])
 def test_remove_git_filter(
-    mocker: MockerFixture, tmp_path: pathlib.Path, filter_exists: bool
+    mocker: MockerFixture, tmp_path: pathlib.Path, *, filter_exists: bool
 ) -> None:
     """Test nb_clean.remove_git_filter."""
     mock_git = mocker.patch("nb_clean.git")

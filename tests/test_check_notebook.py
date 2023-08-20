@@ -1,30 +1,32 @@
 """Tests for nb_clean.check_notebook."""
 
-from typing import Collection, Union
+from __future__ import annotations
 
-import nbformat
-import pytest
+from typing import TYPE_CHECKING, Collection
 
 import nb_clean
+import pytest
+
+if TYPE_CHECKING:
+    import nbformat
 
 
 @pytest.mark.parametrize(
     ("notebook", "is_clean"),
     [
-        # pylint: disable=no-member
         (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
         (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
         (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore[operator]
     ],
 )
-def test_check_notebook(notebook: nbformat.NotebookNode, is_clean: bool) -> None:
+def test_check_notebook(notebook: nbformat.NotebookNode, *, is_clean: bool) -> None:
     """Test nb_clean.check_notebook."""
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
 @pytest.mark.parametrize("remove_empty_cells", [True, False])
 def test_check_notebook_remove_empty_cells(
-    clean_notebook_with_empty_cells: nbformat.NotebookNode, remove_empty_cells: bool
+    clean_notebook_with_empty_cells: nbformat.NotebookNode, *, remove_empty_cells: bool
 ) -> None:
     """Test nb_clean.check_notebook when removing empty cells."""
     output = nb_clean.check_notebook(
@@ -46,7 +48,7 @@ def test_check_notebook_remove_empty_cells(
 )
 def test_check_notebook_preserve_metadata(
     clean_notebook_with_metadata: nbformat.NotebookNode,
-    preserve_cell_metadata: Union[Collection[str], None],
+    preserve_cell_metadata: Collection[str] | None,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
@@ -72,7 +74,7 @@ def test_check_notebook_preserve_metadata(
 )
 def test_check_notebook_preserve_metadata_tags(
     clean_notebook_with_tags_metadata: nbformat.NotebookNode,
-    preserve_cell_metadata: Union[Collection[str], None],
+    preserve_cell_metadata: Collection[str] | None,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
@@ -97,7 +99,7 @@ def test_check_notebook_preserve_metadata_tags(
 )
 def test_check_notebook_preserve_metadata_tags_special(
     clean_notebook_with_tags_special_metadata: nbformat.NotebookNode,
-    preserve_cell_metadata: Union[Collection[str], None],
+    preserve_cell_metadata: Collection[str] | None,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
@@ -114,7 +116,6 @@ def test_check_notebook_preserve_metadata_tags_special(
 @pytest.mark.parametrize(
     ("notebook", "preserve_cell_outputs", "is_clean"),
     [
-        # pylint: disable=no-member
         (
             pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[operator]
             True,
@@ -133,7 +134,7 @@ def test_check_notebook_preserve_metadata_tags_special(
     ],
 )
 def test_check_notebook_preserve_outputs(
-    notebook: nbformat.NotebookNode, preserve_cell_outputs: bool, is_clean: bool
+    notebook: nbformat.NotebookNode, *, preserve_cell_outputs: bool, is_clean: bool
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
     output = nb_clean.check_notebook(
