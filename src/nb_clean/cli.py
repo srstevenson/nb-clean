@@ -164,21 +164,14 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     subparsers = parser.add_subparsers(dest="subcommand")
     subparsers.required = True
 
-    version_parser = subparsers.add_parser(
-        "version", help="print version number"
-    )
-    version_parser.set_defaults(
-        func=lambda _: print(f"nb-clean {nb_clean.VERSION}")
-    )
+    version_parser = subparsers.add_parser("version", help="print version number")
+    version_parser.set_defaults(func=lambda _: print(f"nb-clean {nb_clean.VERSION}"))
 
     add_filter_parser = subparsers.add_parser(
         "add-filter", help="add Git filter to clean notebooks before staging"
     )
     add_filter_parser.add_argument(
-        "-e",
-        "--remove-empty-cells",
-        action="store_true",
-        help="remove empty cells",
+        "-e", "--remove-empty-cells", action="store_true", help="remove empty cells"
     )
     add_filter_parser.add_argument(
         "-m",
@@ -196,8 +189,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     add_filter_parser.set_defaults(func=add_filter)
 
     remove_filter_parser = subparsers.add_parser(
-        "remove-filter",
-        help="remove Git filter that cleans notebooks before staging",
+        "remove-filter", help="remove Git filter that cleans notebooks before staging"
     )
     remove_filter_parser.set_defaults(func=lambda _: remove_filter())
 
@@ -209,17 +201,10 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         ),
     )
     check_parser.add_argument(
-        "inputs",
-        nargs="*",
-        metavar="PATH",
-        type=pathlib.Path,
-        help="input file",
+        "inputs", nargs="*", metavar="PATH", type=pathlib.Path, help="input file"
     )
     check_parser.add_argument(
-        "-e",
-        "--remove-empty-cells",
-        action="store_true",
-        help="check for empty cells",
+        "-e", "--remove-empty-cells", action="store_true", help="check for empty cells"
     )
     check_parser.add_argument(
         "-m",
@@ -237,21 +222,13 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
-        "clean",
-        help="clean notebook of cell execution counts, metadata, and outputs",
+        "clean", help="clean notebook of cell execution counts, metadata, and outputs"
     )
     clean_parser.add_argument(
-        "inputs",
-        nargs="*",
-        metavar="PATH",
-        type=pathlib.Path,
-        help="input path",
+        "inputs", nargs="*", metavar="PATH", type=pathlib.Path, help="input path"
     )
     clean_parser.add_argument(
-        "-e",
-        "--remove-empty-cells",
-        action="store_true",
-        help="remove empty cells",
+        "-e", "--remove-empty-cells", action="store_true", help="remove empty cells"
     )
     clean_parser.add_argument(
         "-m",

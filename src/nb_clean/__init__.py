@@ -49,9 +49,7 @@ def git(*args: str) -> str:
 
     """
     try:
-        process = subprocess.run(
-            ["git"] + list(args), capture_output=True, check=True
-        )
+        process = subprocess.run(["git"] + list(args), capture_output=True, check=True)
     except subprocess.CalledProcessError as exc:
         raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc
 
@@ -116,9 +114,8 @@ def add_git_filter(
 
     attributes_path = git_attributes_path()
 
-    if (
-        attributes_path.is_file()
-        and GIT_ATTRIBUTES_LINE in attributes_path.read_text(encoding="UTF-8")
+    if attributes_path.is_file() and GIT_ATTRIBUTES_LINE in attributes_path.read_text(
+        encoding="UTF-8"
     ):
         return
 
@@ -131,15 +128,11 @@ def remove_git_filter() -> None:
     attributes_path = git_attributes_path()
 
     if attributes_path.is_file():
-        original_contents = attributes_path.read_text(encoding="UTF-8").split(
-            "\n"
-        )
+        original_contents = attributes_path.read_text(encoding="UTF-8").split("\n")
         revised_contents = [
             line for line in original_contents if line != GIT_ATTRIBUTES_LINE
         ]
-        attributes_path.write_text(
-            "\n".join(revised_contents), encoding="UTF-8"
-        )
+        attributes_path.write_text("\n".join(revised_contents), encoding="UTF-8")
 
     git("config", "--remove-section", "filter.nb-clean")
 
