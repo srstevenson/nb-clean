@@ -2,7 +2,6 @@
 .ipynb_checkpoints/
 /.coverage
 /.mypy_cache/
-/.nox/
 /build/
 /coverage.xml
 /dist/

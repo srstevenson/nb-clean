@@ -1,17 +1,19 @@
 """Command line interface to nb-clean."""
 
+from __future__ import annotations
+
 import argparse
 import os
 import pathlib
 import sys
-from typing import List, NoReturn, TextIO, Union
+from typing import NoReturn, TextIO, cast
 
 import nbformat
 
 import nb_clean
 
 
-def expand_directories(paths: List[pathlib.Path]) -> List[pathlib.Path]:
+def expand_directories(paths: list[pathlib.Path]) -> list[pathlib.Path]:
     """Expand paths to directories into paths to notebooks contained within.
 
     Parameters
@@ -24,7 +26,7 @@ def expand_directories(paths: List[pathlib.Path]) -> List[pathlib.Path]:
     List[pathlib.Path]
         Paths with directories expanded into notebooks contained within.
     """
-    expanded: List[pathlib.Path] = []
+    expanded: list[pathlib.Path] = []
     for path in paths:
         if path.is_dir():
             expanded.extend(path.rglob("*.ipynb"))
@@ -90,20 +92,14 @@ def check(args: argparse.Namespace) -> None:
         args.preserve_cell_outputs is True, don't check for cell outputs.
 
     """
-
     if args.inputs:
-        inputs: Union[List[pathlib.Path], List[TextIO]] = expand_directories(
-            args.inputs
-        )
+        inputs: list[pathlib.Path] | list[TextIO] = expand_directories(args.inputs)
     else:
         inputs = [sys.stdin]
 
     states = []
     for input_ in inputs:
-        if input_ is sys.stdin:
-            name = "stdin"
-        else:
-            name = os.fspath(input_)  # type: ignore[arg-type]
+        name = "stdin" if input_ is sys.stdin else os.fspath(cast(pathlib.Path, input_))
 
         notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)  # type: ignore[no-untyped-call]
         is_clean = nb_clean.check_notebook(
@@ -132,9 +128,7 @@ def clean(args: argparse.Namespace) -> None:
 
     """
     if args.inputs:
-        inputs: Union[List[pathlib.Path], List[TextIO]] = expand_directories(
-            args.inputs
-        )
+        inputs: list[pathlib.Path] | list[TextIO] = expand_directories(args.inputs)
         outputs = inputs
     else:
         inputs = [sys.stdin]
@@ -151,7 +145,7 @@ def clean(args: argparse.Namespace) -> None:
         nbformat.write(notebook, output)  # type: ignore[no-untyped-call]
 
 
-def parse_args(args: List[str]) -> argparse.Namespace:
+def parse_args(args: list[str]) -> argparse.Namespace:
     """Parse command line arguments and call corresponding function.
 
     Returns

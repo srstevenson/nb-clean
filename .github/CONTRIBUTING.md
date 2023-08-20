@@ -51,7 +51,7 @@ After cloning the repository, you can implement your changes as follows:
 1. Install the project and its dependencies into an isolated virtual environment
    with `poetry install`.
 2. Before making your changes, run the linters and test suite with
-   `poetry run nox`, and ensure they pass. This checks your development
+   `poetry run poe check`, and ensure they pass. This checks your development
    environment is correctly configured, and there aren't outstanding issues
    before you start coding. If they don't pass, you can open a GitHub issue for
    help debugging.
@@ -62,7 +62,7 @@ After cloning the repository, you can implement your changes as follows:
    tests to prevent future regressions.
 6. Ensure you've updated any docstrings or documentation files (including
    `README.md`) which are affected by your change.
-7. Run the linters and test suite again with `poetry run nox`, and fix any
+7. Run the linters and test suite again with `poetry run poe check`, and fix any
    problems.
 8. Commit your changes, following [these guidelines][commit guidelines] for your
    commit messages.
