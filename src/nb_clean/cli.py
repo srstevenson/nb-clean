@@ -105,7 +105,7 @@ def check(args: argparse.Namespace) -> None:
         else:
             name = os.fspath(input_)  # type: ignore[arg-type]
 
-        notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)
+        notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)  # type: ignore[no-untyped-call]
         is_clean = nb_clean.check_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
@@ -141,14 +141,14 @@ def clean(args: argparse.Namespace) -> None:
         outputs = [sys.stdout]
 
     for input_, output in zip(inputs, outputs):
-        notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)
+        notebook = nbformat.read(input_, as_version=nbformat.NO_CONVERT)  # type: ignore[no-untyped-call]
         notebook = nb_clean.clean_notebook(
             notebook,
             remove_empty_cells=args.remove_empty_cells,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
         )
-        nbformat.write(notebook, output)
+        nbformat.write(notebook, output)  # type: ignore[no-untyped-call]
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:

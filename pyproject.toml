@@ -17,7 +17,7 @@ include = ["LICENCE", "images/nb-clean.png"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-nbformat = ">=5.1.2"
+nbformat = ">=5.9.2"
 
 [tool.poetry.scripts]
 nb-clean = "nb_clean.cli:main"
@@ -46,7 +46,18 @@ skip-magic-trailing-comma = true
 profile = "black"
 
 [tool.mypy]
-ignore_missing_imports = true
+check_untyped_defs = true
+disallow_any_unimported = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+strict = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = ["duplicate-code", "line-too-long"]

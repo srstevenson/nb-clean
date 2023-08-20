@@ -8,6 +8,7 @@ from typing import Collection, Iterable, Union
 
 import nbformat
 import pytest
+from _pytest.capture import CaptureFixture
 from pytest_mock import MockerFixture
 
 import nb_clean.cli
@@ -27,11 +28,11 @@ def test_expand_directories_recursively() -> None:
     assert all(path.is_file() and path.suffix == ".ipynb" for path in expanded_paths)
 
 
-def test_exit_with_error(capsys, mocker: MockerFixture) -> None:
+def test_exit_with_error(capsys: CaptureFixture[str], mocker: MockerFixture) -> None:
     """Test nb_clean.cli.exit_with_error."""
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.exit_with_error("error message", 42)
-    assert capsys.readouterr().err == "nb-clean: error: error message\n"
+    assert capsys.readouterr().err == "nb-clean: error: error message\n"  # type: ignore[unreachable]
     mock_exit.assert_called_once_with(42)
 
 
@@ -139,7 +140,7 @@ def test_check_stdin(
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
     mocker.patch(
-        "nb_clean.cli.sys.stdin", return_value=io.StringIO(nbformat.writes(notebook))
+        "nb_clean.cli.sys.stdin", return_value=io.StringIO(nbformat.writes(notebook))  # type: ignore[no-untyped-call]
     )
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
@@ -200,7 +201,7 @@ def test_clean_file(
 
 
 def test_clean_stdin(
-    capsys,
+    capsys: CaptureFixture[str],
     mocker: MockerFixture,
     dirty_notebook: nbformat.NotebookNode,
     clean_notebook: nbformat.NotebookNode,
@@ -208,7 +209,7 @@ def test_clean_stdin(
     """Test nb_clean.cli.clean when input is stdin."""
     mocker.patch(
         "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(dirty_notebook)),
+        return_value=io.StringIO(nbformat.writes(dirty_notebook)),  # type: ignore[no-untyped-call]
     )
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
     mock_clean_notebook = mocker.patch(
@@ -231,7 +232,7 @@ def test_clean_stdin(
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
-    assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)
+    assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.parametrize(
