@@ -1,19 +1,21 @@
 name: CI
+
 on:
-  - push
-  - pull_request
+  push:
+    branches: [main]
+  pull_request:
+
 jobs:
   nox:
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     name: Run Nox
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python:
-          - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
+          - "3.11"
     steps:
       - uses: actions/checkout@v3
 
@@ -22,14 +24,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Upgrade pip
-        run: python3 -m pip install --upgrade pip
-
-      - name: Install Poetry and coverage.py
-        run: python3 -m pip install poetry coverage
-
       - name: Install dependencies
-        run: poetry install
+        run: |
+          python3 -m pip install coverage poetry
+          poetry install
 
       - name: Run Nox
         run: poetry run nox
@@ -39,5 +37,3 @@ jobs:
 
       - name: Upload test coverage report
         uses: codecov/codecov-action@v3.1.4
-        with:
-          fail_ci_if_error: true
