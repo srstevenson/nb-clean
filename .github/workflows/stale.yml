@@ -1,0 +1,26 @@
+name: Close stale issues and PRs
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          stale-issue-message: ""
+          stale-pr-message: ""
+          stale-issue-label: stale
+          stale-pr-label: stale
+          close-issue-message: >-
+            This issue was closed due to inactivity. Please reopen if still
+            relevant.
+          close-pr-message: >-
+            This PR was closed due to inactivity. Please reopen if still
+            relevant.
