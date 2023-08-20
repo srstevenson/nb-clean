@@ -59,9 +59,7 @@ def pyupgrade(session: nox.Session) -> None:
 
     # pyupgrade does not support passing directories as command line arguments
     # so we must construct a list of input filenames.
-    session.run(
-        "pyupgrade", "--py37-plus", *list_source_files(), external=True
-    )
+    session.run("pyupgrade", "--py37-plus", *list_source_files(), external=True)
 
 
 @nox.session

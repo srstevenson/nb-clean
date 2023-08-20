@@ -24,9 +24,7 @@ def test_expand_directories_recursively() -> None:
     input_paths = [pathlib.Path("tests")]
     expanded_paths = nb_clean.cli.expand_directories(input_paths)
     assert len(expanded_paths) > len(input_paths)
-    assert all(
-        path.is_file() and path.suffix == ".ipynb" for path in expanded_paths
-    )
+    assert all(path.is_file() and path.suffix == ".ipynb" for path in expanded_paths)
 
 
 def test_exit_with_error(capsys, mocker: MockerFixture) -> None:
@@ -58,9 +56,7 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.add_filter when call to Git fails."""
     mocker.patch(
         "nb_clean.add_git_filter",
-        side_effect=nb_clean.GitProcessError(
-            message="error message", return_code=42
-        ),
+        side_effect=nb_clean.GitProcessError(message="error message", return_code=42),
     )
     mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
     nb_clean.cli.add_filter(
@@ -84,9 +80,7 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.remove_filter when call to Git fails."""
     mocker.patch(
         "nb_clean.remove_git_filter",
-        side_effect=nb_clean.GitProcessError(
-            message="error message", return_code=42
-        ),
+        side_effect=nb_clean.GitProcessError(message="error message", return_code=42),
     )
     mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
     nb_clean.cli.remove_filter()
@@ -105,12 +99,8 @@ def test_check_file(
     mocker: MockerFixture, notebook: nbformat.NotebookNode, clean: bool
 ) -> None:
     """Test nb_clean.cli.check when input is file."""
-    mock_read = mocker.patch(
-        "nb_clean.cli.nbformat.read", return_value=notebook
-    )
-    mock_check_notebook = mocker.patch(
-        "nb_clean.check_notebook", return_value=clean
-    )
+    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
+    mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
         argparse.Namespace(
@@ -149,15 +139,10 @@ def test_check_stdin(
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
     mocker.patch(
-        "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(notebook)),
+        "nb_clean.cli.sys.stdin", return_value=io.StringIO(nbformat.writes(notebook))
     )
-    mock_read = mocker.patch(
-        "nb_clean.cli.nbformat.read", return_value=notebook
-    )
-    mock_check_notebook = mocker.patch(
-        "nb_clean.check_notebook", return_value=clean
-    )
+    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
+    mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
         argparse.Namespace(
@@ -167,9 +152,7 @@ def test_check_stdin(
             preserve_cell_outputs=False,
         )
     )
-    mock_read.assert_called_once_with(
-        sys.stdin, as_version=nbformat.NO_CONVERT
-    )
+    mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
     mock_check_notebook.assert_called_once_with(
         notebook,
         remove_empty_cells=False,
@@ -189,9 +172,7 @@ def test_clean_file(
     clean_notebook: nbformat.NotebookNode,
 ) -> None:
     """Test nb_clean.cli.clean when input is a file."""
-    mock_read = mocker.patch(
-        "nb_clean.cli.nbformat.read", return_value=dirty_notebook
-    )
+    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
     mock_clean_notebook = mocker.patch(
         "nb_clean.clean_notebook", return_value=clean_notebook
     )
@@ -215,9 +196,7 @@ def test_clean_file(
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
     )
-    mock_write.assert_called_once_with(
-        clean_notebook, pathlib.Path("notebook.ipynb")
-    )
+    mock_write.assert_called_once_with(clean_notebook, pathlib.Path("notebook.ipynb"))
 
 
 def test_clean_stdin(
@@ -231,9 +210,7 @@ def test_clean_stdin(
         "nb_clean.cli.sys.stdin",
         return_value=io.StringIO(nbformat.writes(dirty_notebook)),
     )
-    mock_read = mocker.patch(
-        "nb_clean.cli.nbformat.read", return_value=dirty_notebook
-    )
+    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
     mock_clean_notebook = mocker.patch(
         "nb_clean.clean_notebook", return_value=clean_notebook
     )
@@ -247,9 +224,7 @@ def test_clean_stdin(
         )
     )
 
-    mock_read.assert_called_once_with(
-        sys.stdin, as_version=nbformat.NO_CONVERT
-    )
+    mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
         remove_empty_cells=False,

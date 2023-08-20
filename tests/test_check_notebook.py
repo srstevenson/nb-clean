@@ -17,17 +17,14 @@ import nb_clean
         (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore[operator]
     ],
 )
-def test_check_notebook(
-    notebook: nbformat.NotebookNode, is_clean: bool
-) -> None:
+def test_check_notebook(notebook: nbformat.NotebookNode, is_clean: bool) -> None:
     """Test nb_clean.check_notebook."""
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
 @pytest.mark.parametrize("remove_empty_cells", [True, False])
 def test_check_notebook_remove_empty_cells(
-    clean_notebook_with_empty_cells: nbformat.NotebookNode,
-    remove_empty_cells: bool,
+    clean_notebook_with_empty_cells: nbformat.NotebookNode, remove_empty_cells: bool
 ) -> None:
     """Test nb_clean.check_notebook when removing empty cells."""
     output = nb_clean.check_notebook(
@@ -57,8 +54,7 @@ def test_check_notebook_preserve_metadata(
         or {"tags", "special", "nbclean"}.issubset(preserve_cell_metadata)
     )
     output = nb_clean.check_notebook(
-        clean_notebook_with_metadata,
-        preserve_cell_metadata=preserve_cell_metadata,
+        clean_notebook_with_metadata, preserve_cell_metadata=preserve_cell_metadata
     )
     assert output is expected
 
@@ -80,12 +76,10 @@ def test_check_notebook_preserve_metadata_tags(
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
-        preserve_cell_metadata == []
-        or {"tags"}.issubset(preserve_cell_metadata)
+        preserve_cell_metadata == [] or {"tags"}.issubset(preserve_cell_metadata)
     )
     output = nb_clean.check_notebook(
-        clean_notebook_with_tags_metadata,
-        preserve_cell_metadata=preserve_cell_metadata,
+        clean_notebook_with_tags_metadata, preserve_cell_metadata=preserve_cell_metadata
     )
     assert output is expected
 
@@ -139,9 +133,7 @@ def test_check_notebook_preserve_metadata_tags_special(
     ],
 )
 def test_check_notebook_preserve_outputs(
-    notebook: nbformat.NotebookNode,
-    preserve_cell_outputs: bool,
-    is_clean: bool,
+    notebook: nbformat.NotebookNode, preserve_cell_outputs: bool, is_clean: bool
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
     output = nb_clean.check_notebook(

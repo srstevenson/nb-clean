@@ -9,8 +9,7 @@ import nb_clean
 
 
 def test_clean_notebook(
-    dirty_notebook: nbformat.NotebookNode,
-    clean_notebook: nbformat.NotebookNode,
+    dirty_notebook: nbformat.NotebookNode, clean_notebook: nbformat.NotebookNode
 ) -> None:
     """Test nb_clean.clean_notebook."""
     assert nb_clean.clean_notebook(dirty_notebook) == clean_notebook
@@ -21,9 +20,7 @@ def test_clean_notebook_with_version(
     clean_notebook: nbformat.NotebookNode,
 ) -> None:
     """Test nb_clean.clean_notebook with language_info version."""
-    assert (
-        nb_clean.clean_notebook(dirty_notebook_with_version) == clean_notebook
-    )
+    assert nb_clean.clean_notebook(dirty_notebook_with_version) == clean_notebook
 
 
 def test_clean_notebook_remove_empty_cells(
@@ -41,11 +38,7 @@ def test_clean_notebook_remove_empty_cells(
 
 @pytest.mark.parametrize(
     "preserve_cell_metadata",
-    [
-        [],
-        ["nbclean", "tags", "special"],
-        ["nbclean", "tags", "special", "toomany"],
-    ],
+    [[], ["nbclean", "tags", "special"], ["nbclean", "tags", "special", "toomany"]],
 )
 def test_clean_notebook_preserve_metadata(
     dirty_notebook: nbformat.NotebookNode,
@@ -61,9 +54,7 @@ def test_clean_notebook_preserve_metadata(
     )
 
 
-@pytest.mark.parametrize(
-    "preserve_cell_metadata", [["tags"], ["tags", "toomany"]]
-)
+@pytest.mark.parametrize("preserve_cell_metadata", [["tags"], ["tags", "toomany"]])
 def test_clean_notebook_preserve_metadata_tags(
     dirty_notebook: nbformat.NotebookNode,
     clean_notebook_with_tags_metadata: nbformat.NotebookNode,
@@ -79,8 +70,7 @@ def test_clean_notebook_preserve_metadata_tags(
 
 
 @pytest.mark.parametrize(
-    "preserve_cell_metadata",
-    [["tags", "special"], ["tags", "special", "toomany"]],
+    "preserve_cell_metadata", [["tags", "special"], ["tags", "special", "toomany"]]
 )
 def test_clean_notebook_preserve_metadata_tags_special(
     dirty_notebook: nbformat.NotebookNode,

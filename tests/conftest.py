@@ -22,9 +22,7 @@ def read_notebook(filename: str) -> nbformat.NotebookNode:
         The notebook.
 
     """
-    return nbformat.read(
-        NOTEBOOKS_DIR / filename, as_version=nbformat.NO_CONVERT
-    )
+    return nbformat.read(NOTEBOOKS_DIR / filename, as_version=nbformat.NO_CONVERT)
 
 
 @pytest.fixture()
