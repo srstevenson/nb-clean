@@ -1,6 +1,7 @@
 """Test fixtures."""
 
 import pathlib
+from typing import cast
 
 import nbformat
 import pytest
@@ -22,7 +23,10 @@ def read_notebook(filename: str) -> nbformat.NotebookNode:
         The notebook.
 
     """
-    return nbformat.read(NOTEBOOKS_DIR / filename, as_version=nbformat.NO_CONVERT)
+    return cast(
+        nbformat.NotebookNode,
+        nbformat.read(NOTEBOOKS_DIR / filename, as_version=nbformat.NO_CONVERT),  # type: ignore[no-untyped-call]
+    )
 
 
 @pytest.fixture()
