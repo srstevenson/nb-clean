@@ -34,9 +34,9 @@ python3 -m pip install nb-clean
 conda install -c conda-forge nb-clean
 ```
 
-In Python projects using [Poetry] or [Pipenv] for dependency management, add
-`nb-clean` as a development dependency with `poetry add --dev nb-clean` or
-`pipenv install --dev nb-clean`. `nb-clean` requires Python 3.8 or later.
+In Python projects using [Poetry] or [PDM] for dependency management, add
+`nb-clean` as a development dependency with `poetry add --group dev nb-clean` or
+`pdm add --dev nb-clean`. `nb-clean` requires Python 3.8 or later.
 
 ## Usage
 
@@ -210,8 +210,8 @@ Copyright © 2017-2022 [Scott Stevenson].
 [conda]: https://docs.conda.io/
 [isc licence]: https://opensource.org/licenses/ISC
 [papermill]: https://papermill.readthedocs.io/
+[pdm]: https://pdm.fming.dev/
 [pip]: https://pip.pypa.io/
-[pipenv]: https://pipenv.readthedocs.io/
 [poetry]: https://python-poetry.org/
 [pre-commit]: https://pre-commit.com/
 [pypi]: https://pypi.org/project/nb-clean/
