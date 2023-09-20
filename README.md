@@ -1,6 +1,6 @@
 <p align="center"><img src="images/nb-clean.png" width=300></p>
 
-[![Licence](https://img.shields.io/github/license/srstevenson/nb-clean?label=Licence&color=blue)](https://github.com/srstevenson/nb-clean/blob/main/LICENCE)
+[![License](https://img.shields.io/github/license/srstevenson/nb-clean?label=License&color=blue)](https://github.com/srstevenson/nb-clean/blob/main/LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/srstevenson/nb-clean?label=GitHub)](https://github.com/srstevenson/nb-clean)
 [![PyPI version](https://img.shields.io/pypi/v/nb-clean?label=PyPI)](https://pypi.org/project/nb-clean/)
 [![Python versions](https://img.shields.io/pypi/pyversions/nb-clean?label=Python)](https://pypi.org/project/nb-clean/)
@@ -201,10 +201,10 @@ that of `nb-clean` >=2.0.0.
 
 Copyright © [Scott Stevenson].
 
-`nb-clean` is distributed under the terms of the [ISC licence].
+`nb-clean` is distributed under the terms of the [ISC license].
 
 [conda]: https://docs.conda.io/
-[isc licence]: https://opensource.org/licenses/ISC
+[isc license]: https://opensource.org/licenses/ISC
 [papermill]: https://papermill.readthedocs.io/
 [pdm]: https://pdm.fming.dev/
 [pip]: https://pip.pypa.io/
