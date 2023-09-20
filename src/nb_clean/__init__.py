@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     import nbformat
     from typing_extensions import Self
 
-VERSION = "3.0.0"
+VERSION = "3.0.1"
 GIT_ATTRIBUTES_LINE = "*.ipynb filter=nb-clean"
 
 
