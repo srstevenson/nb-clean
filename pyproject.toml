@@ -13,7 +13,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Natural Language :: English",
 ]
-include = ["LICENCE", "images/nb-clean.png"]
+include = ["LICENSE", "images/nb-clean.png"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
