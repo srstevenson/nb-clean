@@ -15,10 +15,12 @@ systems, as a command line tool, and as a Python library. It can determine if a
 notebook is clean or not, which can be used as a check in your continuous
 integration pipelines.
 
-:warning: _`nb-clean` 2.0.0 introduced a new command line interface to make
-cleaning notebooks in place easier. If you upgrade from a previous release,
-you'll need to migrate to the new interface as described under
-[Migrating to `nb-clean` 2](#migrating-to-nb-clean-2)._
+> [!NOTE]
+>
+> `nb-clean` 2.0.0 introduced a new command line interface to make cleaning
+> notebooks in place easier. If you upgrade from a previous release, you'll need
+> to migrate to the new interface as described under
+> [Migrating to `nb-clean` 2](#migrating-to-nb-clean-2).
 
 ## Installation
 
