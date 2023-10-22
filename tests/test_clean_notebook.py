@@ -94,3 +94,14 @@ def test_clean_notebook_preserve_outputs(
         nb_clean.clean_notebook(dirty_notebook, preserve_cell_outputs=True)
         == clean_notebook_with_outputs
     )
+
+
+def test_clean_notebook_preserve_execution_counts(
+    dirty_notebook: nbformat.NotebookNode,
+    clean_notebook_with_counts: nbformat.NotebookNode,
+) -> None:
+    """Test nb_clean.clean_notebook when preserving cell execution counts."""
+    assert (
+        nb_clean.clean_notebook(dirty_notebook, preserve_execution_counts=True)
+        == clean_notebook_with_counts
+    )

@@ -141,3 +141,28 @@ def test_check_notebook_preserve_outputs(
         notebook, preserve_cell_outputs=preserve_cell_outputs
     )
     assert output is is_clean
+
+
+@pytest.mark.parametrize(
+    ("notebook", "preserve_execution_counts", "is_clean"),
+    [
+        (
+            pytest.lazy_fixture("clean_notebook_with_counts"),  # type: ignore[operator]
+            True,
+            True,
+        ),
+        (
+            pytest.lazy_fixture("clean_notebook_with_counts"),  # type: ignore[operator]
+            False,
+            False,
+        ),
+    ],
+)
+def test_check_notebook_preserve_execution_counts(
+    notebook: nbformat.NotebookNode, *, preserve_execution_counts: bool, is_clean: bool
+) -> None:
+    """Test nb_clean.check_notebook when preserving cell execution counts."""
+    output = nb_clean.check_notebook(
+        notebook, preserve_execution_counts=preserve_execution_counts
+    )
+    assert output is is_clean

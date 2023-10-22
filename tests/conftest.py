@@ -60,6 +60,12 @@ def clean_notebook_with_empty_cells() -> nbformat.NotebookNode:
 
 
 @pytest.fixture()
+def clean_notebook_with_counts() -> nbformat.NotebookNode:
+    """Return a clean notebook with only input cell execution counts."""
+    return read_notebook("clean_with_counts.ipynb")
+
+
+@pytest.fixture()
 def clean_notebook_with_metadata() -> nbformat.NotebookNode:
     """Return a clean notebook with cell metadata."""
     return read_notebook("clean_with_metadata.ipynb")

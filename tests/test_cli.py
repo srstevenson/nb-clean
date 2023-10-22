@@ -47,12 +47,14 @@ def test_add_filter(mocker: MockerFixture) -> None:
             remove_empty_cells=True,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
     mock_add_git_filter.assert_called_once_with(
         remove_empty_cells=True,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
+        preserve_execution_counts=False,
     )
 
 
@@ -68,6 +70,7 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
             remove_empty_cells=True,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
     mock_exit_with_error.assert_called_once_with("error message", 42)
@@ -111,6 +114,7 @@ def test_check_file(
             remove_empty_cells=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
     mock_read.assert_called_once_with(
@@ -121,6 +125,7 @@ def test_check_file(
         remove_empty_cells=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
+        preserve_execution_counts=False,
         filename="notebook.ipynb",
     )
     if clean:
@@ -152,6 +157,7 @@ def test_check_stdin(
             remove_empty_cells=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
     mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
@@ -160,6 +166,7 @@ def test_check_stdin(
         remove_empty_cells=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
+        preserve_execution_counts=False,
         filename="stdin",
     )
     if clean:
@@ -186,6 +193,7 @@ def test_clean_file(
             remove_empty_cells=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
 
@@ -197,6 +205,7 @@ def test_clean_file(
         remove_empty_cells=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
+        preserve_execution_counts=False,
     )
     mock_write.assert_called_once_with(clean_notebook, pathlib.Path("notebook.ipynb"))
 
@@ -223,6 +232,7 @@ def test_clean_stdin(
             remove_empty_cells=False,
             preserve_cell_metadata=None,
             preserve_cell_outputs=False,
+            preserve_execution_counts=False,
         )
     )
 
@@ -232,6 +242,7 @@ def test_clean_stdin(
         remove_empty_cells=False,
         preserve_cell_metadata=None,
         preserve_cell_outputs=False,
+        preserve_execution_counts=False,
     )
     assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)  # type: ignore[no-untyped-call]
 
@@ -244,9 +255,10 @@ def test_clean_stdin(
         "remove_empty_cells",
         "preserve_cell_metadata",
         "preserve_cell_outputs",
+        "preserve_execution_counts",
     ),
     [
-        ("add-filter -e", "add_filter", [], True, None, False),
+        ("add-filter -e", "add_filter", [], True, None, False, False),
         (
             "check -m -o a.ipynb b.ipynb",
             "check",
@@ -254,6 +266,7 @@ def test_clean_stdin(
             False,
             [],
             True,
+            False,
         ),
         (
             "check -m tags -o a.ipynb b.ipynb",
@@ -262,6 +275,7 @@ def test_clean_stdin(
             False,
             ["tags"],
             True,
+            False,
         ),
         (
             "check -m tags special -o a.ipynb b.ipynb",
@@ -270,8 +284,10 @@ def test_clean_stdin(
             False,
             ["tags", "special"],
             True,
+            False,
         ),
-        ("clean -e -o a.ipynb", "clean", ["a.ipynb"], True, None, True),
+        ("clean -e -o a.ipynb", "clean", ["a.ipynb"], True, None, True, False),
+        ("clean -e -c -o a.ipynb", "clean", ["a.ipynb"], True, None, True, True),
     ],
 )
 def test_parse_args(
@@ -282,6 +298,7 @@ def test_parse_args(
     remove_empty_cells: bool,
     preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
+    preserve_execution_counts: bool,
 ) -> None:
     """Test nb_clean.cli.parse_args."""
     args = nb_clean.cli.parse_args(argv.split())
@@ -291,3 +308,4 @@ def test_parse_args(
     assert args.remove_empty_cells is remove_empty_cells
     assert args.preserve_cell_metadata == preserve_cell_metadata
     assert args.preserve_cell_outputs is preserve_cell_outputs
+    assert args.preserve_execution_counts is preserve_execution_counts
