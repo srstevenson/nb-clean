@@ -53,26 +53,30 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         "remove_empty_cells",
         "preserve_cell_metadata",
         "preserve_cell_outputs",
+        "preserve_execution_counts",
         "filter_command",
     ),
     [
-        (False, None, False, "nb-clean clean"),
-        (True, None, False, "nb-clean clean --remove-empty-cells"),
-        (False, [], False, "nb-clean clean --preserve-cell-metadata"),
-        (False, ["tags"], False, "nb-clean clean --preserve-cell-metadata tags"),
+        (False, None, False, False, "nb-clean clean"),
+        (True, None, False, False, "nb-clean clean --remove-empty-cells"),
+        (False, [], False, False, "nb-clean clean --preserve-cell-metadata"),
+        (False, ["tags"], False, False, "nb-clean clean --preserve-cell-metadata tags"),
         (
             False,
             ["tags", "special"],
             False,
+            False,
             "nb-clean clean --preserve-cell-metadata tags special",
         ),
-        (False, None, True, "nb-clean clean --preserve-cell-outputs"),
+        (False, None, True, False, "nb-clean clean --preserve-cell-outputs"),
         (
             True,
             [],
             True,
+            False,
             "nb-clean clean --remove-empty-cells --preserve-cell-metadata --preserve-cell-outputs",
         ),
+        (False, None, False, True, "nb-clean clean --preserve-execution-counts"),
     ],
 )
 def test_add_git_filter(
@@ -82,6 +86,7 @@ def test_add_git_filter(
     remove_empty_cells: bool,
     preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
+    preserve_execution_counts: bool,
     filter_command: str,
 ) -> None:
     """Test nb_clean.add_git_filter."""
@@ -93,6 +98,7 @@ def test_add_git_filter(
         remove_empty_cells=remove_empty_cells,
         preserve_cell_metadata=preserve_cell_metadata,
         preserve_cell_outputs=preserve_cell_outputs,
+        preserve_execution_counts=preserve_execution_counts,
     )
     mock_git.assert_called_once_with("config", "filter.nb-clean.clean", filter_command)
     mock_git_attributes_path.assert_called_once()
