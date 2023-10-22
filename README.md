@@ -59,7 +59,8 @@ nb-clean check < notebook.ipynb
 To also check for empty cells, add the `-e`/`--remove-empty-cells` flag. To
 ignore cell metadata, add the `-m`/`--preserve-cell-metadata` flag, optionally
 with a selection of metadata fields to ignore. To ignore cell outputs, add the
-`-o`/`--preserve-cell-outputs` flag.
+`-o`/`--preserve-cell-outputs` flag. To ignore cell execution counts, add the
+`-c`/`--preserve-execution-counts` flag.
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
@@ -84,7 +85,8 @@ nb-clean clean < original.ipynb > cleaned.ipynb
 To also remove empty cells, add the `-e`/`--remove-empty-cells` flag. To
 preserve cell metadata, add the `-m`/`--preserve-cell-metadata` flag, optionally
 with a selection of metadata fields to preserve. To preserve cell outputs, add
-the `-o`/`--preserve-cell-outputs` flag.
+the `-o`/`--preserve-cell-outputs` flag. To preserve cell execution counts, add
+the `-c`/`--preserve-execution-counts` flag.
 
 ### Cleaning (Git filter)
 
@@ -119,6 +121,12 @@ To preserve cell outputs, use:
 
 ```bash
 nb-clean add-filter --preserve-cell-outputs
+```
+
+To preserve cell execution counts, use:
+
+```bash
+nb-clean add-filter --preserve-execution-counts
 ```
 
 `nb-clean` will configure a filter in the Git repository in which it is run, and
