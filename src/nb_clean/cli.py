@@ -59,7 +59,8 @@ def add_filter(args: argparse.Namespace) -> None:
         Arguments parsed from the command line. If args.remove_empty_cells
         is True, configure the filter to remove empty cells. If
         args.preserve_cell_metadata is True, configure the filter to
-        preserve cell metadata.
+        preserve cell metadata. If args.preserve_execution_counts is True,
+        configure the filter to preserve cell execution counts.
 
     """
     try:
@@ -67,6 +68,7 @@ def add_filter(args: argparse.Namespace) -> None:
             remove_empty_cells=args.remove_empty_cells,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
         )
     except nb_clean.GitProcessError as exc:
         exit_with_error(exc.message, exc.return_code)
@@ -89,7 +91,9 @@ def check(args: argparse.Namespace) -> None:
         Arguments parsed from the command line. If args.remove_empty_cells
         is True, check for the presence of empty cells. If
         args.preserve_cell_metadata is True, don't check for cell metadata. If
-        args.preserve_cell_outputs is True, don't check for cell outputs.
+        args.preserve_cell_outputs is True, don't check for cell outputs. If
+        args.preserve_execution_counts is True, don't check for cell execution
+        counts.
 
     """
     if args.inputs:
@@ -107,6 +111,7 @@ def check(args: argparse.Namespace) -> None:
             remove_empty_cells=args.remove_empty_cells,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
             filename=name,
         )
         states.append(is_clean)
@@ -124,7 +129,8 @@ def clean(args: argparse.Namespace) -> None:
         Arguments parsed from the command line. If args.remove_empty_cells
         is True, check for empty cells. If args.preserve_cell_metadata is
         True, don't clean cell metadata. If args.preserve_cell_outputs is True,
-        don't clean cell outputs.
+        don't clean cell outputs. If args.preserve_execution_counts is True,
+        don't clean cell execution counts.
 
     """
     if args.inputs:
@@ -141,6 +147,7 @@ def clean(args: argparse.Namespace) -> None:
             remove_empty_cells=args.remove_empty_cells,
             preserve_cell_metadata=args.preserve_cell_metadata,
             preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
         )
         nbformat.write(notebook, output)  # type: ignore[no-untyped-call]
 
@@ -180,6 +187,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         action="store_true",
         help="preserve cell outputs",
     )
+    add_filter_parser.add_argument(
+        "-c",
+        "--preserve-execution-counts",
+        action="store_true",
+        help="preserve cell execution counts",
+    )
     add_filter_parser.set_defaults(func=add_filter)
 
     remove_filter_parser = subparsers.add_parser(
@@ -213,6 +226,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         action="store_true",
         help="preserve cell outputs",
     )
+    check_parser.add_argument(
+        "-c",
+        "--preserve-execution-counts",
+        action="store_true",
+        help="preserve cell execution counts",
+    )
     check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
@@ -236,6 +255,12 @@ def parse_args(args: list[str]) -> argparse.Namespace:
         "--preserve-cell-outputs",
         action="store_true",
         help="preserve cell outputs",
+    )
+    clean_parser.add_argument(
+        "-c",
+        "--preserve-execution-counts",
+        action="store_true",
+        help="preserve cell execution counts",
     )
     clean_parser.set_defaults(func=clean)
 
