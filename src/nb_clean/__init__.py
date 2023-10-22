@@ -84,6 +84,7 @@ def add_git_filter(
     remove_empty_cells: bool = False,
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
+    preserve_execution_counts: bool = False,
 ) -> None:
     """Add a filter to clean notebooks to the current Git repository.
 
@@ -98,6 +99,8 @@ def add_git_filter(
         If list of str, these are the cell metadata fields to preserve.
     preserve_cell_outputs : bool, default False
         If True, preserve cell outputs.
+    preserve_execution_counts : bool, default False
+        If True, preserve cell execution counts.
 
     """
     command = ["nb-clean", "clean"]
@@ -115,6 +118,9 @@ def add_git_filter(
 
     if preserve_cell_outputs:
         command.append("--preserve-cell-outputs")
+
+    if preserve_execution_counts:
+        command.append("--preserve-execution-counts")
 
     git("config", "filter.nb-clean.clean", " ".join(command))
 
@@ -149,6 +155,7 @@ def check_notebook(
     remove_empty_cells: bool = False,
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
+    preserve_execution_counts: bool = False,
     filename: str = "notebook",
 ) -> bool:
     """Check notebook is clean of execution counts, metadata, and outputs.
@@ -166,6 +173,8 @@ def check_notebook(
         If list of str, these are the cell metadata fields to ignore.
     preserve_cell_outputs : bool, default False
         If True, don't check for cell outputs.
+    preserve_execution_counts : bool, default False
+        If True, don't check for cell execution counts.
     filename : str, default "notebook"
         Notebook filename to use in log messages.
 
@@ -195,15 +204,16 @@ def check_notebook(
                     is_clean = False
 
         if cell["cell_type"] == "code":
-            if cell["execution_count"]:
+            if not preserve_execution_counts and cell["execution_count"]:
                 print(f"{prefix}: execution count")
                 is_clean = False
 
             if preserve_cell_outputs:
-                for output in cell["outputs"]:
-                    if output.get("execution_count") is not None:
-                        print(f"{prefix}: output execution count")
-                        is_clean = False
+                if not preserve_execution_counts:
+                    for output in cell["outputs"]:
+                        if output.get("execution_count") is not None:
+                            print(f"{prefix}: output execution count")
+                            is_clean = False
             elif cell["outputs"]:
                 print(f"{prefix}: outputs")
                 is_clean = False
@@ -222,6 +232,7 @@ def clean_notebook(
     remove_empty_cells: bool = False,
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
+    preserve_execution_counts: bool = False,
 ) -> nbformat.NotebookNode:
     """Clean notebook of execution counts, metadata, and outputs.
 
@@ -238,6 +249,8 @@ def clean_notebook(
         If list of str, these are the cell metadata fields to preserve.
     preserve_cell_outputs : bool, default False
         If True, preserve cell outputs.
+    preserve_execution_counts : bool, default False
+        If True, preserve cell execution counts.
 
     Returns
     -------
@@ -258,11 +271,13 @@ def clean_notebook(
                 if field in preserve_cell_metadata
             }
         if cell["cell_type"] == "code":
-            cell["execution_count"] = None
+            if not preserve_execution_counts:
+                cell["execution_count"] = None
             if preserve_cell_outputs:
-                for output in cell["outputs"]:
-                    if "execution_count" in output:
-                        output["execution_count"] = None
+                if not preserve_execution_counts:
+                    for output in cell["outputs"]:
+                        if "execution_count" in output:
+                            output["execution_count"] = None
             else:
                 cell["outputs"] = []
 
