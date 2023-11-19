@@ -146,7 +146,8 @@ def test_check_stdin(
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
     mocker.patch(
-        "nb_clean.cli.sys.stdin", return_value=io.StringIO(nbformat.writes(notebook))  # type: ignore[no-untyped-call]
+        "nb_clean.cli.sys.stdin",
+        return_value=io.StringIO(nbformat.writes(notebook)),  # type: ignore[no-untyped-call]
     )
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
