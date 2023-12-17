@@ -48,6 +48,12 @@ def clean_notebook() -> nbformat.NotebookNode:
 
 
 @pytest.fixture()
+def clean_notebook_with_notebook_metadata() -> nbformat.NotebookNode:
+    """Return a clean notebook with notebook metadata."""
+    return read_notebook("clean_with_notebook_metadata.ipynb")
+
+
+@pytest.fixture()
 def clean_notebook_without_empty_cells() -> nbformat.NotebookNode:
     """Return a clean notebook without empty cells."""
     return read_notebook("clean_without_empty_cells.ipynb")

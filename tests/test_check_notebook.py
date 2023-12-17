@@ -24,6 +24,22 @@ def test_check_notebook(notebook: nbformat.NotebookNode, *, is_clean: bool) -> N
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
+@pytest.mark.parametrize("preserve_notebook_metadata", [True, False])
+def test_check_notebook_preserve_notebook_metadata(
+    clean_notebook_with_notebook_metadata: nbformat.NotebookNode,
+    *,
+    preserve_notebook_metadata: bool,
+) -> None:
+    """Test nb_clean.check_notebook when preserving notebook metadata."""
+    assert (
+        nb_clean.check_notebook(
+            clean_notebook_with_notebook_metadata,
+            preserve_notebook_metadata=preserve_notebook_metadata,
+        )
+        is preserve_notebook_metadata
+    )
+
+
 @pytest.mark.parametrize("remove_empty_cells", [True, False])
 def test_check_notebook_remove_empty_cells(
     clean_notebook_with_empty_cells: nbformat.NotebookNode, *, remove_empty_cells: bool
@@ -46,7 +62,7 @@ def test_check_notebook_remove_empty_cells(
         None,
     ],
 )
-def test_check_notebook_preserve_metadata(
+def test_check_notebook_preserve_cell_metadata(
     clean_notebook_with_cell_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
@@ -72,7 +88,7 @@ def test_check_notebook_preserve_metadata(
         None,
     ],
 )
-def test_check_notebook_preserve_metadata_tags(
+def test_check_notebook_preserve_cell_metadata_tags(
     clean_notebook_with_tags_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
@@ -97,7 +113,7 @@ def test_check_notebook_preserve_metadata_tags(
         None,
     ],
 )
-def test_check_notebook_preserve_metadata_tags_special(
+def test_check_notebook_preserve_cell_metadata_tags_special(
     clean_notebook_with_tags_special_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
