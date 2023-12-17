@@ -85,6 +85,7 @@ def add_git_filter(
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
     preserve_execution_counts: bool = False,
+    preserve_notebook_metadata: bool = False,
 ) -> None:
     """Add a filter to clean notebooks to the current Git repository.
 
@@ -101,6 +102,8 @@ def add_git_filter(
         If True, preserve cell outputs.
     preserve_execution_counts : bool, default False
         If True, preserve cell execution counts.
+    preserve_notebook_metadata: bool, default False
+        If True, preserve notebook metadata such as language version.
 
     """
     command = ["nb-clean", "clean"]
@@ -121,6 +124,9 @@ def add_git_filter(
 
     if preserve_execution_counts:
         command.append("--preserve-execution-counts")
+
+    if preserve_notebook_metadata:
+        command.append("--preserve-notebook-metadata")
 
     git("config", "filter.nb-clean.clean", " ".join(command))
 
@@ -156,6 +162,7 @@ def check_notebook(
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
     preserve_execution_counts: bool = False,
+    preserve_notebook_metadata: bool = False,
     filename: str = "notebook",
 ) -> bool:
     """Check notebook is clean of execution counts, metadata, and outputs.
@@ -175,6 +182,8 @@ def check_notebook(
         If True, don't check for cell outputs.
     preserve_execution_counts : bool, default False
         If True, don't check for cell execution counts.
+    preserve_notebook_metadata : bool, default False
+        If True, preserve notebook metadata such as language version.
     filename : str, default "notebook"
         Notebook filename to use in log messages.
 
@@ -218,10 +227,11 @@ def check_notebook(
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    with contextlib.suppress(KeyError):
-        _ = notebook["metadata"]["language_info"]["version"]
-        print(f"{filename} metadata: language_info.version")
-        is_clean = False
+    if not preserve_notebook_metadata:
+        with contextlib.suppress(KeyError):
+            _ = notebook["metadata"]["language_info"]["version"]
+            print(f"{filename} metadata: language_info.version")
+            is_clean = False
 
     return is_clean
 
@@ -233,6 +243,7 @@ def clean_notebook(
     preserve_cell_metadata: Collection[str] | None = None,
     preserve_cell_outputs: bool = False,
     preserve_execution_counts: bool = False,
+    preserve_notebook_metadata: bool = False,
 ) -> nbformat.NotebookNode:
     """Clean notebook of execution counts, metadata, and outputs.
 
@@ -251,6 +262,8 @@ def clean_notebook(
         If True, preserve cell outputs.
     preserve_execution_counts : bool, default False
         If True, preserve cell execution counts.
+    preserve_notebook_metadata : bool, default False
+        If True, preserve notebook metadata such as language version.
 
     Returns
     -------
@@ -281,7 +294,8 @@ def clean_notebook(
             else:
                 cell["outputs"] = []
 
-    with contextlib.suppress(KeyError):
-        del notebook["metadata"]["language_info"]["version"]
+    if not preserve_notebook_metadata:
+        with contextlib.suppress(KeyError):
+            del notebook["metadata"]["language_info"]["version"]
 
     return notebook
