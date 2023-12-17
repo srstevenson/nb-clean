@@ -47,7 +47,7 @@ def test_check_notebook_remove_empty_cells(
     ],
 )
 def test_check_notebook_preserve_metadata(
-    clean_notebook_with_metadata: nbformat.NotebookNode,
+    clean_notebook_with_cell_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell metadata."""
@@ -56,7 +56,7 @@ def test_check_notebook_preserve_metadata(
         or {"tags", "special", "nbclean"}.issubset(preserve_cell_metadata)
     )
     output = nb_clean.check_notebook(
-        clean_notebook_with_metadata, preserve_cell_metadata=preserve_cell_metadata
+        clean_notebook_with_cell_metadata, preserve_cell_metadata=preserve_cell_metadata
     )
     assert output is expected
 

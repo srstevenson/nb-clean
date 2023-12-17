@@ -66,9 +66,9 @@ def clean_notebook_with_counts() -> nbformat.NotebookNode:
 
 
 @pytest.fixture()
-def clean_notebook_with_metadata() -> nbformat.NotebookNode:
+def clean_notebook_with_cell_metadata() -> nbformat.NotebookNode:
     """Return a clean notebook with cell metadata."""
-    return read_notebook("clean_with_metadata.ipynb")
+    return read_notebook("clean_with_cell_metadata.ipynb")
 
 
 @pytest.fixture()
