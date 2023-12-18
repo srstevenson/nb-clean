@@ -163,7 +163,7 @@ snippet to `.pre-commit-config.yaml` in the root of your repository:
 ```yaml
 repos:
   - repo: https://github.com/srstevenson/nb-clean
-    rev: 3.1.0
+    rev: 3.2.0
     hooks:
       - id: nb-clean
 ```
@@ -178,7 +178,7 @@ filenames, which `pre-commit` will append to the list of arguments.
 ```yaml
 repos:
   - repo: https://github.com/srstevenson/nb-clean
-    rev: 3.1.0
+    rev: 3.2.0
     hooks:
       - id: nb-clean
         args:
