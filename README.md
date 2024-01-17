@@ -57,11 +57,12 @@ nb-clean check < notebook.ipynb
 ```
 
 To also check for empty cells, add the `-e` or `--remove-empty-cells` flag. To
-ignore cell metadata, add the `-m` or `--preserve-cell-metadata` flag, optionally
-with a selection of metadata fields to ignore. To ignore cell outputs, add the
-`-o` or `--preserve-cell-outputs` flag. To ignore cell execution counts, add the
-`-c` or `--preserve-execution-counts` flag. To ignore notebook metadata, such as
-language version, add the `-n` or `--preserve-notebook-metadata` flag.
+ignore cell metadata, add the `-m` or `--preserve-cell-metadata` flag,
+optionally with a selection of metadata fields to ignore. To ignore cell
+outputs, add the `-o` or `--preserve-cell-outputs` flag. To ignore cell
+execution counts, add the `-c` or `--preserve-execution-counts` flag. To ignore
+notebook metadata, such as language version, add the `-n` or
+`--preserve-notebook-metadata` flag.
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
@@ -84,11 +85,12 @@ nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
 To also remove empty cells, add the `-e` or `--remove-empty-cells` flag. To
-preserve cell metadata, add the `-m` or `--preserve-cell-metadata` flag, optionally
-with a selection of metadata fields to preserve. To preserve cell outputs, add
-the `-o` or `--preserve-cell-outputs` flag. To preserve cell execution counts, add
-the `-c` or `--preserve-execution-counts` flag. To preserve notebook metadata, such
-as language version, add the `-n` or `--preserve-notebook-metadata` flag.
+preserve cell metadata, add the `-m` or `--preserve-cell-metadata` flag,
+optionally with a selection of metadata fields to preserve. To preserve cell
+outputs, add the `-o` or `--preserve-cell-outputs` flag. To preserve cell
+execution counts, add the `-c` or `--preserve-execution-counts` flag. To
+preserve notebook metadata, such as language version, add the `-n` or
+`--preserve-notebook-metadata` flag.
 
 ### Cleaning (Git filter)
 
@@ -204,7 +206,8 @@ use the following options:
 The following table maps from the command line interface of `nb-clean` 1.6.0 to
 that of `nb-clean` >=2.0.0.
 
-The examples in the table uses long flags, but short flags can also be used instead.
+The examples in the table uses long flags, but short flags can also be used
+instead.
 
 | Description                             | `nb-clean` 1.6.0                                                 | `nb-clean` >=2.0.0                                       |
 | --------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
