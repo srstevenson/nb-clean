@@ -204,18 +204,18 @@ use the following options:
 The following table maps from the command line interface of `nb-clean` 1.6.0 to
 that of `nb-clean` >=2.0.0.
 
-The examples in the table uses long flags, but short flags can also be used instead. 
+The examples in the table uses long flags, but short flags can also be used instead.
 
-| Description                             | `nb-clean` 1.6.0                                                 | `nb-clean` >=2.0.0                                           |
-| --------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
-| Clean notebook                          | `nb-clean clean --input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                              |
-| Clean notebook (remove empty cells)     | `nb-clean clean --input notebook.ipynb --remove-empty`           | `nb-clean clean notebook.ipynb --remove-empty-cells`         |
-| Clean notebook (preserve cell metadata) | `nb-clean clean --input notebook.ipynb --preserve-metadata`      | `nb-clean clean notebook.ipynb --preserve-cell-metadata`     |
-| Check notebook                          | `nb-clean check --input notebook.ipynb`                          | `nb-clean check notebook.ipynb`                              |
-| Check notebook (ignore non-empty cells) | `nb-clean check --input notebook.ipynb --remove-empty`           | `nb-clean check notebook.ipynb --remove-empty-cells`         |
-| Check notebook (ignore cell metadata)   | `nb-clean check --input notebook.ipynb --preserve-metadata`      | `nb-clean check notebook.ipynb --preserve-notebook-metadata` |
-| Add Git filter to clean notebooks       | `nb-clean configure-git`                                         | `nb-clean add-filter`                                        |
-| Remove Git filter                       | `nb-clean unconfigure-git`                                       | `nb-clean remove-filter`                                     |
+| Description                             | `nb-clean` 1.6.0                                                 | `nb-clean` >=2.0.0                                       |
+| --------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
+| Clean notebook                          | `nb-clean clean --input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                          |
+| Clean notebook (remove empty cells)     | `nb-clean clean --input notebook.ipynb --remove-empty`           | `nb-clean clean notebook.ipynb --remove-empty-cells`     |
+| Clean notebook (preserve cell metadata) | `nb-clean clean --input notebook.ipynb --preserve-metadata`      | `nb-clean clean notebook.ipynb --preserve-cell-metadata` |
+| Check notebook                          | `nb-clean check --input notebook.ipynb`                          | `nb-clean check notebook.ipynb`                          |
+| Check notebook (ignore non-empty cells) | `nb-clean check --input notebook.ipynb --remove-empty`           | `nb-clean check notebook.ipynb --remove-empty-cells`     |
+| Check notebook (ignore cell metadata)   | `nb-clean check --input notebook.ipynb --preserve-metadata`      | `nb-clean check notebook.ipynb --preserve-cell-metadata` |
+| Add Git filter to clean notebooks       | `nb-clean configure-git`                                         | `nb-clean add-filter`                                    |
+| Remove Git filter                       | `nb-clean unconfigure-git`                                       | `nb-clean remove-filter`                                 |
 
 ## Copyright
 
