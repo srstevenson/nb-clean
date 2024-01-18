@@ -56,13 +56,18 @@ or by passing the notebook contents on standard input:
 nb-clean check < notebook.ipynb
 ```
 
-To also check for empty cells, add the `-e` or `--remove-empty-cells` flag. To
-ignore cell metadata, add the `-m` or `--preserve-cell-metadata` flag,
-optionally with a selection of metadata fields to ignore. To ignore cell
-outputs, add the `-o` or `--preserve-cell-outputs` flag. To ignore cell
-execution counts, add the `-c` or `--preserve-execution-counts` flag. To ignore
-notebook metadata, such as language version, add the `-n` or
-`--preserve-notebook-metadata` flag.
+The check can be run with the following flags:
+* Check for empty cells: `-e` or `--remove-empty-cells`
+* Ignore checking cell metadata (optionally with a selection of metadata fields to ignore): `-m` or `--preserve-cell-metadata`
+* Ignore checking cell outputs: `-o` or `--preserve-cell-outputs`
+* Ignore checking cell execution counts: `-c` or `--preserve-execution-counts`
+* Ignore checking notebook metadata (such as language version): `-n` or `--preserve-notebook-metadata`
+
+For example, to check if the notebook is clean but ignoring notebook metadata:
+
+```bash
+nb-clean check --preserve-notebook-metadata notebook.ipynb
+```
 
 `nb-clean` will exit with status code 0 if the notebook is clean, and status
 code 1 if it is not. `nb-clean` will also print details of cell execution
@@ -84,13 +89,18 @@ output:
 nb-clean clean < original.ipynb > cleaned.ipynb
 ```
 
-To also remove empty cells, add the `-e` or `--remove-empty-cells` flag. To
-preserve cell metadata, add the `-m` or `--preserve-cell-metadata` flag,
-optionally with a selection of metadata fields to preserve. To preserve cell
-outputs, add the `-o` or `--preserve-cell-outputs` flag. To preserve cell
-execution counts, add the `-c` or `--preserve-execution-counts` flag. To
-preserve notebook metadata, such as language version, add the `-n` or
-`--preserve-notebook-metadata` flag.
+The cleaning can be run with the following flags:
+* Remove empty cells: `-e` or `--remove-empty-cells`
+* Preserve cell metadata (optionally with a selection of metadata fields to preserve): `-m` or `--preserve-cell-metadata`
+* Preserve cell outputs: `-o` or `--preserve-cell-outputs`
+* Preserve cell execution counts: `-c` or `--preserve-execution-counts`
+* Preserve notebook metadata (such as language version): `-n` or `--preserve-notebook-metadata`
+
+For example, to check if the notebook is clean but preserving notebook metadata:
+
+```bash
+nb-clean clean --preserve-notebook-metadata notebook.ipynb
+```
 
 ### Cleaning (Git filter)
 
@@ -212,11 +222,11 @@ instead.
 | Description                             | `nb-clean` 1.6.0                                                 | `nb-clean` >=2.0.0                                       |
 | --------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
 | Clean notebook                          | `nb-clean clean --input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                          |
-| Clean notebook (remove empty cells)     | `nb-clean clean --input notebook.ipynb --remove-empty`           | `nb-clean clean notebook.ipynb --remove-empty-cells`     |
-| Clean notebook (preserve cell metadata) | `nb-clean clean --input notebook.ipynb --preserve-metadata`      | `nb-clean clean notebook.ipynb --preserve-cell-metadata` |
+| Clean notebook (remove empty cells)     | `nb-clean clean --input --remove-empty notebook.ipynb`           | `nb-clean clean --remove-empty-cells notebook.ipynb`     |
+| Clean notebook (preserve cell metadata) | `nb-clean clean --input --preserve-metadata notebook.ipynb`       | `nb-clean clean --preserve-cell-metadata notebook.ipynb` |
 | Check notebook                          | `nb-clean check --input notebook.ipynb`                          | `nb-clean check notebook.ipynb`                          |
-| Check notebook (ignore non-empty cells) | `nb-clean check --input notebook.ipynb --remove-empty`           | `nb-clean check notebook.ipynb --remove-empty-cells`     |
-| Check notebook (ignore cell metadata)   | `nb-clean check --input notebook.ipynb --preserve-metadata`      | `nb-clean check notebook.ipynb --preserve-cell-metadata` |
+| Check notebook (ignore non-empty cells) | `nb-clean check --input --remove-empty notebook.ipynb`           | `nb-clean check --remove-empty-cells notebook.ipynb`     |
+| Check notebook (ignore cell metadata)   | `nb-clean check --input --preserve-metadata notebook.ipynb`      | `nb-clean check --preserve-cell-metadata notebook.ipynb` |
 | Add Git filter to clean notebooks       | `nb-clean configure-git`                                         | `nb-clean add-filter`                                    |
 | Remove Git filter                       | `nb-clean unconfigure-git`                                       | `nb-clean remove-filter`                                 |
 
