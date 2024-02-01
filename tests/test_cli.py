@@ -98,11 +98,7 @@ def test_remove_filter_failure(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.parametrize(
-    ("notebook", "clean"),
-    [
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
-    ],
+    ("notebook", "clean"), [("clean_notebook", True), ("dirty_notebook", False)]
 )
 def test_check_file(
     mocker: MockerFixture, notebook: nbformat.NotebookNode, *, clean: bool
@@ -140,16 +136,17 @@ def test_check_file(
 
 
 @pytest.mark.parametrize(
-    ("notebook", "clean"),
-    [
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
-    ],
+    ("notebook_name", "clean"), [("clean_notebook", True), ("dirty_notebook", False)]
 )
 def test_check_stdin(
-    mocker: MockerFixture, notebook: nbformat.NotebookNode, *, clean: bool
+    mocker: MockerFixture,
+    notebook_name: str,
+    *,
+    clean: bool,
+    request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
+    notebook = request.getfixturevalue(notebook_name)
     mocker.patch(
         "nb_clean.cli.sys.stdin",
         return_value=io.StringIO(nbformat.writes(notebook)),  # type: ignore[no-untyped-call]

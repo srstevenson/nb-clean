@@ -15,19 +15,18 @@ def test_clean_notebook(
 
 
 @pytest.mark.parametrize(
-    ("preserve_notebook_metadata", "expected_output"),
-    [
-        (True, pytest.lazy_fixture("clean_notebook_with_notebook_metadata")),  # type: ignore[operator]
-        (False, pytest.lazy_fixture("clean_notebook")),  # type: ignore[operator]
-    ],
+    ("preserve_notebook_metadata", "expected_output_name"),
+    [(True, "clean_notebook_with_notebook_metadata"), (False, "clean_notebook")],
 )
 def test_clean_notebook_with_notebook_metadata(
     clean_notebook_with_notebook_metadata: nbformat.NotebookNode,
     *,
     preserve_notebook_metadata: bool,
-    expected_output: nbformat.NotebookNode,
+    expected_output_name: str,
+    request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.clean_notebook with notebook metadata."""
+    expected_output = request.getfixturevalue(expected_output_name)
     assert (
         nb_clean.clean_notebook(
             clean_notebook_with_notebook_metadata,

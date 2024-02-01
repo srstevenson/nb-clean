@@ -12,15 +12,18 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.parametrize(
-    ("notebook", "is_clean"),
+    ("notebook_name", "is_clean"),
     [
-        (pytest.lazy_fixture("clean_notebook"), True),  # type: ignore[operator]
-        (pytest.lazy_fixture("dirty_notebook"), False),  # type: ignore[operator]
-        (pytest.lazy_fixture("dirty_notebook_with_version"), False),  # type: ignore[operator]
+        ("clean_notebook", True),
+        ("dirty_notebook", False),
+        ("dirty_notebook_with_version", False),
     ],
 )
-def test_check_notebook(notebook: nbformat.NotebookNode, *, is_clean: bool) -> None:
+def test_check_notebook(
+    notebook_name: str, *, is_clean: bool, request: pytest.FixtureRequest
+) -> None:
     """Test nb_clean.check_notebook."""
+    notebook = request.getfixturevalue(notebook_name)
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
@@ -130,29 +133,22 @@ def test_check_notebook_preserve_cell_metadata_tags_special(
 
 
 @pytest.mark.parametrize(
-    ("notebook", "preserve_cell_outputs", "is_clean"),
+    ("notebook_name", "preserve_cell_outputs", "is_clean"),
     [
-        (
-            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[operator]
-            True,
-            True,
-        ),
-        (
-            pytest.lazy_fixture("clean_notebook_with_outputs"),  # type: ignore[operator]
-            False,
-            False,
-        ),
-        (
-            pytest.lazy_fixture("clean_notebook_with_outputs_with_counts"),  # type: ignore[operator]
-            True,
-            False,
-        ),
+        ("clean_notebook_with_outputs", True, True),
+        ("clean_notebook_with_outputs", False, False),
+        ("clean_notebook_with_outputs_with_counts", True, False),
     ],
 )
 def test_check_notebook_preserve_outputs(
-    notebook: nbformat.NotebookNode, *, preserve_cell_outputs: bool, is_clean: bool
+    notebook_name: str,
+    *,
+    preserve_cell_outputs: bool,
+    is_clean: bool,
+    request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
+    notebook = request.getfixturevalue(notebook_name)
     output = nb_clean.check_notebook(
         notebook, preserve_cell_outputs=preserve_cell_outputs
     )
@@ -160,24 +156,21 @@ def test_check_notebook_preserve_outputs(
 
 
 @pytest.mark.parametrize(
-    ("notebook", "preserve_execution_counts", "is_clean"),
+    ("notebook_name", "preserve_execution_counts", "is_clean"),
     [
-        (
-            pytest.lazy_fixture("clean_notebook_with_counts"),  # type: ignore[operator]
-            True,
-            True,
-        ),
-        (
-            pytest.lazy_fixture("clean_notebook_with_counts"),  # type: ignore[operator]
-            False,
-            False,
-        ),
+        ("clean_notebook_with_counts", True, True),
+        ("clean_notebook_with_counts", False, False),
     ],
 )
 def test_check_notebook_preserve_execution_counts(
-    notebook: nbformat.NotebookNode, *, preserve_execution_counts: bool, is_clean: bool
+    notebook_name: str,
+    *,
+    preserve_execution_counts: bool,
+    is_clean: bool,
+    request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell execution counts."""
+    notebook = request.getfixturevalue(notebook_name)
     output = nb_clean.check_notebook(
         notebook, preserve_execution_counts=preserve_execution_counts
     )
