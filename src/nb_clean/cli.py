@@ -25,6 +25,7 @@ def expand_directories(paths: list[pathlib.Path]) -> list[pathlib.Path]:
     -------
     List[pathlib.Path]
         Paths with directories expanded into notebooks contained within.
+
     """
     expanded: list[pathlib.Path] = []
     for path in paths:
