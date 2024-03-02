@@ -55,12 +55,12 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [tool.poe.tasks]
-_ruff_fix = "ruff --fix ."
+_ruff_check_fix = "ruff check --fix ."
 _ruff_fmt = "ruff format ."
-fmt = ["_ruff_fix", "_ruff_fmt"]
+fmt = ["_ruff_check_fix", "_ruff_fmt"]
 
 _ruff_fmt_check = "ruff format --check ."
-_ruff_check = "ruff ."
+_ruff_check = "ruff check ."
 _mypy = "mypy ."
 lint = ["_ruff_fmt_check", "_ruff_check", "_mypy"]
 
@@ -72,6 +72,11 @@ addopts = "--cov=nb_clean --cov-report=term-missing"
 
 [tool.ruff]
 target-version = "py38"
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
 select = ["ALL"]
 ignore = [
   "C901",
@@ -91,8 +96,5 @@ ignore = [
   "T201",
 ]
 
-[tool.ruff.format]
-skip-magic-trailing-comma = true
-
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 split-on-trailing-comma = false
