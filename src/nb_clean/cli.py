@@ -170,8 +170,7 @@ def parse_args(args: list[str]) -> argparse.Namespace:
 
     """
     parser = argparse.ArgumentParser(description=__doc__)
-    subparsers = parser.add_subparsers(dest="subcommand")
-    subparsers.required = True
+    subparsers = parser.add_subparsers(dest="subcommand", required=True)
 
     version_parser = subparsers.add_parser("version", help="print version number")
     version_parser.set_defaults(func=lambda _: print(f"nb-clean {nb_clean.VERSION}"))
