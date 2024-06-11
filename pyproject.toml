@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nb-clean"
-version = "3.2.0"
+version = "3.3.0"
 description = "Clean Jupyter notebooks for versioning"
 authors = ["Scott Stevenson <scott@stevenson.io>"]
 license = "ISC"
@@ -9,9 +9,9 @@ homepage = "https://github.com/srstevenson/nb-clean"
 repository = "https://github.com/srstevenson/nb-clean"
 keywords = ["jupyter", "notebook", "clean", "filter", "git"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Science/Research",
-    "Natural Language :: English",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
 ]
 include = ["images/nb-clean.png"]
 
@@ -35,10 +35,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.report]
-exclude_also = [
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
+exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.mypy]
 check_untyped_defs = true
