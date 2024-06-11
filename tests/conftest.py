@@ -99,3 +99,9 @@ def clean_notebook_with_outputs() -> nbformat.NotebookNode:
 def clean_notebook_with_outputs_with_counts() -> nbformat.NotebookNode:
     """Return a notebook with cell outputs and output execution counts."""
     return read_notebook("clean_with_outputs_with_counts.ipynb")
+
+
+@pytest.fixture()
+def clean_notebook_without_notebook_metadata() -> nbformat.NotebookNode:
+    """Return a clean notebook without notebook metadata."""
+    return read_notebook("clean_without_notebook_metadata.ipynb")

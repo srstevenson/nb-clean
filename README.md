@@ -69,8 +69,10 @@ The check can be run with the following flags:
 - To ignore cell outputs use `--preserve-cell-outputs` or the short form `-o`.
 - To ignore cell execution counts use `--preserve-execution-counts` or the short
   form `-c`.
-- To ignore notebook metadata (such as language version) use
+- To ignore language version notebook metadata use
   `--preserve-notebook-metadata` or the short form `-n`.
+- To check the notebook does not contain any notebook metadata use
+  `--remove-all-notebook-metadata` or the short form `-M`.
 
 For example, to check if a notebook is clean whilst ignoring notebook metadata:
 
@@ -126,6 +128,8 @@ The cleaning can be run with the following flags:
   short form `-c`.
 - To preserve notebook metadata (such as language version) use
   `--preserve-notebook-metadata` or the short form `-n`.
+- To remove all notebook metadata use `--remove-all-notebook-metadata` or the
+  short form `-M`.
 
 For example, to clean a notebook whilst preserving notebook metadata:
 
@@ -186,10 +190,17 @@ To preserve cell execution counts, use:
 nb-clean add-filter --preserve-execution-counts
 ```
 
-To preserve notebook metadata, such as language version, use:
+To preserve notebook `language_info.version` metadata, use:
 
 ```bash
 nb-clean add-filter --preserve-notebook-metadata
+```
+
+By default, `nb-clean` will not delete all notebook metadata. To completely
+remove all notebook metadata:
+
+```bash
+nb-clean add-filter --remove-all-notebook-metadata
 ```
 
 `nb-clean` will configure a filter in the Git repository in which it is run, and

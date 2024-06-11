@@ -51,6 +51,7 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
 @pytest.mark.parametrize(
     (
         "remove_empty_cells",
+        "remove_all_notebook_metadata",
         "preserve_cell_metadata",
         "preserve_cell_outputs",
         "preserve_execution_counts",
@@ -58,10 +59,19 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         "filter_command",
     ),
     [
-        (False, None, False, False, False, "nb-clean clean"),
-        (True, None, False, False, False, "nb-clean clean --remove-empty-cells"),
-        (False, [], False, False, False, "nb-clean clean --preserve-cell-metadata"),
+        (False, False, None, False, False, False, "nb-clean clean"),
+        (True, False, None, False, False, False, "nb-clean clean --remove-empty-cells"),
         (
+            False,
+            False,
+            [],
+            False,
+            False,
+            False,
+            "nb-clean clean --preserve-cell-metadata",
+        ),
+        (
+            False,
             False,
             ["tags"],
             False,
@@ -71,15 +81,25 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         ),
         (
             False,
+            False,
             ["tags", "special"],
             False,
             False,
             False,
             "nb-clean clean --preserve-cell-metadata tags special",
         ),
-        (False, None, True, False, False, "nb-clean clean --preserve-cell-outputs"),
+        (
+            False,
+            False,
+            None,
+            True,
+            False,
+            False,
+            "nb-clean clean --preserve-cell-outputs",
+        ),
         (
             True,
+            False,
             [],
             True,
             False,
@@ -88,11 +108,21 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
         ),
         (
             False,
+            False,
             None,
             False,
             True,
             True,
             "nb-clean clean --preserve-execution-counts --preserve-notebook-metadata",
+        ),
+        (
+            False,
+            True,
+            None,
+            False,
+            False,
+            False,
+            "nb-clean clean --remove-all-notebook-metadata",
         ),
     ],
 )
@@ -101,6 +131,7 @@ def test_add_git_filter(
     tmp_path: pathlib.Path,
     *,
     remove_empty_cells: bool,
+    remove_all_notebook_metadata: bool,
     preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     preserve_execution_counts: bool,
@@ -114,6 +145,7 @@ def test_add_git_filter(
     )
     nb_clean.add_git_filter(
         remove_empty_cells=remove_empty_cells,
+        remove_all_notebook_metadata=remove_all_notebook_metadata,
         preserve_cell_metadata=preserve_cell_metadata,
         preserve_cell_outputs=preserve_cell_outputs,
         preserve_execution_counts=preserve_execution_counts,
@@ -122,6 +154,17 @@ def test_add_git_filter(
     mock_git.assert_called_once_with("config", "filter.nb-clean.clean", filter_command)
     mock_git_attributes_path.assert_called_once()
     assert nb_clean.GIT_ATTRIBUTES_LINE in (tmp_path / "attributes").read_text()
+
+
+def test_add_git_filter_exclusive_arguments() -> None:
+    """Test nb_clean.add_git_filter with invalid arguments."""
+    with pytest.raises(
+        ValueError,
+        match="`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`",
+    ):
+        nb_clean.add_git_filter(
+            remove_all_notebook_metadata=True, preserve_notebook_metadata=True
+        )
 
 
 def test_add_git_filter_idempotent(
