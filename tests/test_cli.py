@@ -8,9 +8,10 @@ import pathlib
 import sys
 from typing import TYPE_CHECKING, Collection, Iterable
 
-import nb_clean.cli
 import nbformat
 import pytest
+
+import nb_clean.cli
 
 if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture
