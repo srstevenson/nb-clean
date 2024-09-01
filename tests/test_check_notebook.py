@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Collection
 
-import nb_clean
 import pytest
+
+import nb_clean
 
 if TYPE_CHECKING:
     import nbformat

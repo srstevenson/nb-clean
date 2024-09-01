@@ -2,9 +2,10 @@
 
 from typing import Collection
 
-import nb_clean
 import nbformat
 import pytest
+
+import nb_clean
 
 
 def test_clean_notebook(

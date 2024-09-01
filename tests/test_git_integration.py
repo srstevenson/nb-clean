@@ -7,8 +7,9 @@ import subprocess
 from typing import TYPE_CHECKING, Collection
 from unittest.mock import Mock
 
-import nb_clean
 import pytest
+
+import nb_clean
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
