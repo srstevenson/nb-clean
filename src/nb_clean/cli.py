@@ -18,12 +18,12 @@ def expand_directories(paths: list[pathlib.Path]) -> list[pathlib.Path]:
 
     Parameters
     ----------
-    paths : List[pathlib.Path]
+    paths : list[pathlib.Path]
         Paths to expand, including directories.
 
     Returns
     -------
-    List[pathlib.Path]
+    list[pathlib.Path]
         Paths with directories expanded into notebooks contained within.
 
     """
