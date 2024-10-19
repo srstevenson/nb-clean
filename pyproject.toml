@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nb-clean"
-version = "3.3.0"
+version = "4.0.0"
 description = "Clean Jupyter notebooks for versioning"
 authors = ["Scott Stevenson <scott@stevenson.io>"]
 license = "ISC"
