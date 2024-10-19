@@ -38,7 +38,7 @@ conda install -c conda-forge nb-clean
 
 In Python projects using [Poetry] or [PDM] for dependency management, add
 `nb-clean` as a development dependency with `poetry add --group dev nb-clean` or
-`pdm add --dev nb-clean`. `nb-clean` requires Python 3.8 or later.
+`pdm add --dev nb-clean`. `nb-clean` requires Python 3.9 or later.
 
 ## Usage
 

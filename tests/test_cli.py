@@ -6,7 +6,7 @@ import argparse
 import io
 import pathlib
 import sys
-from typing import TYPE_CHECKING, Collection, Iterable
+from typing import TYPE_CHECKING
 
 import nbformat
 import pytest
@@ -14,6 +14,8 @@ import pytest
 import nb_clean.cli
 
 if TYPE_CHECKING:
+    from collections.abc import Collection, Iterable
+
     from _pytest.capture import CaptureFixture
     from pytest_mock import MockerFixture
 

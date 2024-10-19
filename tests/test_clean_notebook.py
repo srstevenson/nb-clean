@@ -1,6 +1,6 @@
 """Tests for nb_clean.clean_notebook."""
 
-from typing import Collection
+from collections.abc import Collection
 
 import nbformat
 import pytest
