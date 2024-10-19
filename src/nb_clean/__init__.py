@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import nbformat
     from typing_extensions import Self
 
-VERSION: Final = "4.0.0"
+VERSION: Final = "4.0.1"
 GIT_ATTRIBUTES_LINE: Final = "*.ipynb filter=nb-clean"
 
 
