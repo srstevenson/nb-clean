@@ -24,7 +24,8 @@ integration pipelines.
 
 ## Installation
 
-To install the latest release from [PyPI], use [pip]:
+`nb-clean` requires Python 3.9 or later. To install the latest release from
+[PyPI] with [pip], use:
 
 ```bash
 python3 -m pip install nb-clean
@@ -35,10 +36,6 @@ python3 -m pip install nb-clean
 ```bash
 conda install -c conda-forge nb-clean
 ```
-
-In Python projects using [Poetry] or [PDM] for dependency management, add
-`nb-clean` as a development dependency with `poetry add --group dev nb-clean` or
-`pdm add --dev nb-clean`. `nb-clean` requires Python 3.9 or later.
 
 ## Usage
 
@@ -286,16 +283,13 @@ instead.
 
 ## Copyright
 
-Copyright © [Scott Stevenson].
+Copyright © Scott Stevenson.
 
 `nb-clean` is distributed under the terms of the [ISC license].
 
 [conda]: https://docs.conda.io/
 [isc license]: https://opensource.org/licenses/ISC
 [papermill]: https://papermill.readthedocs.io/
-[pdm]: https://pdm.fming.dev/
 [pip]: https://pip.pypa.io/
-[poetry]: https://python-poetry.org/
 [pre-commit]: https://pre-commit.com/
 [pypi]: https://pypi.org/project/nb-clean/
-[scott stevenson]: https://scott.stevenson.io
