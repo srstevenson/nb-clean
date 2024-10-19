@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pathlib
 import subprocess
-from typing import TYPE_CHECKING, Collection
+from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
 import pytest
@@ -12,6 +12,8 @@ import pytest
 import nb_clean
 
 if TYPE_CHECKING:
+    from collections.abc import Collection
+
     from pytest_mock import MockerFixture
 
 

@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Collection
+from typing import TYPE_CHECKING
 
 import pytest
 
 import nb_clean
 
 if TYPE_CHECKING:
+    from collections.abc import Collection
+
     import nbformat
 
 

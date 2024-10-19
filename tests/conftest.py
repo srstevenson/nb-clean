@@ -1,12 +1,12 @@
 """Test fixtures."""
 
 import pathlib
-from typing import cast
+from typing import Final, cast
 
 import nbformat
 import pytest
 
-NOTEBOOKS_DIR = pathlib.Path(__file__).parent / "notebooks"
+NOTEBOOKS_DIR: Final = pathlib.Path(__file__).parent / "notebooks"
 
 
 def read_notebook(filename: str) -> nbformat.NotebookNode:

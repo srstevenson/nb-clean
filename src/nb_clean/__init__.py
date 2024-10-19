@@ -5,14 +5,16 @@ from __future__ import annotations
 import contextlib
 import pathlib
 import subprocess
-from typing import TYPE_CHECKING, Collection
+from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
+    from collections.abc import Collection
+
     import nbformat
     from typing_extensions import Self
 
-VERSION = "3.3.0"
-GIT_ATTRIBUTES_LINE = "*.ipynb filter=nb-clean"
+VERSION: Final = "3.3.0"
+GIT_ATTRIBUTES_LINE: Final = "*.ipynb filter=nb-clean"
 
 
 class GitProcessError(Exception):
