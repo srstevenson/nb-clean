@@ -341,13 +341,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "poethepoet"
-version = "0.29.0"
+version = "0.31.1"
 description = "A task runner that works well with poetry."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "poethepoet-0.29.0-py3-none-any.whl", hash = "sha256:f8dfe55006dcfb5cf31bcb1904e1262e1c642a4502fee3688cbf1bddfe5c7601"},
-    {file = "poethepoet-0.29.0.tar.gz", hash = "sha256:676842302f2304a86b31ac56398dd672fae8471128d2086896393384dbafc095"},
+    {file = "poethepoet-0.31.1-py3-none-any.whl", hash = "sha256:7fdfa0ac6074be9936723e7231b5bfaad2923e96c674a9857e81d326cf8ccdc2"},
+    {file = "poethepoet-0.31.1.tar.gz", hash = "sha256:d6b66074edf85daf115bb916eae0afd6387d19e1562e1c9ef7d61d5c585696aa"},
 ]
 
 [package.dependencies]
