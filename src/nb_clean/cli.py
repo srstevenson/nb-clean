@@ -225,8 +225,7 @@ def parse_args(args: list[str]) -> argparse.Namespace:
     check_parser = subparsers.add_parser(
         "check",
         help=(
-            "check a notebook is clean of cell execution counts, metadata, "
-            "and outputs"
+            "check a notebook is clean of cell execution counts, metadata, and outputs"
         ),
     )
     check_parser.add_argument(
