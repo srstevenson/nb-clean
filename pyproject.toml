@@ -62,6 +62,7 @@ testpaths = ["tests"]
 target-version = "py39"
 
 [tool.ruff.format]
+docstring-code-format = true
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
