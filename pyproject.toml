@@ -1,38 +1,40 @@
-[tool.poetry]
+[project]
 name = "nb-clean"
 version = "4.0.1"
 description = "Clean Jupyter notebooks for versioning"
-authors = ["Scott Stevenson <scott@stevenson.io>"]
-license = "ISC"
+authors = [{ name = "Scott Stevenson", email = "scott@stevenson.io" }]
 readme = "README.md"
-homepage = "https://github.com/srstevenson/nb-clean"
-repository = "https://github.com/srstevenson/nb-clean"
+license = "ISC"
+requires-python = ">=3.9"
 keywords = ["jupyter", "notebook", "clean", "filter", "git"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Natural Language :: English",
 ]
-include = ["images/nb-clean.png"]
+dependencies = ["nbformat>=5.9.2"]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<4.0"
-nbformat = ">=5.9.2"
+[project.urls]
+Homepage = "https://github.com/srstevenson/nb-clean"
+Repository = "https://github.com/srstevenson/nb-clean"
+Issues = "https://github.com/srstevenson/nb-clean/issues"
 
-[tool.poetry.scripts]
+[project.scripts]
 nb-clean = "nb_clean.cli:main"
 
-[tool.poetry.group.dev.dependencies]
-mypy = ">=1.4"
-poethepoet = ">=0.22.0"
-pytest = ">=7.2.1"
-pytest-cov = ">=4.1.0"
-pytest-mock = ">=3.11.1"
-ruff = ">=0.1.6"
+[dependency-groups]
+dev = [
+  "coverage>=7.6.10",
+  "mypy>=1.4",
+  "pytest>=7.2.1",
+  "pytest-cov>=4.1.0",
+  "pytest-mock>=3.11.1",
+  "ruff>=0.1.6",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.coverage.report]
 exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
@@ -52,21 +54,9 @@ warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
-[tool.poe.tasks]
-_ruff_check_fix = "ruff check --fix ."
-_ruff_fmt = "ruff format ."
-fmt = ["_ruff_check_fix", "_ruff_fmt"]
-
-_ruff_fmt_check = "ruff format --check ."
-_ruff_check = "ruff check ."
-_mypy = "mypy ."
-lint = ["_ruff_fmt_check", "_ruff_check", "_mypy"]
-
-test = "pytest tests"
-check = ["lint", "test"]
-
 [tool.pytest.ini_options]
 addopts = "--cov=nb_clean --cov-report=term-missing"
+testpaths = ["tests"]
 
 [tool.ruff]
 target-version = "py39"
