@@ -51,7 +51,7 @@ def git(*args: str) -> str:
 
     Examples
     --------
-    >>> git('rev-parse', '--git-dir')
+    >>> git("rev-parse", "--git-dir")
     .git
 
     """
