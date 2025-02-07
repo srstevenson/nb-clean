@@ -1,4 +1,4 @@
-"""Top-level script to run nb-clean with `python3 -m nb_clean`."""
+"""Top-level script to run nb-clean."""
 
 from nb_clean.cli import main
 

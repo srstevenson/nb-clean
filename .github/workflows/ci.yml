@@ -17,24 +17,36 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
+    env:
+      UV_PYTHON: ${{ matrix.python }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
       - name: Install dependencies
-        run: |
-          python3 -m pip install coverage poetry
-          poetry install
+        run: uv sync --dev
 
-      - name: Run checks
-        run: poetry run poe check
+      - name: Run formatter
+        run: uv run ruff format --check .
 
-      - name: Create XML coverage report
-        run: poetry run coverage xml
+      - name: Run linter
+        run: uv run ruff check .
+
+      - name: Run type checker
+        run: uv run mypy .
+
+      - name: Run tests
+        run: uv run pytest
+
+      - name: Create test coverage report
+        run: uv run coverage xml
 
       - name: Upload test coverage report
         uses: codecov/codecov-action@v5.3.1

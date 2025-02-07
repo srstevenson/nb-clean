@@ -7,7 +7,7 @@
 [![CI status](https://github.com/srstevenson/nb-clean/workflows/CI/badge.svg)](https://github.com/srstevenson/nb-clean/actions)
 [![Coverage](https://img.shields.io/codecov/c/gh/srstevenson/nb-clean?label=Coverage)](https://app.codecov.io/gh/srstevenson/nb-clean)
 
-`nb-clean` cleans Jupyter notebooks of cell execution counts, metadata, outputs,
+nb-clean cleans Jupyter notebooks of cell execution counts, metadata, outputs,
 and (optionally) empty cells, preparing them for committing to version control.
 It provides both a Git filter and pre-commit hook to automatically clean
 notebooks before they're staged, and can also be used with other version control
@@ -17,24 +17,24 @@ integration pipelines.
 
 > [!NOTE]
 >
-> `nb-clean` 2.0.0 introduced a new command line interface to make cleaning
+> nb-clean 2.0.0 introduced a new command line interface to make cleaning
 > notebooks in place easier. If you upgrade from a previous release, you'll need
 > to migrate to the new interface as described under
-> [Migrating to `nb-clean` 2](#migrating-to-nb-clean-2).
+> [Migrating to nb-clean 2](#migrating-to-nb-clean-2).
 
 ## Installation
 
-`nb-clean` requires Python 3.9 or later. To install the latest release from
-[PyPI] with [pip], use:
+nb-clean requires Python 3.9 or later. To run the latest release of nb-clean in
+an ephemeral virtual environment, use [uv]:
 
 ```bash
-python3 -m pip install nb-clean
+uvx nb-clean
 ```
 
-`nb-clean` can also be installed with [Conda]:
+To add nb-clean as a dependency to a Python project managed with uv, use:
 
 ```bash
-conda install -c conda-forge nb-clean
+uv add --dev nb-clean
 ```
 
 ## Usage
@@ -90,9 +90,9 @@ field:
 nb-clean check --preserve-cell-metadata tags -- notebook.ipynb
 ```
 
-`nb-clean` will exit with status code 0 if the notebook is clean, and status
-code 1 if it is not. `nb-clean` will also print details of cell execution
-counts, metadata, outputs, and empty cells it finds.
+nb-clean will exit with status code 0 if the notebook is clean, and status code
+1 if it is not. nb-clean will also print details of cell execution counts,
+metadata, outputs, and empty cells it finds.
 
 ### Cleaning (interactive)
 
@@ -193,14 +193,14 @@ To preserve notebook `language_info.version` metadata, use:
 nb-clean add-filter --preserve-notebook-metadata
 ```
 
-By default, `nb-clean` will not delete all notebook metadata. To completely
-remove all notebook metadata:
+By default, nb-clean will not delete all notebook metadata. To completely remove
+all notebook metadata:
 
 ```bash
 nb-clean add-filter --remove-all-notebook-metadata
 ```
 
-`nb-clean` will configure a filter in the Git repository in which it is run, and
+nb-clean will configure a filter in the Git repository in which it is run, and
 won't mutate your global or system Git configuration. To remove the filter, run:
 
 ```bash
@@ -209,8 +209,8 @@ nb-clean remove-filter
 
 ### Cleaning (pre-commit hook)
 
-`nb-clean` can also be used as a [pre-commit] hook. You may prefer this to the
-Git filter if your project already uses the pre-commit framework.
+nb-clean can also be used as a [pre-commit] hook. You may prefer this to the Git
+filter if your project already uses the pre-commit framework.
 
 Note that the Git filter and pre-commit hook work differently, with different
 effects on your working directory. The pre-commit hook operates on the notebook
@@ -220,7 +220,7 @@ directory dirty. This means cell outputs are still visible to you in your local
 Jupyter instance when using the Git filter, but not when using the pre-commit
 hook.
 
-After installing [pre-commit], add the `nb-clean` hook by adding the following
+After installing [pre-commit], add the nb-clean hook by adding the following
 snippet to `.pre-commit-config.yaml` in the root of your repository:
 
 ```yaml
@@ -231,7 +231,7 @@ repos:
       - id: nb-clean
 ```
 
-You can pass additional arguments to `nb-clean` with an `args` array. The
+You can pass additional arguments to nb-clean with an `args` array. The
 following example shows how to preserve only two specific metadata fields. Note
 that, in the example, the final item `--` in the arg list is mandatory. The
 option `--preserve-cell-metadata` may take an arbitrary number of field
@@ -253,7 +253,7 @@ repos:
 ```
 
 Run `pre-commit install` to ensure the hook is installed, and
-`pre-commit autoupdate` to update the hook to the latest release of `nb-clean`.
+`pre-commit autoupdate` to update the hook to the latest release of nb-clean.
 
 ### Preserving all nbformat metadata
 
@@ -262,15 +262,15 @@ To ignore or preserve specifically the metadata defined in the
 use the following options:
 `--preserve-cell-metadata collapsed scrolled deletable editable format name tags jupyter execution`.
 
-### Migrating to `nb-clean` 2
+### Migrating to nb-clean 2
 
-The following table maps from the command line interface of `nb-clean` 1.6.0 to
-that of `nb-clean` >=2.0.0.
+The following table maps from the command line interface of nb-clean 1.6.0 to
+that of nb-clean >=2.0.0.
 
 The examples in the table use long flags, but short flags can also be used
 instead.
 
-| Description                                 | `nb-clean` 1.6.0                                                 | `nb-clean` >=2.0.0                                          |
+| Description                                 | nb-clean 1.6.0                                                   | nb-clean >=2.0.0                                            |
 | ------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- |
 | Clean notebook                              | `nb-clean clean --input notebook.ipynb \| sponge notebook.ipynb` | `nb-clean clean notebook.ipynb`                             |
 | Clean notebook (remove empty cells)         | `nb-clean clean --input notebook.ipynb --remove-empty`           | `nb-clean clean --remove-empty-cells notebook.ipynb`        |
@@ -285,11 +285,9 @@ instead.
 
 Copyright © Scott Stevenson.
 
-`nb-clean` is distributed under the terms of the [ISC license].
+nb-clean is distributed under the terms of the [ISC license].
 
-[conda]: https://docs.conda.io/
 [isc license]: https://opensource.org/licenses/ISC
 [papermill]: https://papermill.readthedocs.io/
-[pip]: https://pip.pypa.io/
 [pre-commit]: https://pre-commit.com/
-[pypi]: https://pypi.org/project/nb-clean/
+[uv]: https://docs.astral.sh/uv/
