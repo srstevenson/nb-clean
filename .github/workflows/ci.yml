@@ -49,4 +49,4 @@ jobs:
         run: uv run coverage xml
 
       - name: Upload test coverage report
-        uses: codecov/codecov-action@v5.3.1
+        uses: codecov/codecov-action@v5.4.0
