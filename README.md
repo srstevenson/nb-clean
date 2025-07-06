@@ -156,49 +156,9 @@ nb-clean add-filter
 ```
 
 This will configure a filter to remove cell execution counts, metadata, and
-outputs. To also remove empty cells, use:
-
-```bash
-nb-clean add-filter --remove-empty-cells
-```
-
-To preserve cell metadata, such as that required by tools such as [papermill],
-use:
-
-```bash
-nb-clean add-filter --preserve-cell-metadata
-```
-
-To preserve only specific cell metadata, e.g., `tags` and `special`, use:
-
-```bash
-nb-clean add-filter --preserve-cell-metadata tags special
-```
-
-To preserve cell outputs, use:
-
-```bash
-nb-clean add-filter --preserve-cell-outputs
-```
-
-To preserve cell execution counts, use:
-
-```bash
-nb-clean add-filter --preserve-execution-counts
-```
-
-To preserve notebook `language_info.version` metadata, use:
-
-```bash
-nb-clean add-filter --preserve-notebook-metadata
-```
-
-By default, nb-clean will not delete all notebook metadata. To completely remove
-all notebook metadata:
-
-```bash
-nb-clean add-filter --remove-all-notebook-metadata
-```
+outputs. The same flags as described above for
+[interactive cleaning](#cleaning-interactive) can be passed to customise the
+behaviour.
 
 nb-clean will configure a filter in the Git repository in which it is run, and
 won't mutate your global or system Git configuration. To remove the filter, run:
@@ -206,6 +166,26 @@ won't mutate your global or system Git configuration. To remove the filter, run:
 ```bash
 nb-clean remove-filter
 ```
+
+### Cleaning (Jujutsu)
+
+nb-clean can be used to clean notebooks tracked with [Jujutsu] rather than Git.
+Configure Jujutsu to use nb-clean as a fix tool by adding the following snippet
+to `~/.config/jj/config.toml`:
+
+```toml
+[fix.tools.nb-clean]
+command = ["nb-clean", "clean"]
+patterns = ["glob:'**/*.ipynb'"]
+```
+
+The same flags as described above for
+[interactive cleaning](#cleaning-interactive) can be appended to the `command`
+array to customise the behaviour.
+
+Tracked notebooks can then be cleaned by running `jj fix`. See the [Jujutsu
+documentation][jujutsu docs] for further details of how to invoke and configure
+fix tools.
 
 ### Cleaning (pre-commit hook)
 
@@ -288,6 +268,8 @@ Copyright © Scott Stevenson.
 nb-clean is distributed under the terms of the [ISC license].
 
 [isc license]: https://opensource.org/licenses/ISC
+[jujutsu docs]: https://jj-vcs.github.io/jj/latest/cli-reference/#jj-fix
+[jujutsu]: https://jj-vcs.github.io/jj/
 [papermill]: https://papermill.readthedocs.io/
 [pre-commit]: https://pre-commit.com/
 [uv]: https://docs.astral.sh/uv/
