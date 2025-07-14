@@ -5,6 +5,7 @@ description = "Clean Jupyter notebooks for versioning"
 authors = [{ name = "Scott Stevenson", email = "scott@stevenson.io" }]
 readme = "README.md"
 license = "ISC"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
 keywords = ["jupyter", "notebook", "clean", "filter", "git"]
 classifiers = [
