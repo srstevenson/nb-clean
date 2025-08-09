@@ -1,6 +1,7 @@
 """Tests for nb_clean.clean_notebook."""
 
 from collections.abc import Collection
+from typing import cast
 
 import nbformat
 import pytest
@@ -27,7 +28,9 @@ def test_clean_notebook_with_notebook_metadata(
     request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.clean_notebook with notebook metadata."""
-    expected_output = request.getfixturevalue(expected_output_name)
+    expected_output = cast(
+        nbformat.NotebookNode, request.getfixturevalue(expected_output_name)
+    )
     assert (
         nb_clean.clean_notebook(
             clean_notebook_with_notebook_metadata,

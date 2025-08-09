@@ -25,12 +25,13 @@ nb-clean = "nb_clean.cli:main"
 
 [dependency-groups]
 dev = [
+  "basedpyright>=1.31.1",
   "coverage>=7.6.10",
-  "mypy>=1.4",
   "pytest>=7.2.1",
   "pytest-cov>=4.1.0",
   "pytest-mock>=3.11.1",
   "ruff>=0.1.6",
+  "typing-extensions>=4.14.1",
 ]
 
 [build-system]
@@ -40,20 +41,9 @@ build-backend = "uv_build"
 [tool.coverage.report]
 exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
-[tool.mypy]
-check_untyped_defs = true
-disallow_any_unimported = true
-disallow_untyped_defs = true
-enable_error_code = ["ignore-without-code"]
-no_implicit_optional = true
-show_error_codes = true
-strict = true
-warn_no_return = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
+[tool.basedpyright]
+typeCheckingMode = "recommended"
+reportUnusedCallResult = false
 
 [tool.pytest.ini_options]
 addopts = "--cov=nb_clean --cov-report=term-missing"
