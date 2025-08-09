@@ -126,7 +126,7 @@ def check(args: Args) -> None:
     else:
         inputs = [sys.stdin]
 
-    states: list[bool] = []
+    all_clean = True
     for input_ in inputs:
         name = "stdin" if input_ is sys.stdin else os.fspath(cast(Path, input_))
 
@@ -144,9 +144,9 @@ def check(args: Args) -> None:
             preserve_notebook_metadata=args.preserve_notebook_metadata,
             filename=name,
         )
-        states.append(is_clean)
+        all_clean &= is_clean
 
-    if not all(states):
+    if not all_clean:
         sys.exit(1)
 
 
