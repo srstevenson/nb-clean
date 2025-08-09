@@ -7,21 +7,18 @@ import os
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, NoReturn, TextIO, cast
+from typing import NoReturn, TextIO, cast
 
 import nbformat
 
 import nb_clean
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 @dataclass
 class Args(argparse.Namespace):
     """Arguments parsed from the command-line."""
 
-    command: str = ""
+    subcommand: str = ""
     inputs: list[Path] = field(default_factory=list)
     remove_empty_cells: bool = False
     remove_all_notebook_metadata: bool = False
@@ -29,7 +26,6 @@ class Args(argparse.Namespace):
     preserve_cell_outputs: bool = False
     preserve_execution_counts: bool = False
     preserve_notebook_metadata: bool = False
-    func: Callable[[Args], None] = lambda _: None
 
 
 def expand_directories(paths: list[Path]) -> list[Path]:
@@ -70,29 +66,41 @@ def exit_with_error(message: str, return_code: int) -> NoReturn:
     sys.exit(return_code)
 
 
-def add_filter(args: Args) -> None:
+def add_filter(
+    *,
+    remove_empty_cells: bool,
+    remove_all_notebook_metadata: bool,
+    preserve_cell_metadata: list[str] | None,
+    preserve_cell_outputs: bool,
+    preserve_execution_counts: bool,
+    preserve_notebook_metadata: bool,
+) -> None:
     """Add the nb-clean filter to the current Git repository.
 
     Parameters
     ----------
-    args : Args
-        Arguments parsed from the command line. If args.remove_empty_cells
-        is True, configure the filter to remove empty cells. If
-        args.preserve_cell_metadata is True, configure the filter to
-        preserve cell metadata. If args.preserve_execution_counts is True,
-        configure the filter to preserve cell execution counts. If
-        args.preserve_notebook_metadata is True, configure the filter to
-        preserve notebook metadata such as language version.
+    remove_empty_cells : bool
+        Configure the filter to remove empty cells.
+    remove_all_notebook_metadata : bool
+        Configure the filter to remove all notebook metadata.
+    preserve_cell_metadata : list[str] | None
+        Configure the filter to preserve cell metadata.
+    preserve_cell_outputs : bool
+        Configure the filter to preserve cell outputs.
+    preserve_execution_counts : bool
+        Configure the filter to preserve cell execution counts.
+    preserve_notebook_metadata : bool
+        Configure the filter to preserve notebook metadata such as language version.
 
     """
     try:
         nb_clean.add_git_filter(
-            remove_empty_cells=args.remove_empty_cells,
-            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
-            preserve_cell_metadata=args.preserve_cell_metadata,
-            preserve_cell_outputs=args.preserve_cell_outputs,
-            preserve_execution_counts=args.preserve_execution_counts,
-            preserve_notebook_metadata=args.preserve_notebook_metadata,
+            remove_empty_cells=remove_empty_cells,
+            remove_all_notebook_metadata=remove_all_notebook_metadata,
+            preserve_cell_metadata=preserve_cell_metadata,
+            preserve_cell_outputs=preserve_cell_outputs,
+            preserve_execution_counts=preserve_execution_counts,
+            preserve_notebook_metadata=preserve_notebook_metadata,
         )
     except nb_clean.GitProcessError as exc:
         exit_with_error(exc.message, exc.return_code)
@@ -106,28 +114,43 @@ def remove_filter() -> None:
         exit_with_error(exc.message, exc.return_code)
 
 
-def check(args: Args) -> None:
+def check(
+    inputs: list[Path],
+    *,
+    remove_empty_cells: bool,
+    remove_all_notebook_metadata: bool,
+    preserve_cell_metadata: list[str] | None,
+    preserve_cell_outputs: bool,
+    preserve_execution_counts: bool,
+    preserve_notebook_metadata: bool,
+) -> None:
     """Check notebooks are clean of execution counts, metadata, and outputs.
 
     Parameters
     ----------
-    args : Args
-        Arguments parsed from the command line. If args.remove_empty_cells
-        is True, check for the presence of empty cells. If
-        args.preserve_cell_metadata is True, don't check for cell metadata. If
-        args.preserve_cell_outputs is True, don't check for cell outputs. If
-        args.preserve_execution_counts is True, don't check for cell execution
-        counts. If args.preserve_notebook_metadata is True, don't check for
-        notebook metadata such as language version.
+    inputs : list[Path]
+        Input notebook paths to check, empty list for stdin.
+    remove_empty_cells : bool
+        Check for the presence of empty cells.
+    remove_all_notebook_metadata : bool
+        Check for any notebook metadata.
+    preserve_cell_metadata : list[str] | None
+        Don't check for cell metadata.
+    preserve_cell_outputs : bool
+        Don't check for cell outputs.
+    preserve_execution_counts : bool
+        Don't check for cell execution counts.
+    preserve_notebook_metadata : bool
+        Don't check for notebook metadata such as language version.
 
     """
-    if args.inputs:
-        inputs: list[Path] | list[TextIO] = expand_directories(args.inputs)
+    if inputs:
+        processed_inputs: list[Path] | list[TextIO] = expand_directories(inputs)
     else:
-        inputs = [sys.stdin]
+        processed_inputs = [sys.stdin]
 
     all_clean = True
-    for input_ in inputs:
+    for input_ in processed_inputs:
         name = "stdin" if input_ is sys.stdin else os.fspath(cast(Path, input_))
 
         notebook = cast(
@@ -136,12 +159,12 @@ def check(args: Args) -> None:
         )
         is_clean = nb_clean.check_notebook(
             notebook,
-            remove_empty_cells=args.remove_empty_cells,
-            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
-            preserve_cell_metadata=args.preserve_cell_metadata,
-            preserve_cell_outputs=args.preserve_cell_outputs,
-            preserve_execution_counts=args.preserve_execution_counts,
-            preserve_notebook_metadata=args.preserve_notebook_metadata,
+            remove_empty_cells=remove_empty_cells,
+            remove_all_notebook_metadata=remove_all_notebook_metadata,
+            preserve_cell_metadata=preserve_cell_metadata,
+            preserve_cell_outputs=preserve_cell_outputs,
+            preserve_execution_counts=preserve_execution_counts,
+            preserve_notebook_metadata=preserve_notebook_metadata,
             filename=name,
         )
         all_clean &= is_clean
@@ -150,28 +173,44 @@ def check(args: Args) -> None:
         sys.exit(1)
 
 
-def clean(args: Args) -> None:
+def clean(
+    inputs: list[Path],
+    *,
+    remove_empty_cells: bool,
+    remove_all_notebook_metadata: bool,
+    preserve_cell_metadata: list[str] | None,
+    preserve_cell_outputs: bool,
+    preserve_execution_counts: bool,
+    preserve_notebook_metadata: bool,
+) -> None:
     """Clean notebooks of execution counts, metadata, and outputs.
 
     Parameters
     ----------
-    args : Args
-        Arguments parsed from the command line. If args.remove_empty_cells
-        is True, check for empty cells. If args.preserve_cell_metadata is
-        True, don't clean cell metadata. If args.preserve_cell_outputs is True,
-        don't clean cell outputs. If args.preserve_execution_counts is True,
-        don't clean cell execution counts. If args.preserve_notebook_metadata
-        is True, don't clean notebook metadata such as language version.
+    inputs : list[Path]
+        Input notebook paths to clean, empty list for stdin.
+    remove_empty_cells : bool
+        Remove empty cells.
+    remove_all_notebook_metadata : bool
+        Remove all notebook metadata.
+    preserve_cell_metadata : list[str] | None
+        Don't clean cell metadata.
+    preserve_cell_outputs : bool
+        Don't clean cell outputs.
+    preserve_execution_counts : bool
+        Don't clean cell execution counts.
+    preserve_notebook_metadata : bool
+        Don't clean notebook metadata such as language version.
 
     """
-    if args.inputs:
-        inputs: list[Path] | list[TextIO] = expand_directories(args.inputs)
-        outputs = inputs
+    if inputs:
+        processed_inputs: list[Path] | list[TextIO] = expand_directories(inputs)
+        outputs = processed_inputs
     else:
-        inputs = [sys.stdin]
+        processed_inputs = [sys.stdin]
         outputs = [sys.stdout]
 
-    for input_, output in zip(inputs, outputs):
+    for input_, output in zip(processed_inputs, outputs):
         notebook = cast(
             nbformat.NotebookNode,
             nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
@@ -179,12 +218,12 @@ def clean(args: Args) -> None:
 
         notebook = nb_clean.clean_notebook(
             notebook,
-            remove_empty_cells=args.remove_empty_cells,
-            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
-            preserve_cell_metadata=args.preserve_cell_metadata,
-            preserve_cell_outputs=args.preserve_cell_outputs,
-            preserve_execution_counts=args.preserve_execution_counts,
-            preserve_notebook_metadata=args.preserve_notebook_metadata,
+            remove_empty_cells=remove_empty_cells,
+            remove_all_notebook_metadata=remove_all_notebook_metadata,
+            preserve_cell_metadata=preserve_cell_metadata,
+            preserve_cell_outputs=preserve_cell_outputs,
+            preserve_execution_counts=preserve_execution_counts,
+            preserve_notebook_metadata=preserve_notebook_metadata,
         )
         nbformat.write(notebook, output)  # pyright: ignore[reportUnknownMemberType]
 
@@ -206,8 +245,7 @@ def parse_args(args: list[str]) -> Args:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="subcommand", required=True)
 
-    version_parser = subparsers.add_parser("version", help="print version number")
-    version_parser.set_defaults(func=lambda _: print(f"nb-clean {nb_clean.VERSION}"))  # pyright: ignore[reportUnknownLambdaType]
+    subparsers.add_parser("version", help="print version number")
 
     add_filter_parser = subparsers.add_parser(
         "add-filter", help="add Git filter to clean notebooks before staging"
@@ -246,12 +284,10 @@ def parse_args(args: list[str]) -> Args:
         action="store_true",
         help="preserve notebook metadata",
     )
-    add_filter_parser.set_defaults(func=add_filter)
 
-    remove_filter_parser = subparsers.add_parser(
+    subparsers.add_parser(
         "remove-filter", help="remove Git filter that cleans notebooks before staging"
     )
-    remove_filter_parser.set_defaults(func=lambda _: remove_filter())  # pyright: ignore[reportUnknownLambdaType]
 
     check_parser = subparsers.add_parser(
         "check",
@@ -296,7 +332,6 @@ def parse_args(args: list[str]) -> Args:
         action="store_true",
         help="preserve notebook metadata",
     )
-    check_parser.set_defaults(func=check)
 
     clean_parser = subparsers.add_parser(
         "clean", help="clean notebook of cell execution counts, metadata, and outputs"
@@ -338,7 +373,6 @@ def parse_args(args: list[str]) -> Args:
         action="store_true",
         help="preserve notebook metadata",
     )
-    clean_parser.set_defaults(func=clean)
 
     return parser.parse_args(args, namespace=Args())
 
@@ -346,4 +380,40 @@ def parse_args(args: list[str]) -> Args:
 def main() -> None:  # pragma: no cover
     """Command line entrypoint."""
     args = parse_args(sys.argv[1:])
-    args.func(args)
+
+    if args.subcommand == "version":
+        print(f"nb-clean {nb_clean.VERSION}")
+    elif args.subcommand == "add-filter":
+        add_filter(
+            remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
+            preserve_cell_metadata=args.preserve_cell_metadata,
+            preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
+            preserve_notebook_metadata=args.preserve_notebook_metadata,
+        )
+    elif args.subcommand == "remove-filter":
+        remove_filter()
+    elif args.subcommand == "check":
+        check(
+            args.inputs,
+            remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
+            preserve_cell_metadata=args.preserve_cell_metadata,
+            preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
+            preserve_notebook_metadata=args.preserve_notebook_metadata,
+        )
+    elif args.subcommand == "clean":
+        clean(
+            args.inputs,
+            remove_empty_cells=args.remove_empty_cells,
+            remove_all_notebook_metadata=args.remove_all_notebook_metadata,
+            preserve_cell_metadata=args.preserve_cell_metadata,
+            preserve_cell_outputs=args.preserve_cell_outputs,
+            preserve_execution_counts=args.preserve_execution_counts,
+            preserve_notebook_metadata=args.preserve_notebook_metadata,
+        )
+    else:
+        # This should never happen due to argparse validation, but be defensive
+        exit_with_error(f"Unknown subcommand: {args.subcommand}", 1)
