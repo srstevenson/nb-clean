@@ -43,10 +43,7 @@ jobs:
         run: uv run basedpyright .
 
       - name: Run tests
-        run: uv run pytest
+        run: uv run coverage run -m pytest
 
-      - name: Create test coverage report
-        run: uv run coverage xml
-
-      - name: Upload test coverage report
-        uses: codecov/codecov-action@v5.4.3
+      - name: Print test coverage report
+        run: uv run coverage report

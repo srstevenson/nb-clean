@@ -28,7 +28,6 @@ dev = [
   "basedpyright>=1.31.1",
   "coverage>=7.6.10",
   "pytest>=7.2.1",
-  "pytest-cov>=4.1.0",
   "pytest-mock>=3.11.1",
   "ruff>=0.1.6",
   "typing-extensions>=4.14.1",
@@ -44,10 +43,6 @@ exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 [tool.basedpyright]
 typeCheckingMode = "recommended"
 reportUnusedCallResult = false
-
-[tool.pytest.ini_options]
-addopts = "--cov=nb_clean --cov-report=term-missing"
-testpaths = ["tests"]
 
 [tool.ruff]
 target-version = "py39"
