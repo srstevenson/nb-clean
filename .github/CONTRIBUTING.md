@@ -49,11 +49,11 @@ before you begin.
 After cloning the repository, you can implement your changes as follows:
 
 1. Install the project and its dependencies into an isolated virtual environment
-   with `uv sync --dev`.
-2. Before making your changes, run the tests with `uv run pytest`, and ensure
-   they pass. This checks your development environment is correctly configured,
-   and there aren't outstanding issues before you start coding. If they don't
-   pass, you can open a GitHub issue for help debugging.
+   with `make install`.
+2. Before making your changes, run the tests with `make test`, and ensure they
+   pass. This checks your development environment is correctly configured, and
+   there aren't outstanding issues before you start coding. If they don't pass,
+   you can open a GitHub issue for help debugging.
 3. Checkout a new branch for your changes, branching from `main`, with a
    sensible name for your changes.
 4. Implement your changes.
@@ -61,9 +61,9 @@ After cloning the repository, you can implement your changes as follows:
    tests to prevent future regressions.
 6. Ensure you've updated any docstrings or documentation files (including
    `README.md`) which are affected by your change.
-7. Run the linter with `uv run ruff check .`, formatter with
-   `uv run ruff format .`, type checker with `uv run basedpyright .`, and tests
-   with `uv run pytest`, and fix any problems.
+7. Run the linter and type checker with `make check`, and tests with
+   `make test`, and fix any problems. Alternatively, use `make all` to run
+   formatting, linting, and tests in one command.
 8. Commit your changes, following [these guidelines][commit guidelines] for your
    commit messages.
 9. Fork the base repository on GitHub, push your branch to your fork, and open a
