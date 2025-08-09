@@ -46,13 +46,13 @@ def expand_directories(paths: list[Path]) -> list[Path]:
         Paths with directories expanded into notebooks contained within.
 
     """
-    expanded: list[Path] = []
+    expanded: set[Path] = set()
     for path in paths:
         if path.is_dir():
-            expanded.extend(path.rglob("*.ipynb"))
+            expanded.update(path.rglob("*.ipynb"))
         else:
-            expanded.append(path)
-    return list(set(expanded))
+            expanded.add(path)
+    return list(expanded)
 
 
 def exit_with_error(message: str, return_code: int) -> NoReturn:
