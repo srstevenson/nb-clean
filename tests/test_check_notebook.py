@@ -1,5 +1,3 @@
-"""Tests for nb_clean.check_notebook."""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
@@ -24,7 +22,6 @@ if TYPE_CHECKING:
 def test_check_notebook(
     notebook_name: str, *, is_clean: bool, request: pytest.FixtureRequest
 ) -> None:
-    """Test nb_clean.check_notebook."""
     notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     assert nb_clean.check_notebook(notebook) is is_clean
 
@@ -35,7 +32,6 @@ def test_check_notebook_preserve_notebook_metadata(
     *,
     preserve_notebook_metadata: bool,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving notebook metadata."""
     assert (
         nb_clean.check_notebook(
             clean_notebook_with_notebook_metadata,
@@ -49,7 +45,6 @@ def test_check_notebook_preserve_notebook_metadata(
 def test_check_notebook_remove_empty_cells(
     clean_notebook_with_empty_cells: nbformat.NotebookNode, *, remove_empty_cells: bool
 ) -> None:
-    """Test nb_clean.check_notebook when removing empty cells."""
     output = nb_clean.check_notebook(
         clean_notebook_with_empty_cells, remove_empty_cells=remove_empty_cells
     )
@@ -71,7 +66,6 @@ def test_check_notebook_preserve_cell_metadata(
     clean_notebook_with_cell_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
         preserve_cell_metadata == []
         or {"tags", "special", "nbclean"}.issubset(preserve_cell_metadata)
@@ -97,7 +91,6 @@ def test_check_notebook_preserve_cell_metadata_tags(
     clean_notebook_with_tags_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
         preserve_cell_metadata == [] or {"tags"}.issubset(preserve_cell_metadata)
     )
@@ -122,7 +115,6 @@ def test_check_notebook_preserve_cell_metadata_tags_special(
     clean_notebook_with_tags_special_metadata: nbformat.NotebookNode,
     preserve_cell_metadata: Collection[str] | None,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving cell metadata."""
     expected = (preserve_cell_metadata is not None) and (
         preserve_cell_metadata == []
         or {"tags", "special"}.issubset(preserve_cell_metadata)
@@ -149,7 +141,6 @@ def test_check_notebook_preserve_outputs(
     is_clean: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving cell outputs."""
     notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_cell_outputs=preserve_cell_outputs
@@ -171,7 +162,6 @@ def test_check_notebook_preserve_execution_counts(
     is_clean: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    """Test nb_clean.check_notebook when preserving cell execution counts."""
     notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_execution_counts=preserve_execution_counts
@@ -197,12 +187,9 @@ def test_check_notebook_remove_all_notebook_metadata(
     is_clean: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    """Test nb_clean.clean_notebook when removing all notebook metadata.
-
-    The test with `("clean_notebook_with_notebook_metadata", False, True)` is False due
-    to `clean_notebook_with_notebook_metadata` containing `language_info.version`
-    detected when `preserve_notebook_metadata=False`.
-    """
+    # The test with `("clean_notebook_with_notebook_metadata", False, True)`
+    # is False due to `clean_notebook_with_notebook_metadata` containing
+    # `language_info.version` detected when `preserve_notebook_metadata=False`.
     notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     assert (
         nb_clean.check_notebook(
@@ -215,7 +202,6 @@ def test_check_notebook_remove_all_notebook_metadata(
 def test_check_notebook_exclusive_arguments(
     dirty_notebook: nbformat.NotebookNode,
 ) -> None:
-    """Test nb_clean.check_notebook with invalid arguments."""
     with pytest.raises(
         ValueError,
         match="`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`",

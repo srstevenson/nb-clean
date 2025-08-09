@@ -1,5 +1,3 @@
-"""Tests for nb-clean's Git integration."""
-
 from __future__ import annotations
 
 import subprocess
@@ -18,7 +16,6 @@ if TYPE_CHECKING:
 
 
 def test_git(mocker: MockerFixture) -> None:
-    """Test nb_clean.git."""
     mock_process = Mock()
     mock_process.stdout = b" output string "
     mock_run = mocker.patch("nb_clean.subprocess.run", return_value=mock_process)
@@ -30,7 +27,6 @@ def test_git(mocker: MockerFixture) -> None:
 
 
 def test_git_failure(mocker: MockerFixture) -> None:
-    """Test nb_clean.git when call to Git fails."""
     mocker.patch(
         "nb_clean.subprocess.run",
         side_effect=subprocess.CalledProcessError(
@@ -44,7 +40,6 @@ def test_git_failure(mocker: MockerFixture) -> None:
 
 
 def test_git_attributes_path(mocker: MockerFixture) -> None:
-    """Test nb_clean.git_attributes_path."""
     mocker.patch("nb_clean.git", return_value="dir/.git")
     assert nb_clean.git_attributes_path() == Path("dir", ".git", "info", "attributes")
 
@@ -139,7 +134,6 @@ def test_add_git_filter(
     preserve_notebook_metadata: bool,
     filter_command: str,
 ) -> None:
-    """Test nb_clean.add_git_filter."""
     mock_git = mocker.patch("nb_clean.git")
     mock_git_attributes_path = mocker.patch(
         "nb_clean.git_attributes_path", return_value=tmp_path / "attributes"
@@ -158,7 +152,6 @@ def test_add_git_filter(
 
 
 def test_add_git_filter_exclusive_arguments() -> None:
-    """Test nb_clean.add_git_filter with invalid arguments."""
     with pytest.raises(
         ValueError,
         match="`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`",
@@ -169,7 +162,6 @@ def test_add_git_filter_exclusive_arguments() -> None:
 
 
 def test_add_git_filter_idempotent(mocker: MockerFixture, tmp_path: Path) -> None:
-    """Test nb_clean.add_git_filter is idempotent."""
     mocker.patch("nb_clean.git")
     (tmp_path / "attributes").write_text(nb_clean.GIT_ATTRIBUTES_LINE)
     mock_git_attributes_path = mocker.patch(
@@ -184,7 +176,6 @@ def test_add_git_filter_idempotent(mocker: MockerFixture, tmp_path: Path) -> Non
 def test_remove_git_filter(
     mocker: MockerFixture, tmp_path: Path, *, filter_exists: bool
 ) -> None:
-    """Test nb_clean.remove_git_filter."""
     mock_git = mocker.patch("nb_clean.git")
     mock_git_attributes_path = mocker.patch(
         "nb_clean.git_attributes_path", return_value=tmp_path / "attributes"
