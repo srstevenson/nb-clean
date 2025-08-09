@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import os
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -8,13 +9,13 @@ from typing import TYPE_CHECKING, cast
 import nbformat
 import pytest
 
+import nb_clean
 import nb_clean.cli
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable
 
-    from _pytest.capture import CaptureFixture
-    from pytest_mock import MockerFixture
+    from pytest import CaptureFixture  # noqa: PT013
 
 
 def test_expand_directories_with_files() -> None:
@@ -29,239 +30,190 @@ def test_expand_directories_recursively() -> None:
     assert all(path.is_file() and path.suffix == ".ipynb" for path in expanded_paths)
 
 
-def test_exit_with_error(capsys: CaptureFixture[str], mocker: MockerFixture) -> None:
-    mock_exit = mocker.patch("nb_clean.cli.sys.exit")
-    nb_clean.cli.exit_with_error("error message", 42)
-    assert capsys.readouterr().err == "nb-clean: error: error message\n"  # pyright: ignore[reportUnreachable]
-    mock_exit.assert_called_once_with(42)
+def test_exit_with_error(capsys: CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exc:
+        nb_clean.cli.exit_with_error("error message", 42)
+    assert exc.value.code == 42
+    assert capsys.readouterr().err == "nb-clean: error: error message\n"
 
 
-def test_add_filter(mocker: MockerFixture) -> None:
-    mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
-    nb_clean.cli.add_filter(
-        remove_empty_cells=True,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=True,
-    )
-    mock_add_git_filter.assert_called_once_with(
-        remove_empty_cells=True,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=True,
-    )
+def test_add_filter_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_add_git_filter(**kwargs: object) -> None:
+        captured.update(kwargs)
+
+    monkeypatch.setattr(nb_clean, "add_git_filter", fake_add_git_filter)
+
+    argv = ["nb-clean", "add-filter", "-e", "-n"]
+    monkeypatch.setattr(sys, "argv", argv)
+    nb_clean.cli.main()
+
+    assert captured == {
+        "remove_empty_cells": True,
+        "remove_all_notebook_metadata": False,
+        "preserve_cell_metadata": None,
+        "preserve_cell_outputs": False,
+        "preserve_execution_counts": False,
+        "preserve_notebook_metadata": True,
+    }
 
 
-def test_add_filter_remove_all_notebook_metadata(mocker: MockerFixture) -> None:
-    mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
-    nb_clean.cli.add_filter(
-        remove_empty_cells=True,
-        remove_all_notebook_metadata=True,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
-    mock_add_git_filter.assert_called_once_with(
-        remove_empty_cells=True,
-        remove_all_notebook_metadata=True,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
+def test_add_filter_remove_all_notebook_metadata_dispatch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_add_git_filter(**kwargs: object) -> None:
+        captured.update(kwargs)
+
+    monkeypatch.setattr(nb_clean, "add_git_filter", fake_add_git_filter)
+
+    argv = ["nb-clean", "add-filter", "-e", "-M"]
+    monkeypatch.setattr(sys, "argv", argv)
+    nb_clean.cli.main()
+
+    assert captured == {
+        "remove_empty_cells": True,
+        "remove_all_notebook_metadata": True,
+        "preserve_cell_metadata": None,
+        "preserve_cell_outputs": False,
+        "preserve_execution_counts": False,
+        "preserve_notebook_metadata": False,
+    }
 
 
-def test_add_filter_failure(mocker: MockerFixture) -> None:
-    mocker.patch(
-        "nb_clean.add_git_filter",
-        side_effect=nb_clean.GitProcessError(message="error message", return_code=42),
-    )
-    mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
-    nb_clean.cli.add_filter(
-        remove_empty_cells=True,
-        remove_all_notebook_metadata=True,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
-    mock_exit_with_error.assert_called_once_with("error message", 42)
+def test_add_filter_failure_dispatch(
+    capsys: CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fake_add_git_filter(**_kwargs: object) -> None:
+        raise nb_clean.GitProcessError(message="error message", return_code=42)
+
+    monkeypatch.setattr(nb_clean, "add_git_filter", fake_add_git_filter)
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "add-filter", "-e", "-M"])
+
+    with pytest.raises(SystemExit) as exc:
+        nb_clean.cli.main()
+    assert exc.value.code == 42
+    assert capsys.readouterr().err == "nb-clean: error: error message\n"
 
 
-def test_remove_filter(mocker: MockerFixture) -> None:
-    mock_remove_git_filter = mocker.patch("nb_clean.remove_git_filter")
-    nb_clean.cli.remove_filter()
-    mock_remove_git_filter.assert_called_once()
+def test_remove_filter_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
+    called = {"value": False}
+
+    def fake_remove_git_filter() -> None:
+        called["value"] = True
+
+    monkeypatch.setattr(nb_clean, "remove_git_filter", fake_remove_git_filter)
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "remove-filter"])
+    nb_clean.cli.main()
+    assert called["value"]
 
 
-def test_remove_filter_failure(mocker: MockerFixture) -> None:
-    mocker.patch(
-        "nb_clean.remove_git_filter",
-        side_effect=nb_clean.GitProcessError(message="error message", return_code=42),
-    )
-    mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
-    nb_clean.cli.remove_filter()
-    mock_exit_with_error.assert_called_once_with("error message", 42)
+def test_remove_filter_failure_dispatch(
+    capsys: CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fake_remove_git_filter() -> None:
+        raise nb_clean.GitProcessError(message="error message", return_code=42)
+
+    monkeypatch.setattr(nb_clean, "remove_git_filter", fake_remove_git_filter)
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "remove-filter"])
+
+    with pytest.raises(SystemExit) as exc:
+        nb_clean.cli.main()
+    assert exc.value.code == 42
+    assert capsys.readouterr().err == "nb-clean: error: error message\n"
 
 
 @pytest.mark.parametrize(
-    ("notebook", "clean"), [("clean_notebook", True), ("dirty_notebook", False)]
+    ("name", "expect_exit"), [("clean.ipynb", False), ("dirty.ipynb", True)]
 )
 def test_check_file(
-    mocker: MockerFixture, notebook: nbformat.NotebookNode, *, clean: bool
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, name: str, *, expect_exit: bool
 ) -> None:
-    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
-    mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
-    mock_exit = mocker.patch("nb_clean.cli.sys.exit")
-    nb_clean.cli.check(
-        [Path("notebook.ipynb")],
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
-    mock_read.assert_called_once_with(
-        Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
-    )
-    mock_check_notebook.assert_called_once_with(
-        notebook,
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-        filename="notebook.ipynb",
-    )
-    if clean:
-        mock_exit.assert_not_called()
+    src = Path("tests/notebooks") / name
+    dst = tmp_path / name
+    dst.write_bytes(src.read_bytes())
+
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "check", os.fspath(dst)])
+
+    if expect_exit:
+        with pytest.raises(SystemExit) as exc:
+            nb_clean.cli.main()
+        assert exc.value.code == 1
     else:
-        mock_exit.assert_called_once_with(1)
+        nb_clean.cli.main()
 
 
 @pytest.mark.parametrize(
-    ("notebook_name", "clean"), [("clean_notebook", True), ("dirty_notebook", False)]
+    ("notebook_name", "expect_exit"),
+    [("clean_notebook", False), ("dirty_notebook", True)],
 )
 def test_check_stdin(
-    mocker: MockerFixture,
+    monkeypatch: pytest.MonkeyPatch,
     notebook_name: str,
     *,
-    clean: bool,
+    expect_exit: bool,
     request: pytest.FixtureRequest,
 ) -> None:
     notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
-    mocker.patch(
-        "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(notebook)),  # pyright: ignore[reportUnknownMemberType, reportAny]
-    )
-    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
-    mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
-    mock_exit = mocker.patch("nb_clean.cli.sys.exit")
-    nb_clean.cli.check(
-        [],
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
-    mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
-    mock_check_notebook.assert_called_once_with(
-        notebook,
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-        filename="stdin",
-    )
-    if clean:
-        mock_exit.assert_not_called()
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "check"])
+    content = cast(str, nbformat.writes(notebook))  # pyright: ignore[reportUnknownMemberType]
+    monkeypatch.setattr(sys, "stdin", io.StringIO(content))
+    if expect_exit:
+        with pytest.raises(SystemExit) as exc:
+            nb_clean.cli.main()
+        assert exc.value.code == 1
     else:
-        mock_exit.assert_called_once_with(1)
+        nb_clean.cli.main()
 
 
-def test_clean_file(
-    mocker: MockerFixture,
-    dirty_notebook: nbformat.NotebookNode,
-    clean_notebook: nbformat.NotebookNode,
-) -> None:
-    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
-    mock_clean_notebook = mocker.patch(
-        "nb_clean.clean_notebook", return_value=clean_notebook
-    )
-    mock_write = mocker.patch("nb_clean.cli.nbformat.write")
+def test_clean_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    src_dirty = Path("tests/notebooks/dirty.ipynb")
+    dst_dirty = tmp_path / "dirty.ipynb"
+    dst_dirty.write_bytes(src_dirty.read_bytes())
 
-    nb_clean.cli.clean(
-        [Path("notebook.ipynb")],
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "clean", str(dst_dirty)])
+    nb_clean.cli.main()
 
-    mock_read.assert_called_once_with(
-        Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
+    cleaned = cast(
+        nbformat.NotebookNode,
+        nbformat.read(dst_dirty, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
     )
-    mock_clean_notebook.assert_called_once_with(
-        dirty_notebook,
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
+    expected = cast(
+        nbformat.NotebookNode,
+        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+            Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
+        ),
     )
-    mock_write.assert_called_once_with(clean_notebook, Path("notebook.ipynb"))
+    assert cleaned == expected
 
 
 def test_clean_stdin(
-    capsys: CaptureFixture[str],
-    mocker: MockerFixture,
-    dirty_notebook: nbformat.NotebookNode,
-    clean_notebook: nbformat.NotebookNode,
+    capsys: CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    mocker.patch(
-        "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(dirty_notebook)),  # pyright: ignore[reportUnknownMemberType, reportAny]
+    dirty = cast(
+        nbformat.NotebookNode,
+        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+            Path("tests/notebooks/dirty.ipynb"), as_version=nbformat.NO_CONVERT
+        ),
     )
-    mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
-    mock_clean_notebook = mocker.patch(
-        "nb_clean.clean_notebook", return_value=clean_notebook
-    )
-
-    nb_clean.cli.clean(
-        [],
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
+    expected = cast(
+        nbformat.NotebookNode,
+        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+            Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
+        ),
     )
 
-    mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
-    mock_clean_notebook.assert_called_once_with(
-        dirty_notebook,
-        remove_empty_cells=False,
-        remove_all_notebook_metadata=False,
-        preserve_cell_metadata=None,
-        preserve_cell_outputs=False,
-        preserve_execution_counts=False,
-        preserve_notebook_metadata=False,
-    )
-    assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)  # pyright: ignore[reportUnknownMemberType]
+    monkeypatch.setattr(sys, "argv", ["nb-clean", "clean"])
+    dirty_content = cast(str, nbformat.writes(dirty))  # pyright: ignore[reportUnknownMemberType]
+    monkeypatch.setattr(sys, "stdin", io.StringIO(dirty_content))
+
+    nb_clean.cli.main()
+
+    out = capsys.readouterr().out
+    expected_text = cast(str, nbformat.writes(expected))  # pyright: ignore[reportUnknownMemberType]
+    assert out.strip() == expected_text.strip()
 
 
 @pytest.mark.parametrize(
