@@ -188,7 +188,7 @@ def clean(
         processed_inputs = [sys.stdin]
         outputs = [sys.stdout]
 
-    for input_, output in zip(processed_inputs, outputs):
+    for input_, output in zip(processed_inputs, outputs, strict=True):
         notebook = cast(
             nbformat.NotebookNode,
             nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]

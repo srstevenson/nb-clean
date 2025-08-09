@@ -35,7 +35,7 @@ and accompanying [blog post][blog post].
 
 ## Installation
 
-nb-clean requires Python 3.9 or later. To run the latest release of nb-clean in
+nb-clean requires Python 3.10 or later. To run the latest release of nb-clean in
 an ephemeral virtual environment, use [uv]:
 
 ```bash
