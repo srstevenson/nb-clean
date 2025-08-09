@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import pathlib
 import subprocess
+from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
@@ -46,9 +46,7 @@ def test_git_failure(mocker: MockerFixture) -> None:
 def test_git_attributes_path(mocker: MockerFixture) -> None:
     """Test nb_clean.git_attributes_path."""
     mocker.patch("nb_clean.git", return_value="dir/.git")
-    assert nb_clean.git_attributes_path() == pathlib.Path(
-        "dir", ".git", "info", "attributes"
-    )
+    assert nb_clean.git_attributes_path() == Path("dir", ".git", "info", "attributes")
 
 
 @pytest.mark.parametrize(
@@ -131,7 +129,7 @@ def test_git_attributes_path(mocker: MockerFixture) -> None:
 )
 def test_add_git_filter(
     mocker: MockerFixture,
-    tmp_path: pathlib.Path,
+    tmp_path: Path,
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
@@ -170,9 +168,7 @@ def test_add_git_filter_exclusive_arguments() -> None:
         )
 
 
-def test_add_git_filter_idempotent(
-    mocker: MockerFixture, tmp_path: pathlib.Path
-) -> None:
+def test_add_git_filter_idempotent(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test nb_clean.add_git_filter is idempotent."""
     mocker.patch("nb_clean.git")
     (tmp_path / "attributes").write_text(nb_clean.GIT_ATTRIBUTES_LINE)
@@ -186,7 +182,7 @@ def test_add_git_filter_idempotent(
 
 @pytest.mark.parametrize("filter_exists", [True, False])
 def test_remove_git_filter(
-    mocker: MockerFixture, tmp_path: pathlib.Path, *, filter_exists: bool
+    mocker: MockerFixture, tmp_path: Path, *, filter_exists: bool
 ) -> None:
     """Test nb_clean.remove_git_filter."""
     mock_git = mocker.patch("nb_clean.git")

@@ -62,8 +62,8 @@ After cloning the repository, you can implement your changes as follows:
 6. Ensure you've updated any docstrings or documentation files (including
    `README.md`) which are affected by your change.
 7. Run the linter with `uv run ruff check .`, formatter with
-   `uv run ruff format .`, type checker with `uv run mypy .`, and tests with
-   `uv run pytest`, and fix any problems.
+   `uv run ruff format .`, type checker with `uv run basedpyright .`, and tests
+   with `uv run pytest`, and fix any problems.
 8. Commit your changes, following [these guidelines][commit guidelines] for your
    commit messages.
 9. Fork the base repository on GitHub, push your branch to your fork, and open a

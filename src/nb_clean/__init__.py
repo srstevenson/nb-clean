@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import contextlib
-import pathlib
 import subprocess
-from typing import TYPE_CHECKING, Final
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Final, cast
 
 if TYPE_CHECKING:
     from collections.abc import Collection
@@ -32,8 +32,8 @@ class GitProcessError(Exception):
 
         """
         super().__init__(message)
-        self.message = message
-        self.return_code = return_code
+        self.message: str = message
+        self.return_code: int = return_code
 
 
 def git(*args: str) -> str:
@@ -58,17 +58,17 @@ def git(*args: str) -> str:
     try:
         process = subprocess.run(["git", *list(args)], capture_output=True, check=True)
     except subprocess.CalledProcessError as exc:
-        raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc
+        raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc  # pyright: ignore[reportAny]
 
     return process.stdout.decode().strip()
 
 
-def git_attributes_path() -> pathlib.Path:
+def git_attributes_path() -> Path:
     """Get path to the attributes file in the current Git repository.
 
     Returns
     -------
-    pathlib.Path
+    Path
         Path to the attributes file.
 
     Examples
@@ -78,7 +78,7 @@ def git_attributes_path() -> pathlib.Path:
 
     """
     git_dir = git("rev-parse", "--git-dir")
-    return pathlib.Path(git_dir, "info", "attributes")
+    return Path(git_dir, "info", "attributes")
 
 
 def add_git_filter(
@@ -214,7 +214,7 @@ def check_notebook(
 
     is_clean = True
 
-    for index, cell in enumerate(notebook.cells):
+    for index, cell in enumerate(notebook.cells):  # pyright: ignore[reportAny]
         prefix = f"{filename} cell {index}"
 
         if remove_empty_cells and not cell["source"]:
@@ -226,7 +226,7 @@ def check_notebook(
                 print(f"{prefix}: metadata")
                 is_clean = False
         elif len(preserve_cell_metadata) > 0:
-            for field in cell["metadata"]:
+            for field in cell["metadata"]:  # pyright: ignore[reportAny]
                 if field not in preserve_cell_metadata:
                     print(f"{prefix}: metadata {field}")
                     is_clean = False
@@ -238,21 +238,21 @@ def check_notebook(
 
             if preserve_cell_outputs:
                 if not preserve_execution_counts:
-                    for output in cell["outputs"]:
-                        if output.get("execution_count") is not None:
+                    for output in cell["outputs"]:  # pyright: ignore[reportAny]
+                        if output.get("execution_count") is not None:  # pyright: ignore[reportAny]
                             print(f"{prefix}: output execution count")
                             is_clean = False
             elif cell["outputs"]:
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    if remove_all_notebook_metadata and notebook.metadata:
+    if remove_all_notebook_metadata and cast(dict[str, Any], notebook.metadata):  # pyright: ignore[reportExplicitAny]
         print(f"{filename}: metadata")
         is_clean = False
 
     if not preserve_notebook_metadata:
         with contextlib.suppress(KeyError):
-            _ = notebook["metadata"]["language_info"]["version"]
+            notebook["metadata"]["language_info"]["version"]
             print(f"{filename} metadata: language_info.version")
             is_clean = False
 
@@ -302,15 +302,15 @@ def clean_notebook(
         raise ValueError(msg)
 
     if remove_empty_cells:
-        notebook.cells = [cell for cell in notebook.cells if cell["source"]]
+        notebook.cells = [cell for cell in notebook.cells if cell["source"]]  # pyright: ignore[reportAny]
 
-    for cell in notebook.cells:
+    for cell in notebook.cells:  # pyright: ignore[reportAny]
         if preserve_cell_metadata is None:
             cell["metadata"] = {}
         elif len(preserve_cell_metadata) > 0:
             cell["metadata"] = {
                 field: value
-                for field, value in cell["metadata"].items()
+                for field, value in cell["metadata"].items()  # pyright: ignore[reportAny]
                 if field in preserve_cell_metadata
             }
         if cell["cell_type"] == "code":
@@ -318,7 +318,7 @@ def clean_notebook(
                 cell["execution_count"] = None
             if preserve_cell_outputs:
                 if not preserve_execution_counts:
-                    for output in cell["outputs"]:
+                    for output in cell["outputs"]:  # pyright: ignore[reportAny]
                         if "execution_count" in output:
                             output["execution_count"] = None
             else:

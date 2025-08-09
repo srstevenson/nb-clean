@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-import argparse
 import io
-import pathlib
 import sys
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import TYPE_CHECKING, cast
 
 import nbformat
 import pytest
 
 import nb_clean.cli
+from nb_clean.cli import Args
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable
@@ -22,13 +22,13 @@ if TYPE_CHECKING:
 
 def test_expand_directories_with_files() -> None:
     """Test expanding directories when only files are present."""
-    paths = [pathlib.Path("tests/notebooks/dirty.ipynb")]
+    paths = [Path("tests/notebooks/dirty.ipynb")]
     assert nb_clean.cli.expand_directories(paths) == paths
 
 
 def test_expand_directories_recursively() -> None:
     """Test recursive expansion of directories."""
-    input_paths = [pathlib.Path("tests")]
+    input_paths = [Path("tests")]
     expanded_paths = nb_clean.cli.expand_directories(input_paths)
     assert len(expanded_paths) > len(input_paths)
     assert all(path.is_file() and path.suffix == ".ipynb" for path in expanded_paths)
@@ -38,7 +38,7 @@ def test_exit_with_error(capsys: CaptureFixture[str], mocker: MockerFixture) -> 
     """Test nb_clean.cli.exit_with_error."""
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.exit_with_error("error message", 42)
-    assert capsys.readouterr().err == "nb-clean: error: error message\n"  # type: ignore[unreachable]
+    assert capsys.readouterr().err == "nb-clean: error: error message\n"  # pyright: ignore[reportUnreachable]
     mock_exit.assert_called_once_with(42)
 
 
@@ -46,7 +46,7 @@ def test_add_filter(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.add_filter."""
     mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
     nb_clean.cli.add_filter(
-        argparse.Namespace(
+        Args(
             remove_empty_cells=True,
             remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
@@ -69,7 +69,7 @@ def test_add_filter_remove_all_notebook_metadata(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.add_filter with remove all notebook metadata."""
     mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
     nb_clean.cli.add_filter(
-        argparse.Namespace(
+        Args(
             remove_empty_cells=True,
             remove_all_notebook_metadata=True,
             preserve_cell_metadata=None,
@@ -96,7 +96,7 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     )
     mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
     nb_clean.cli.add_filter(
-        argparse.Namespace(
+        Args(
             remove_empty_cells=True,
             remove_all_notebook_metadata=True,
             preserve_cell_metadata=None,
@@ -137,8 +137,8 @@ def test_check_file(
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
-        argparse.Namespace(
-            inputs=[pathlib.Path("notebook.ipynb")],
+        Args(
+            inputs=[Path("notebook.ipynb")],
             remove_empty_cells=False,
             remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
@@ -148,7 +148,7 @@ def test_check_file(
         )
     )
     mock_read.assert_called_once_with(
-        pathlib.Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
+        Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
     )
     mock_check_notebook.assert_called_once_with(
         notebook,
@@ -177,16 +177,16 @@ def test_check_stdin(
     request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.cli.check when input is stdin."""
-    notebook = request.getfixturevalue(notebook_name)
+    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     mocker.patch(
         "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(notebook)),  # type: ignore[no-untyped-call]
+        return_value=io.StringIO(nbformat.writes(notebook)),  # pyright: ignore[reportUnknownMemberType, reportAny]
     )
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=notebook)
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
-        argparse.Namespace(
+        Args(
             inputs=[],
             remove_empty_cells=False,
             remove_all_notebook_metadata=False,
@@ -226,8 +226,8 @@ def test_clean_file(
     mock_write = mocker.patch("nb_clean.cli.nbformat.write")
 
     nb_clean.cli.clean(
-        argparse.Namespace(
-            inputs=[pathlib.Path("notebook.ipynb")],
+        Args(
+            inputs=[Path("notebook.ipynb")],
             remove_empty_cells=False,
             remove_all_notebook_metadata=False,
             preserve_cell_metadata=None,
@@ -238,7 +238,7 @@ def test_clean_file(
     )
 
     mock_read.assert_called_once_with(
-        pathlib.Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
+        Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
     )
     mock_clean_notebook.assert_called_once_with(
         dirty_notebook,
@@ -249,7 +249,7 @@ def test_clean_file(
         preserve_execution_counts=False,
         preserve_notebook_metadata=False,
     )
-    mock_write.assert_called_once_with(clean_notebook, pathlib.Path("notebook.ipynb"))
+    mock_write.assert_called_once_with(clean_notebook, Path("notebook.ipynb"))
 
 
 def test_clean_stdin(
@@ -261,7 +261,7 @@ def test_clean_stdin(
     """Test nb_clean.cli.clean when input is stdin."""
     mocker.patch(
         "nb_clean.cli.sys.stdin",
-        return_value=io.StringIO(nbformat.writes(dirty_notebook)),  # type: ignore[no-untyped-call]
+        return_value=io.StringIO(nbformat.writes(dirty_notebook)),  # pyright: ignore[reportUnknownMemberType, reportAny]
     )
     mock_read = mocker.patch("nb_clean.cli.nbformat.read", return_value=dirty_notebook)
     mock_clean_notebook = mocker.patch(
@@ -269,7 +269,7 @@ def test_clean_stdin(
     )
 
     nb_clean.cli.clean(
-        argparse.Namespace(
+        Args(
             inputs=[],
             remove_empty_cells=False,
             remove_all_notebook_metadata=False,
@@ -290,7 +290,7 @@ def test_clean_stdin(
         preserve_execution_counts=False,
         preserve_notebook_metadata=False,
     )
-    assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)  # type: ignore[no-untyped-call]
+    assert capsys.readouterr().out.strip() == nbformat.writes(clean_notebook)  # pyright: ignore[reportUnknownMemberType]
 
 
 @pytest.mark.parametrize(
@@ -380,7 +380,7 @@ def test_parse_args(
     args = nb_clean.cli.parse_args(argv.split())
     assert args.func == getattr(nb_clean.cli, function)
     if inputs:
-        assert args.inputs == [pathlib.Path(path) for path in inputs]
+        assert args.inputs == [Path(path) for path in inputs]
     assert args.remove_empty_cells is remove_empty_cells
     assert args.remove_all_notebook_metadata is remove_all_notebook_metadata
     assert args.preserve_cell_metadata == preserve_cell_metadata

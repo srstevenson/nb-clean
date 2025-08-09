@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
+import nbformat
 import pytest
 
 import nb_clean
 
 if TYPE_CHECKING:
     from collections.abc import Collection
-
-    import nbformat
 
 
 @pytest.mark.parametrize(
@@ -26,7 +25,7 @@ def test_check_notebook(
     notebook_name: str, *, is_clean: bool, request: pytest.FixtureRequest
 ) -> None:
     """Test nb_clean.check_notebook."""
-    notebook = request.getfixturevalue(notebook_name)
+    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
@@ -151,7 +150,7 @@ def test_check_notebook_preserve_outputs(
     request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell outputs."""
-    notebook = request.getfixturevalue(notebook_name)
+    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_cell_outputs=preserve_cell_outputs
     )
@@ -173,7 +172,7 @@ def test_check_notebook_preserve_execution_counts(
     request: pytest.FixtureRequest,
 ) -> None:
     """Test nb_clean.check_notebook when preserving cell execution counts."""
-    notebook = request.getfixturevalue(notebook_name)
+    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_execution_counts=preserve_execution_counts
     )
@@ -204,7 +203,7 @@ def test_check_notebook_remove_all_notebook_metadata(
     to `clean_notebook_with_notebook_metadata` containing `language_info.version`
     detected when `preserve_notebook_metadata=False`.
     """
-    notebook = request.getfixturevalue(notebook_name)
+    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
     assert (
         nb_clean.check_notebook(
             notebook, remove_all_notebook_metadata=remove_all_notebook_metadata
