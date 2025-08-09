@@ -14,6 +14,18 @@ systems, as a command line tool, and as a Python library. It can determine if a
 notebook is clean or not, which can be used as a check in your continuous
 integration pipelines.
 
+Jupyter notebooks contain execution metadata that changes every time you run a
+cell, including execution counts, timestamps, and output data. When committed to
+version control, these elements create unnecessary diff noise, make meaningful
+code review difficult, and can accidentally expose sensitive information in cell
+outputs. By cleaning notebooks before committing, you preserve only the
+essential code and markdown content, leading to cleaner diffs, more focused
+reviews, and better collaboration.
+
+For a detailed discussion of the challenges notebooks present for version
+control and collaborative development, see my [PyCon UK 2017 talk][pycon talk]
+and accompanying [blog post][blog post].
+
 > [!NOTE]
 >
 > nb-clean 2.0.0 introduced a new command line interface to make cleaning
@@ -36,7 +48,25 @@ To add nb-clean as a dependency to a Python project managed with uv, use:
 uv add --dev nb-clean
 ```
 
-## Usage
+## Command line usage
+
+### Understanding notebook metadata
+
+Jupyter notebooks contain several types of metadata that nb-clean can handle:
+
+**Cell metadata** includes information attached to individual cells, such as
+tags, slideshow settings, and execution timing. Cell metadata fields like
+`collapsed`, `scrolled`, `deletable`, and `editable` control notebook interface
+behaviour, whilst `tags` and custom fields support workflow automation.
+
+**Notebook metadata** contains document-level information including the kernel
+specification, language version, and notebook format version. The language
+version information (`metadata.language_info.version`) frequently changes
+between Python versions and creates unnecessary version control noise.
+
+**Execution metadata** encompasses execution counts for code cells and their
+outputs, along with execution timestamps and output data. This metadata changes
+every time you run cells, regardless of whether the actual code has changed.
 
 ### Checking
 
@@ -46,11 +76,18 @@ You can check if a notebook is clean with:
 nb-clean check notebook.ipynb
 ```
 
-or by passing the notebook contents on standard input:
+You can also process notebooks through standard input and output streams, which
+is useful for integrating with shell pipelines or processing notebooks without
+writing to disk:
 
 ```bash
 nb-clean check < notebook.ipynb
 ```
+
+When reading from standard input, nb-clean processes the notebook content
+directly without accessing the filesystem. This approach is particularly useful
+for automated workflows, continuous integration pipelines, or when you want to
+check notebooks without creating temporary files.
 
 The check can be run with the following flags:
 
@@ -92,6 +129,10 @@ nb-clean check --preserve-cell-metadata tags -- notebook.ipynb
 nb-clean will exit with status code 0 if the notebook is clean, and status code
 1 if it is not. nb-clean will also print details of cell execution counts,
 metadata, outputs, and empty cells it finds.
+
+Note that the conflicting options `--preserve-notebook-metadata` and
+`--remove-all-notebook-metadata` cannot be used together, as they represent
+contradictory instructions.
 
 ### Cleaning (interactive)
 
@@ -145,6 +186,26 @@ To clean a notebook whilst preserving only the `tags` cell metadata field:
 nb-clean clean --preserve-cell-metadata tags -- notebook.ipynb
 ```
 
+#### Directory processing
+
+Both the `check` and `clean` commands can operate on directories as well as
+individual notebook files. When you provide a directory path, nb-clean will
+recursively find all `.ipynb` files within that directory and process them. For
+example:
+
+```bash
+nb-clean check notebooks/
+```
+
+or
+
+```bash
+nb-clean clean experiments/
+```
+
+This is particularly useful for batch processing entire project directories or
+ensuring all notebooks in a repository are clean.
+
 ### Cleaning (Git filter)
 
 To add a filter to an existing Git repository to automatically clean notebooks
@@ -159,8 +220,14 @@ outputs. The same flags as described above for
 [interactive cleaning](#cleaning-interactive) can be passed to customise the
 behaviour.
 
-nb-clean will configure a filter in the Git repository in which it is run, and
-won't mutate your global or system Git configuration. To remove the filter, run:
+The Git filter operates by configuring the `filter.nb-clean.clean` setting in
+your repository's local Git configuration and adding the line
+`*.ipynb filter=nb-clean` to `.git/info/attributes`. This ensures that all
+notebook files are automatically processed through nb-clean when staged for
+commit. The filter configuration is local to the repository and won't affect
+your global or system Git settings.
+
+To remove the filter, run:
 
 ```bash
 nb-clean remove-filter
@@ -241,7 +308,37 @@ To ignore or preserve specifically the metadata defined in the
 use the following options:
 `--preserve-cell-metadata collapsed scrolled deletable editable format name tags jupyter execution`.
 
-### Migrating to nb-clean 2
+## Python library usage
+
+nb-clean can be used programmatically as a Python library, allowing integration
+into other tools.
+
+```python
+import nbformat
+
+import nb_clean
+
+# Load a notebook
+with open("notebook.ipynb") as f:
+    notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
+
+# Check if the notebook is clean
+is_clean = nb_clean.check_notebook(
+    notebook, preserve_cell_outputs=True, filename="notebook.ipynb"
+)
+
+# Clean the notebook
+cleaned_notebook = nb_clean.clean_notebook(
+    notebook, remove_empty_cells=True, preserve_cell_metadata=["tags", "slideshow"]
+)
+```
+
+The library functions accept the same configuration options as the command-line
+interface. The `check_notebook()` function returns a boolean indicating whether
+the notebook is clean, whilst `clean_notebook()` returns a cleaned copy of the
+notebook.
+
+## Migrating to nb-clean 2
 
 The following table maps from the command line interface of nb-clean 1.6.0 to
 that of nb-clean >=2.0.0.
@@ -266,9 +363,11 @@ Copyright © Scott Stevenson.
 
 nb-clean is distributed under the terms of the [ISC license].
 
+[blog post]: https://srstevenson.com/posts/jupyter-notebooks-and-collaboration/
 [isc license]: https://opensource.org/licenses/ISC
 [jujutsu docs]: https://jj-vcs.github.io/jj/latest/cli-reference/#jj-fix
 [jujutsu]: https://jj-vcs.github.io/jj/
 [papermill]: https://papermill.readthedocs.io/
 [pre-commit]: https://pre-commit.com/
+[pycon talk]: https://www.youtube.com/watch?v=J3k3HkVnd2c
 [uv]: https://docs.astral.sh/uv/
