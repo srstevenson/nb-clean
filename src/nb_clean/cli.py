@@ -7,11 +7,14 @@ import os
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import NoReturn, TextIO, cast
+from typing import TYPE_CHECKING, NoReturn, TextIO, cast
 
 import nbformat
 
 import nb_clean
+
+if TYPE_CHECKING:
+    from collections.abc import Collection, Iterable, Sequence
 
 
 @dataclass
@@ -28,7 +31,7 @@ class Args(argparse.Namespace):
     preserve_notebook_metadata: bool = False
 
 
-def expand_directories(paths: list[Path]) -> list[Path]:
+def expand_directories(paths: Iterable[Path]) -> list[Path]:
     """Expand paths to directories into paths to notebooks contained within.
 
     Args:
@@ -63,7 +66,7 @@ def add_filter(
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
-    preserve_cell_metadata: list[str] | None,
+    preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     preserve_execution_counts: bool,
     preserve_notebook_metadata: bool,
@@ -106,11 +109,11 @@ def remove_filter() -> None:
 
 
 def check(
-    inputs: list[Path],
+    inputs: Iterable[Path],
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
-    preserve_cell_metadata: list[str] | None,
+    preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     preserve_execution_counts: bool,
     preserve_notebook_metadata: bool,
@@ -157,11 +160,11 @@ def check(
 
 
 def clean(
-    inputs: list[Path],
+    inputs: Iterable[Path],
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
-    preserve_cell_metadata: list[str] | None,
+    preserve_cell_metadata: Collection[str] | None,
     preserve_cell_outputs: bool,
     preserve_execution_counts: bool,
     preserve_notebook_metadata: bool,
@@ -203,7 +206,7 @@ def clean(
         nbformat.write(notebook, output)  # pyright: ignore[reportUnknownMemberType]
 
 
-def parse_args(args: list[str]) -> Args:
+def parse_args(args: Sequence[str]) -> Args:
     """Parse command line arguments and call corresponding function.
 
     Args:
