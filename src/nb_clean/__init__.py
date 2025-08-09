@@ -23,12 +23,9 @@ class GitProcessError(Exception):
     def __init__(self: Self, message: str, return_code: int) -> None:
         """Exception for errors executing Git.
 
-        Parameters
-        ----------
-        message : str
-            Error message.
-        return_code : int
-            Return code.
+        Args:
+            message: Error message.
+            return_code: Return code.
 
         """
         super().__init__(message)
@@ -37,22 +34,20 @@ class GitProcessError(Exception):
 
 
 def git(*args: str) -> str:
-    """Call a Git subcommand with arguments.
+    """Execute a Git subcommand with the provided arguments.
 
-    Parameters
-    ----------
-    *args : str
-        Git subcommand and arguments.
+    Args:
+        *args: Git subcommand and arguments to execute.
 
-    Returns
-    -------
-    str
-        Standard output from Git.
+    Returns:
+        Standard output from the Git command, stripped of whitespace.
 
-    Examples
-    --------
-    >>> git("rev-parse", "--git-dir")
-    .git
+    Raises:
+        GitProcessError: If the Git command fails with a non-zero exit code.
+
+    Examples:
+        >>> git("rev-parse", "--git-dir")
+        '.git'
 
     """
     try:
@@ -66,15 +61,12 @@ def git(*args: str) -> str:
 def git_attributes_path() -> Path:
     """Get path to the attributes file in the current Git repository.
 
-    Returns
-    -------
-    Path
+    Returns:
         Path to the attributes file.
 
-    Examples
-    --------
-    >>> git_attributes_path()
-    PosixPath('.git/info/attributes')
+    Examples:
+        >>> git_attributes_path()
+        PosixPath('.git/info/attributes')
 
     """
     git_dir = git("rev-parse", "--git-dir")
@@ -90,25 +82,27 @@ def add_git_filter(
     preserve_execution_counts: bool = False,
     preserve_notebook_metadata: bool = False,
 ) -> None:
-    """Add a filter to clean notebooks to the current Git repository.
+    """Configure and add a Git filter to automatically clean Jupyter notebooks.
 
-    Parameters
-    ----------
-    remove_empty_cells : bool, default False
-        If True, remove empty cells.
-    remove_all_notebook_metadata : bool, default False
-        If True, remove all notebook metadata.
-    preserve_cell_metadata : list of str or None, default None
-        If None, clean all cell metadata.
-        If [], preserve all cell metadata.
-        (This corresponds to the `-m` CLI option without specifying any fields.)
-        If list of str, these are the cell metadata fields to preserve.
-    preserve_cell_outputs : bool, default False
-        If True, preserve cell outputs.
-    preserve_execution_counts : bool, default False
-        If True, preserve cell execution counts.
-    preserve_notebook_metadata: bool, default False
-        If True, preserve notebook metadata such as language version.
+    This function sets up a Git filter that will automatically clean notebooks
+    when they are staged for commit, removing execution counts, outputs, and
+    metadata according to the specified options.
+
+    Args:
+        remove_empty_cells: If True, remove empty cells. Defaults to False.
+        remove_all_notebook_metadata: If True, remove all notebook metadata. Defaults to False.
+        preserve_cell_metadata: Controls cell metadata handling. If None, clean all cell metadata.
+            If [], preserve all cell metadata.
+            (This corresponds to the `-m` CLI option without specifying any fields.)
+            If list of str, these are the cell metadata fields to preserve.
+            Defaults to None.
+        preserve_cell_outputs: If True, preserve cell outputs. Defaults to False.
+        preserve_execution_counts: If True, preserve cell execution counts. Defaults to False.
+        preserve_notebook_metadata: If True, preserve notebook metadata such as language version.
+            Defaults to False.
+
+    Raises:
+        ValueError: If both preserve_notebook_metadata and remove_all_notebook_metadata are True.
 
     """
     if preserve_notebook_metadata and remove_all_notebook_metadata:
@@ -154,7 +148,15 @@ def add_git_filter(
 
 
 def remove_git_filter() -> None:
-    """Remove the nb-clean filter from the current Git repository."""
+    """Remove the nb-clean filter from the current Git repository.
+
+    This function removes the nb-clean filter configuration from the Git repository
+    and cleans up the attributes file by removing the filter directive.
+
+    Raises:
+        GitProcessError: If Git command execution fails.
+
+    """
     attributes_path = git_attributes_path()
 
     if attributes_path.is_file():
@@ -180,31 +182,23 @@ def check_notebook(
 ) -> bool:
     """Check notebook is clean of execution counts, metadata, and outputs.
 
-    Parameters
-    ----------
-    notebook : nbformat.NotebookNode
-        The notebook.
-    remove_empty_cells : bool, default False
-        If True, also check for the presence of empty cells.
-    remove_all_notebook_metadata : bool, default False
-        If True, also check for the presence of any notebook metadata.
-    preserve_cell_metadata : list of str or None, default None
-        If None, check for all cell metadata.
-        If [], don't check for any cell metadata.
-        (This corresponds to the `-m` CLI option without specifying any fields.)
-        If list of str, these are the cell metadata fields to ignore.
-    preserve_cell_outputs : bool, default False
-        If True, don't check for cell outputs.
-    preserve_execution_counts : bool, default False
-        If True, don't check for cell execution counts.
-    preserve_notebook_metadata : bool, default False
-        If True, preserve notebook metadata such as language version.
-    filename : str, default "notebook"
-        Notebook filename to use in log messages.
+    Args:
+        notebook: The notebook to check.
+        remove_empty_cells: If True, also check for the presence of empty cells. Defaults to False.
+        remove_all_notebook_metadata: If True, also check for the presence of any notebook metadata.
+            Defaults to False.
+        preserve_cell_metadata: If None, check for all cell metadata.
+            If [], don't check for any cell metadata.
+            (This corresponds to the `-m` CLI option without specifying any fields.)
+            If list of str, these are the cell metadata fields to ignore.
+            Defaults to None.
+        preserve_cell_outputs: If True, don't check for cell outputs. Defaults to False.
+        preserve_execution_counts: If True, don't check for cell execution counts. Defaults to False.
+        preserve_notebook_metadata: If True, preserve notebook metadata such as language version.
+            Defaults to False.
+        filename: Notebook filename to use in log messages. Defaults to "notebook".
 
-    Returns
-    -------
-    bool
+    Returns:
         True if the notebook is clean, False otherwise.
 
     """
@@ -271,29 +265,21 @@ def clean_notebook(
 ) -> nbformat.NotebookNode:
     """Clean notebook of execution counts, metadata, and outputs.
 
-    Parameters
-    ----------
-    notebook : nbformat.NotebookNode
-        The notebook.
-    remove_empty_cells : bool, default False
-        If True, remove empty cells.
-    remove_all_notebook_metadata : bool, default False
-        If True, remove all notebook metadata.
-    preserve_cell_metadata : list of str or None, default None
-        If None, clean all cell metadata.
-        If [], preserve all cell metadata.
-        (This corresponds to the `-m` CLI option without specifying any fields.)
-        If list of str, these are the cell metadata fields to preserve.
-    preserve_cell_outputs : bool, default False
-        If True, preserve cell outputs.
-    preserve_execution_counts : bool, default False
-        If True, preserve cell execution counts.
-    preserve_notebook_metadata : bool, default False
-        If True, preserve notebook metadata such as language version.
+    Args:
+        notebook: The notebook to clean.
+        remove_empty_cells: If True, remove empty cells. Defaults to False.
+        remove_all_notebook_metadata: If True, remove all notebook metadata. Defaults to False.
+        preserve_cell_metadata: If None, clean all cell metadata.
+            If [], preserve all cell metadata.
+            (This corresponds to the `-m` CLI option without specifying any fields.)
+            If list of str, these are the cell metadata fields to preserve.
+            Defaults to None.
+        preserve_cell_outputs: If True, preserve cell outputs. Defaults to False.
+        preserve_execution_counts: If True, preserve cell execution counts. Defaults to False.
+        preserve_notebook_metadata: If True, preserve notebook metadata such as language version.
+            Defaults to False.
 
-    Returns
-    -------
-    nbformat.NotebookNode
+    Returns:
         The cleaned notebook.
 
     """

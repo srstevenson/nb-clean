@@ -31,14 +31,10 @@ class Args(argparse.Namespace):
 def expand_directories(paths: list[Path]) -> list[Path]:
     """Expand paths to directories into paths to notebooks contained within.
 
-    Parameters
-    ----------
-    paths : list[Path]
-        Paths to expand, including directories.
+    Args:
+        paths: Paths to expand, including directories.
 
-    Returns
-    -------
-    list[Path]
+    Returns:
         Paths with directories expanded into notebooks contained within.
 
     """
@@ -54,12 +50,9 @@ def expand_directories(paths: list[Path]) -> list[Path]:
 def exit_with_error(message: str, return_code: int) -> NoReturn:
     """Print an error message to standard error and exit.
 
-    Parameters
-    ----------
-    message : str
-        Error message to print to standard error.
-    return_code : int
-        Return code with which to exit.
+    Args:
+        message: Error message to print to standard error.
+        return_code: Return code with which to exit.
 
     """
     print(f"nb-clean: error: {message}", file=sys.stderr)
@@ -77,20 +70,13 @@ def add_filter(
 ) -> None:
     """Add the nb-clean filter to the current Git repository.
 
-    Parameters
-    ----------
-    remove_empty_cells : bool
-        Configure the filter to remove empty cells.
-    remove_all_notebook_metadata : bool
-        Configure the filter to remove all notebook metadata.
-    preserve_cell_metadata : list[str] | None
-        Configure the filter to preserve cell metadata.
-    preserve_cell_outputs : bool
-        Configure the filter to preserve cell outputs.
-    preserve_execution_counts : bool
-        Configure the filter to preserve cell execution counts.
-    preserve_notebook_metadata : bool
-        Configure the filter to preserve notebook metadata such as language version.
+    Args:
+        remove_empty_cells: Configure the filter to remove empty cells.
+        remove_all_notebook_metadata: Configure the filter to remove all notebook metadata.
+        preserve_cell_metadata: Configure the filter to preserve cell metadata.
+        preserve_cell_outputs: Configure the filter to preserve cell outputs.
+        preserve_execution_counts: Configure the filter to preserve cell execution counts.
+        preserve_notebook_metadata: Configure the filter to preserve notebook metadata such as language version.
 
     """
     try:
@@ -107,7 +93,12 @@ def add_filter(
 
 
 def remove_filter() -> None:
-    """Remove the nb-clean filter from the current repository."""
+    """Remove the nb-clean filter from the current Git repository.
+
+    This function removes the nb-clean filter configuration and cleans up
+    the Git attributes file. If Git command execution fails, the program
+    will exit with an appropriate error code.
+    """
     try:
         nb_clean.remove_git_filter()
     except nb_clean.GitProcessError as exc:
@@ -126,22 +117,14 @@ def check(
 ) -> None:
     """Check notebooks are clean of execution counts, metadata, and outputs.
 
-    Parameters
-    ----------
-    inputs : list[Path]
-        Input notebook paths to check, empty list for stdin.
-    remove_empty_cells : bool
-        Check for the presence of empty cells.
-    remove_all_notebook_metadata : bool
-        Check for any notebook metadata.
-    preserve_cell_metadata : list[str] | None
-        Don't check for cell metadata.
-    preserve_cell_outputs : bool
-        Don't check for cell outputs.
-    preserve_execution_counts : bool
-        Don't check for cell execution counts.
-    preserve_notebook_metadata : bool
-        Don't check for notebook metadata such as language version.
+    Args:
+        inputs: Input notebook paths to check, empty list for stdin.
+        remove_empty_cells: Check for the presence of empty cells.
+        remove_all_notebook_metadata: Check for any notebook metadata.
+        preserve_cell_metadata: Don't check for cell metadata.
+        preserve_cell_outputs: Don't check for cell outputs.
+        preserve_execution_counts: Don't check for cell execution counts.
+        preserve_notebook_metadata: Don't check for notebook metadata such as language version.
 
     """
     if inputs:
@@ -185,22 +168,14 @@ def clean(
 ) -> None:
     """Clean notebooks of execution counts, metadata, and outputs.
 
-    Parameters
-    ----------
-    inputs : list[Path]
-        Input notebook paths to clean, empty list for stdin.
-    remove_empty_cells : bool
-        Remove empty cells.
-    remove_all_notebook_metadata : bool
-        Remove all notebook metadata.
-    preserve_cell_metadata : list[str] | None
-        Don't clean cell metadata.
-    preserve_cell_outputs : bool
-        Don't clean cell outputs.
-    preserve_execution_counts : bool
-        Don't clean cell execution counts.
-    preserve_notebook_metadata : bool
-        Don't clean notebook metadata such as language version.
+    Args:
+        inputs: Input notebook paths to clean, empty list for stdin.
+        remove_empty_cells: Remove empty cells.
+        remove_all_notebook_metadata: Remove all notebook metadata.
+        preserve_cell_metadata: Don't clean cell metadata.
+        preserve_cell_outputs: Don't clean cell outputs.
+        preserve_execution_counts: Don't clean cell execution counts.
+        preserve_notebook_metadata: Don't clean notebook metadata such as language version.
 
     """
     if inputs:
@@ -231,14 +206,10 @@ def clean(
 def parse_args(args: list[str]) -> Args:
     """Parse command line arguments and call corresponding function.
 
-    Parameters
-    ----------
-    args : list[str]
-        Command line arguments to parse.
+    Args:
+        args: Command line arguments to parse.
 
-    Returns
-    -------
-    Args
+    Returns:
         Parsed command line arguments.
 
     """
@@ -378,7 +349,11 @@ def parse_args(args: list[str]) -> Args:
 
 
 def main() -> None:  # pragma: no cover
-    """Command line entrypoint."""
+    """Command line entrypoint for nb-clean.
+
+    Parses command line arguments and dispatches to the appropriate
+    subcommand handler (version, add-filter, remove-filter, check, or clean).
+    """
     args = parse_args(sys.argv[1:])
 
     if args.subcommand == "version":
