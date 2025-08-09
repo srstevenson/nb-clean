@@ -11,7 +11,6 @@ import nbformat
 import pytest
 
 import nb_clean.cli
-from nb_clean.cli import Args
 
 if TYPE_CHECKING:
     from collections.abc import Collection, Iterable
@@ -46,14 +45,12 @@ def test_add_filter(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.add_filter."""
     mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
     nb_clean.cli.add_filter(
-        Args(
-            remove_empty_cells=True,
-            remove_all_notebook_metadata=False,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=True,
-        )
+        remove_empty_cells=True,
+        remove_all_notebook_metadata=False,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=True,
     )
     mock_add_git_filter.assert_called_once_with(
         remove_empty_cells=True,
@@ -69,14 +66,12 @@ def test_add_filter_remove_all_notebook_metadata(mocker: MockerFixture) -> None:
     """Test nb_clean.cli.add_filter with remove all notebook metadata."""
     mock_add_git_filter = mocker.patch("nb_clean.add_git_filter")
     nb_clean.cli.add_filter(
-        Args(
-            remove_empty_cells=True,
-            remove_all_notebook_metadata=True,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        remove_empty_cells=True,
+        remove_all_notebook_metadata=True,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
     mock_add_git_filter.assert_called_once_with(
         remove_empty_cells=True,
@@ -96,14 +91,12 @@ def test_add_filter_failure(mocker: MockerFixture) -> None:
     )
     mock_exit_with_error = mocker.patch("nb_clean.cli.exit_with_error")
     nb_clean.cli.add_filter(
-        Args(
-            remove_empty_cells=True,
-            remove_all_notebook_metadata=True,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        remove_empty_cells=True,
+        remove_all_notebook_metadata=True,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
     mock_exit_with_error.assert_called_once_with("error message", 42)
 
@@ -137,15 +130,13 @@ def test_check_file(
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
-        Args(
-            inputs=[Path("notebook.ipynb")],
-            remove_empty_cells=False,
-            remove_all_notebook_metadata=False,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        [Path("notebook.ipynb")],
+        remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
     mock_read.assert_called_once_with(
         Path("notebook.ipynb"), as_version=nbformat.NO_CONVERT
@@ -186,15 +177,13 @@ def test_check_stdin(
     mock_check_notebook = mocker.patch("nb_clean.check_notebook", return_value=clean)
     mock_exit = mocker.patch("nb_clean.cli.sys.exit")
     nb_clean.cli.check(
-        Args(
-            inputs=[],
-            remove_empty_cells=False,
-            remove_all_notebook_metadata=False,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        [],
+        remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
     mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
     mock_check_notebook.assert_called_once_with(
@@ -226,15 +215,13 @@ def test_clean_file(
     mock_write = mocker.patch("nb_clean.cli.nbformat.write")
 
     nb_clean.cli.clean(
-        Args(
-            inputs=[Path("notebook.ipynb")],
-            remove_empty_cells=False,
-            remove_all_notebook_metadata=False,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        [Path("notebook.ipynb")],
+        remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
 
     mock_read.assert_called_once_with(
@@ -269,15 +256,13 @@ def test_clean_stdin(
     )
 
     nb_clean.cli.clean(
-        Args(
-            inputs=[],
-            remove_empty_cells=False,
-            remove_all_notebook_metadata=False,
-            preserve_cell_metadata=None,
-            preserve_cell_outputs=False,
-            preserve_execution_counts=False,
-            preserve_notebook_metadata=False,
-        )
+        [],
+        remove_empty_cells=False,
+        remove_all_notebook_metadata=False,
+        preserve_cell_metadata=None,
+        preserve_cell_outputs=False,
+        preserve_execution_counts=False,
+        preserve_notebook_metadata=False,
     )
 
     mock_read.assert_called_once_with(sys.stdin, as_version=nbformat.NO_CONVERT)
@@ -296,7 +281,6 @@ def test_clean_stdin(
 @pytest.mark.parametrize(
     (
         "argv",
-        "function",
         "inputs",
         "remove_empty_cells",
         "remove_all_notebook_metadata",
@@ -306,10 +290,9 @@ def test_clean_stdin(
         "preserve_notebook_metadata",
     ),
     [
-        ("add-filter -e", "add_filter", [], True, False, None, False, False, False),
+        ("add-filter -e", [], True, False, None, False, False, False),
         (
             "check -m -o a.ipynb b.ipynb",
-            "check",
             "a.ipynb b.ipynb".split(),
             False,
             False,
@@ -320,7 +303,6 @@ def test_clean_stdin(
         ),
         (
             "check -m tags -o a.ipynb b.ipynb",
-            "check",
             "a.ipynb b.ipynb".split(),
             False,
             False,
@@ -331,7 +313,6 @@ def test_clean_stdin(
         ),
         (
             "check -m tags special -o a.ipynb b.ipynb",
-            "check",
             "a.ipynb b.ipynb".split(),
             False,
             False,
@@ -340,33 +321,12 @@ def test_clean_stdin(
             False,
             False,
         ),
-        (
-            "clean -e -o a.ipynb",
-            "clean",
-            ["a.ipynb"],
-            True,
-            False,
-            None,
-            True,
-            False,
-            False,
-        ),
-        (
-            "clean -e -c -o a.ipynb",
-            "clean",
-            ["a.ipynb"],
-            True,
-            False,
-            None,
-            True,
-            True,
-            False,
-        ),
+        ("clean -e -o a.ipynb", ["a.ipynb"], True, False, None, True, False, False),
+        ("clean -e -c -o a.ipynb", ["a.ipynb"], True, False, None, True, True, False),
     ],
 )
 def test_parse_args(
     argv: str,
-    function: str,
     inputs: Iterable[str],
     *,
     remove_empty_cells: bool,
@@ -378,7 +338,6 @@ def test_parse_args(
 ) -> None:
     """Test nb_clean.cli.parse_args."""
     args = nb_clean.cli.parse_args(argv.split())
-    assert args.func == getattr(nb_clean.cli, function)
     if inputs:
         assert args.inputs == [Path(path) for path in inputs]
     assert args.remove_empty_cells is remove_empty_cells
