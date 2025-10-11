@@ -9,7 +9,7 @@ NOTEBOOKS_DIR: Final = Path(__file__).parent / "notebooks"
 
 def _read_notebook(filename: str) -> nbformat.NotebookNode:
     return cast(
-        nbformat.NotebookNode,
+        "nbformat.NotebookNode",
         nbformat.read(NOTEBOOKS_DIR / filename, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
     )
 

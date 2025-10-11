@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-import nbformat
 import pytest
 
 import nb_clean
 
 if TYPE_CHECKING:
     from collections.abc import Collection
+
+    import nbformat
 
 
 @pytest.mark.parametrize(
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 def test_check_notebook(
     notebook_name: str, *, is_clean: bool, request: pytest.FixtureRequest
 ) -> None:
-    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
+    notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     assert nb_clean.check_notebook(notebook) is is_clean
 
 
@@ -141,7 +142,7 @@ def test_check_notebook_preserve_outputs(
     is_clean: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
+    notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_cell_outputs=preserve_cell_outputs
     )
@@ -162,7 +163,7 @@ def test_check_notebook_preserve_execution_counts(
     is_clean: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
+    notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     output = nb_clean.check_notebook(
         notebook, preserve_execution_counts=preserve_execution_counts
     )
@@ -190,7 +191,7 @@ def test_check_notebook_remove_all_notebook_metadata(
     # The test with `("clean_notebook_with_notebook_metadata", False, True)`
     # is False due to `clean_notebook_with_notebook_metadata` containing
     # `language_info.version` detected when `preserve_notebook_metadata=False`.
-    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
+    notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     assert (
         nb_clean.check_notebook(
             notebook, remove_all_notebook_metadata=remove_all_notebook_metadata
