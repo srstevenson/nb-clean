@@ -137,10 +137,10 @@ def check(
 
     all_clean = True
     for input_ in processed_inputs:
-        name = "stdin" if input_ is sys.stdin else os.fspath(cast(Path, input_))
+        name = "stdin" if input_ is sys.stdin else os.fspath(cast("Path", input_))
 
         notebook = cast(
-            nbformat.NotebookNode,
+            "nbformat.NotebookNode",
             nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
         )
         is_clean = nb_clean.check_notebook(
@@ -188,9 +188,9 @@ def clean(
         processed_inputs = [sys.stdin]
         outputs = [sys.stdout]
 
-    for input_, output in zip(processed_inputs, outputs):
+    for input_, output in zip(processed_inputs, outputs, strict=True):
         notebook = cast(
-            nbformat.NotebookNode,
+            "nbformat.NotebookNode",
             nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
         )
 

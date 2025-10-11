@@ -240,7 +240,7 @@ def check_notebook(
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    if remove_all_notebook_metadata and cast(dict[str, Any], notebook.metadata):  # pyright: ignore[reportExplicitAny]
+    if remove_all_notebook_metadata and cast("dict[str, Any]", notebook.metadata):  # pyright: ignore[reportExplicitAny]
         print(f"{filename}: metadata")
         is_clean = False
 

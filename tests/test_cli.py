@@ -156,9 +156,9 @@ def test_check_stdin(
     expect_exit: bool,
     request: pytest.FixtureRequest,
 ) -> None:
-    notebook = cast(nbformat.NotebookNode, request.getfixturevalue(notebook_name))
+    notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     monkeypatch.setattr(sys, "argv", ["nb-clean", "check"])
-    content = cast(str, nbformat.writes(notebook))  # pyright: ignore[reportUnknownMemberType]
+    content = cast("str", nbformat.writes(notebook))  # pyright: ignore[reportUnknownMemberType]
     monkeypatch.setattr(sys, "stdin", io.StringIO(content))
     if expect_exit:
         with pytest.raises(SystemExit) as exc:
@@ -177,11 +177,11 @@ def test_clean_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     nb_clean.cli.main()
 
     cleaned = cast(
-        nbformat.NotebookNode,
+        "nbformat.NotebookNode",
         nbformat.read(dst_dirty, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
     )
     expected = cast(
-        nbformat.NotebookNode,
+        "nbformat.NotebookNode",
         nbformat.read(  # pyright: ignore[reportUnknownMemberType]
             Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
         ),
@@ -193,26 +193,26 @@ def test_clean_stdin(
     capsys: CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     dirty = cast(
-        nbformat.NotebookNode,
+        "nbformat.NotebookNode",
         nbformat.read(  # pyright: ignore[reportUnknownMemberType]
             Path("tests/notebooks/dirty.ipynb"), as_version=nbformat.NO_CONVERT
         ),
     )
     expected = cast(
-        nbformat.NotebookNode,
+        "nbformat.NotebookNode",
         nbformat.read(  # pyright: ignore[reportUnknownMemberType]
             Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
         ),
     )
 
     monkeypatch.setattr(sys, "argv", ["nb-clean", "clean"])
-    dirty_content = cast(str, nbformat.writes(dirty))  # pyright: ignore[reportUnknownMemberType]
+    dirty_content = cast("str", nbformat.writes(dirty))  # pyright: ignore[reportUnknownMemberType]
     monkeypatch.setattr(sys, "stdin", io.StringIO(dirty_content))
 
     nb_clean.cli.main()
 
     out = capsys.readouterr().out
-    expected_text = cast(str, nbformat.writes(expected))  # pyright: ignore[reportUnknownMemberType]
+    expected_text = cast("str", nbformat.writes(expected))  # pyright: ignore[reportUnknownMemberType]
     assert out.strip() == expected_text.strip()
 
 
@@ -231,7 +231,7 @@ def test_clean_stdin(
         ("add-filter -e", [], True, False, None, False, False, False),
         (
             "check -m -o a.ipynb b.ipynb",
-            "a.ipynb b.ipynb".split(),
+            ["a.ipynb", "b.ipynb"],
             False,
             False,
             [],
@@ -241,7 +241,7 @@ def test_clean_stdin(
         ),
         (
             "check -m tags -o a.ipynb b.ipynb",
-            "a.ipynb b.ipynb".split(),
+            ["a.ipynb", "b.ipynb"],
             False,
             False,
             ["tags"],
@@ -251,7 +251,7 @@ def test_clean_stdin(
         ),
         (
             "check -m tags special -o a.ipynb b.ipynb",
-            "a.ipynb b.ipynb".split(),
+            ["a.ipynb", "b.ipynb"],
             False,
             False,
             ["tags", "special"],

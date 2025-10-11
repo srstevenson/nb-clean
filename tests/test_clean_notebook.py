@@ -25,7 +25,7 @@ def test_clean_notebook_with_notebook_metadata(
     request: pytest.FixtureRequest,
 ) -> None:
     expected_output = cast(
-        nbformat.NotebookNode, request.getfixturevalue(expected_output_name)
+        "nbformat.NotebookNode", request.getfixturevalue(expected_output_name)
     )
     assert (
         nb_clean.clean_notebook(
