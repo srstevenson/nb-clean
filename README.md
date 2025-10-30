@@ -367,7 +367,6 @@ nb-clean is distributed under the terms of the [ISC license].
 [isc license]: https://opensource.org/licenses/ISC
 [jujutsu docs]: https://jj-vcs.github.io/jj/latest/cli-reference/#jj-fix
 [jujutsu]: https://jj-vcs.github.io/jj/
-[papermill]: https://papermill.readthedocs.io/
 [pre-commit]: https://pre-commit.com/
 [pycon talk]: https://www.youtube.com/watch?v=J3k3HkVnd2c
 [uv]: https://docs.astral.sh/uv/
