@@ -8,7 +8,7 @@ on:
 jobs:
   checks:
     name: Run checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     strategy:
       matrix:
         python:
