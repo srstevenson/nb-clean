@@ -39,7 +39,6 @@ def expand_directories(paths: Iterable[Path]) -> list[Path]:
 
     Returns:
         Paths with directories expanded into notebooks contained within.
-
     """
     expanded: set[Path] = set()
     for path in paths:
@@ -56,7 +55,6 @@ def exit_with_error(message: str, return_code: int) -> NoReturn:
     Args:
         message: Error message to print to standard error.
         return_code: Return code with which to exit.
-
     """
     print(f"nb-clean: error: {message}", file=sys.stderr)
     sys.exit(return_code)
@@ -80,7 +78,6 @@ def add_filter(
         preserve_cell_outputs: Configure the filter to preserve cell outputs.
         preserve_execution_counts: Configure the filter to preserve cell execution counts.
         preserve_notebook_metadata: Configure the filter to preserve notebook metadata such as language version.
-
     """
     try:
         nb_clean.add_git_filter(
@@ -128,7 +125,6 @@ def check(
         preserve_cell_outputs: Don't check for cell outputs.
         preserve_execution_counts: Don't check for cell execution counts.
         preserve_notebook_metadata: Don't check for notebook metadata such as language version.
-
     """
     if inputs:
         processed_inputs: list[Path] | list[TextIO] = expand_directories(inputs)
@@ -179,7 +175,6 @@ def clean(
         preserve_cell_outputs: Don't clean cell outputs.
         preserve_execution_counts: Don't clean cell execution counts.
         preserve_notebook_metadata: Don't clean notebook metadata such as language version.
-
     """
     if inputs:
         processed_inputs: list[Path] | list[TextIO] = expand_directories(inputs)
@@ -214,7 +209,6 @@ def parse_args(args: Sequence[str]) -> Args:
 
     Returns:
         Parsed command line arguments.
-
     """
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="subcommand", required=True)
