@@ -56,8 +56,6 @@ select = ["ALL"]
 ignore = [
   "C901",
   "COM812",
-  "D203",
-  "D213",
   "E501",
   "INP001",
   "ISC001",
@@ -76,3 +74,6 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**.py" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

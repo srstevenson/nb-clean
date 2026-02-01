@@ -26,7 +26,6 @@ class GitProcessError(Exception):
         Args:
             message: Error message.
             return_code: Return code.
-
         """
         super().__init__(message)
         self.message: str = message
@@ -48,7 +47,6 @@ def git(*args: str) -> str:
     Examples:
         >>> git("rev-parse", "--git-dir")
         '.git'
-
     """
     try:
         process = subprocess.run(["git", *list(args)], capture_output=True, check=True)
@@ -67,7 +65,6 @@ def git_attributes_path() -> Path:
     Examples:
         >>> git_attributes_path()
         PosixPath('.git/info/attributes')
-
     """
     git_dir = git("rev-parse", "--git-dir")
     return Path(git_dir, "info", "attributes")
@@ -103,7 +100,6 @@ def add_git_filter(
 
     Raises:
         ValueError: If both preserve_notebook_metadata and remove_all_notebook_metadata are True.
-
     """
     if preserve_notebook_metadata and remove_all_notebook_metadata:
         msg = "`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`"
@@ -155,7 +151,6 @@ def remove_git_filter() -> None:
 
     Raises:
         GitProcessError: If Git command execution fails.
-
     """
     attributes_path = git_attributes_path()
 
@@ -200,7 +195,6 @@ def check_notebook(
 
     Returns:
         True if the notebook is clean, False otherwise.
-
     """
     if preserve_notebook_metadata and remove_all_notebook_metadata:
         msg = "`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`"
@@ -281,7 +275,6 @@ def clean_notebook(
 
     Returns:
         The cleaned notebook.
-
     """
     if preserve_notebook_metadata and remove_all_notebook_metadata:
         msg = "`preserve_notebook_metadata` and `remove_all_notebook_metadata` cannot both be `True`"
