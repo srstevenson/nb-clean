@@ -54,26 +54,29 @@ skip-magic-trailing-comma = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "C901",
-  "COM812",
-  "E501",
-  "INP001",
-  "ISC001",
-  "PLR0912",
-  "PLR0913",
-  "PLR2004",
-  "RET504",
-  "S101",
-  "S603",
-  "S607",
-  "T201",
+  "COM812",  # Trailing comma missing
+  "C901",    # Function is too complex
+  "E501",    # Line too long
+  "PLR0912", # Too many branches
+  "PLR0913", # Too many arguments in function definition
+  "PLR2004", # Magic value used in comparison
+  "S603",    # subprocess call: check for execution of untrusted input
+  "S607",    # Starting a process with a partial executable path
+  "T201",    # print found
 ]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**.py" = ["D"]
+"tests/**.py" = [
+  "D",      # pydocstyle
+  "INP001", # Implicit namespace package
+  "S101",   # Magic value used in comparison
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
