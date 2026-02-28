@@ -51,7 +51,7 @@ def git(*args: str) -> str:
     try:
         process = subprocess.run(["git", *list(args)], capture_output=True, check=True)
     except subprocess.CalledProcessError as exc:
-        raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc  # pyright: ignore[reportAny]
+        raise GitProcessError(exc.stderr.decode(), exc.returncode) from exc
 
     return process.stdout.decode().strip()
 
@@ -202,7 +202,7 @@ def check_notebook(
 
     is_clean = True
 
-    for index, cell in enumerate(notebook.cells):  # pyright: ignore[reportAny]
+    for index, cell in enumerate(notebook.cells):
         prefix = f"{filename} cell {index}"
 
         if remove_empty_cells and not cell["source"]:
@@ -214,7 +214,7 @@ def check_notebook(
                 print(f"{prefix}: metadata")
                 is_clean = False
         elif len(preserve_cell_metadata) > 0:
-            for field in cell["metadata"]:  # pyright: ignore[reportAny]
+            for field in cell["metadata"]:
                 if field not in preserve_cell_metadata:
                     print(f"{prefix}: metadata {field}")
                     is_clean = False
@@ -226,15 +226,15 @@ def check_notebook(
 
             if preserve_cell_outputs:
                 if not preserve_execution_counts:
-                    for output in cell["outputs"]:  # pyright: ignore[reportAny]
-                        if output.get("execution_count") is not None:  # pyright: ignore[reportAny]
+                    for output in cell["outputs"]:
+                        if output.get("execution_count") is not None:
                             print(f"{prefix}: output execution count")
                             is_clean = False
             elif cell["outputs"]:
                 print(f"{prefix}: outputs")
                 is_clean = False
 
-    if remove_all_notebook_metadata and cast("dict[str, Any]", notebook.metadata):  # pyright: ignore[reportExplicitAny]
+    if remove_all_notebook_metadata and cast("dict[str, Any]", notebook.metadata):
         print(f"{filename}: metadata")
         is_clean = False
 
@@ -281,15 +281,15 @@ def clean_notebook(
         raise ValueError(msg)
 
     if remove_empty_cells:
-        notebook.cells = [cell for cell in notebook.cells if cell["source"]]  # pyright: ignore[reportAny]
+        notebook.cells = [cell for cell in notebook.cells if cell["source"]]
 
-    for cell in notebook.cells:  # pyright: ignore[reportAny]
+    for cell in notebook.cells:
         if preserve_cell_metadata is None:
             cell["metadata"] = {}
         elif len(preserve_cell_metadata) > 0:
             cell["metadata"] = {
                 field: value
-                for field, value in cell["metadata"].items()  # pyright: ignore[reportAny]
+                for field, value in cell["metadata"].items()
                 if field in preserve_cell_metadata
             }
         if cell["cell_type"] == "code":
@@ -297,7 +297,7 @@ def clean_notebook(
                 cell["execution_count"] = None
             if preserve_cell_outputs:
                 if not preserve_execution_counts:
-                    for output in cell["outputs"]:  # pyright: ignore[reportAny]
+                    for output in cell["outputs"]:
                         if "execution_count" in output:
                             output["execution_count"] = None
             else:

@@ -25,11 +25,11 @@ nb-clean = "nb_clean.cli:main"
 
 [dependency-groups]
 dev = [
-  "basedpyright>=1.31.1",
   "coverage>=7.6.10",
   "pytest>=7.2.1",
   "pytest-mock>=3.11.1",
   "ruff>=0.1.6",
+  "ty>=0.0.19",
   "typing-extensions>=4.14.1",
 ]
 
@@ -39,10 +39,6 @@ build-backend = "uv_build"
 
 [tool.coverage.report]
 exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
-
-[tool.basedpyright]
-typeCheckingMode = "recommended"
-reportUnusedCallResult = false
 
 [tool.ruff]
 target-version = "py310"
@@ -80,3 +76,6 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ty.rules]
+all = "error"

@@ -137,7 +137,7 @@ def check(
 
         notebook = cast(
             "nbformat.NotebookNode",
-            nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
+            nbformat.read(input_, as_version=nbformat.NO_CONVERT),
         )
         is_clean = nb_clean.check_notebook(
             notebook,
@@ -186,7 +186,7 @@ def clean(
     for input_, output in zip(processed_inputs, outputs, strict=True):
         notebook = cast(
             "nbformat.NotebookNode",
-            nbformat.read(input_, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
+            nbformat.read(input_, as_version=nbformat.NO_CONVERT),
         )
 
         notebook = nb_clean.clean_notebook(
@@ -198,7 +198,7 @@ def clean(
             preserve_execution_counts=preserve_execution_counts,
             preserve_notebook_metadata=preserve_notebook_metadata,
         )
-        nbformat.write(notebook, output)  # pyright: ignore[reportUnknownMemberType]
+        nbformat.write(notebook, output)
 
 
 def parse_args(args: Sequence[str]) -> Args:

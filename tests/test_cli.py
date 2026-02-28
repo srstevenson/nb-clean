@@ -158,7 +158,7 @@ def test_check_stdin(
 ) -> None:
     notebook = cast("nbformat.NotebookNode", request.getfixturevalue(notebook_name))
     monkeypatch.setattr(sys, "argv", ["nb-clean", "check"])
-    content = cast("str", nbformat.writes(notebook))  # pyright: ignore[reportUnknownMemberType]
+    content = cast("str", nbformat.writes(notebook))
     monkeypatch.setattr(sys, "stdin", io.StringIO(content))
     if expect_exit:
         with pytest.raises(SystemExit) as exc:
@@ -178,11 +178,11 @@ def test_clean_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
 
     cleaned = cast(
         "nbformat.NotebookNode",
-        nbformat.read(dst_dirty, as_version=nbformat.NO_CONVERT),  # pyright: ignore[reportUnknownMemberType]
+        nbformat.read(dst_dirty, as_version=nbformat.NO_CONVERT),
     )
     expected = cast(
         "nbformat.NotebookNode",
-        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+        nbformat.read(
             Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
         ),
     )
@@ -194,25 +194,25 @@ def test_clean_stdin(
 ) -> None:
     dirty = cast(
         "nbformat.NotebookNode",
-        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+        nbformat.read(
             Path("tests/notebooks/dirty.ipynb"), as_version=nbformat.NO_CONVERT
         ),
     )
     expected = cast(
         "nbformat.NotebookNode",
-        nbformat.read(  # pyright: ignore[reportUnknownMemberType]
+        nbformat.read(
             Path("tests/notebooks/clean.ipynb"), as_version=nbformat.NO_CONVERT
         ),
     )
 
     monkeypatch.setattr(sys, "argv", ["nb-clean", "clean"])
-    dirty_content = cast("str", nbformat.writes(dirty))  # pyright: ignore[reportUnknownMemberType]
+    dirty_content = cast("str", nbformat.writes(dirty))
     monkeypatch.setattr(sys, "stdin", io.StringIO(dirty_content))
 
     nb_clean.cli.main()
 
     out = capsys.readouterr().out
-    expected_text = cast("str", nbformat.writes(expected))  # pyright: ignore[reportUnknownMemberType]
+    expected_text = cast("str", nbformat.writes(expected))
     assert out.strip() == expected_text.strip()
 
 
