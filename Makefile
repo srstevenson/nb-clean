@@ -14,13 +14,13 @@ fmt:
 .PHONY: lint
 lint:
 	uv run ruff check --fix
-	uv run basedpyright
+	uv run ty check
 
 .PHONY: check
 check:
 	uv run ruff format --check
 	uv run ruff check
-	uv run basedpyright
+	uv run ty check
 
 .PHONY: test
 test:
@@ -31,9 +31,9 @@ test:
 help:
 	@echo "Available commands:"
 	@echo "  make help     - Show this help message (default)"
-	@echo "  make all      - Format (ruff), lint (ruff, basedpyright), and test (pytest)"
+	@echo "  make all      - Format (ruff), lint (ruff, ty), and test (pytest)"
 	@echo "  make install  - Install dependencies with uv"
 	@echo "  make fmt      - Format code with ruff"
-	@echo "  make lint     - Lint with ruff (--fix) and type-check with basedpyright"
-	@echo "  make check    - Check formatting (ruff), lint (ruff), and types (basedpyright)"
+	@echo "  make lint     - Lint with ruff (--fix) and type-check with ty"
+	@echo "  make check    - Check formatting (ruff), lint (ruff), and types (ty)"
 	@echo "  make test     - Run tests with pytest and report coverage"
