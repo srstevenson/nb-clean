@@ -1,6 +1,6 @@
 use std::fmt;
 
-use serde_json::{Value, ser::PrettyFormatter};
+use serde_json::{Value, ser::PrettyFormatter, value::RawValue};
 
 use crate::cli::Options;
 
@@ -37,7 +37,14 @@ const TRANSIENT_METADATA: [&str; 3] = ["orig_nbformat", "orig_nbformat_minor", "
 
 impl Notebook {
     pub fn parse(bytes: &[u8]) -> Result<Self, String> {
-        let value: Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        let json = std::str::from_utf8(bytes).map_err(|e| e.to_string())?;
+        // Unicode escapes can spell a private key, so these also need explicit object parsing.
+        let value = if json.contains("$serde_json::private::") || json.contains("\\u") {
+            let raw: &RawValue = serde_json::from_str(json).map_err(|e| e.to_string())?;
+            json_value(raw, 0)?
+        } else {
+            serde_json::from_str(json).map_err(|e| e.to_string())?
+        };
         validate(&value)?;
         Ok(Self(value))
     }
@@ -142,6 +149,34 @@ impl Notebook {
     }
 }
 
+// Parse objects explicitly so serde_json's private number key remains ordinary data.
+fn json_value(raw: &RawValue, depth: usize) -> Result<Value, String> {
+    if depth >= 128 {
+        return Err("JSON nesting limit exceeded".into());
+    }
+    let json = raw.get();
+    match json.as_bytes()[0] {
+        b'{' => {
+            let fields: std::collections::BTreeMap<String, &RawValue> =
+                serde_json::from_str(json).map_err(|e| e.to_string())?;
+            fields
+                .into_iter()
+                .map(|(key, raw)| Ok((key, json_value(raw, depth + 1)?)))
+                .collect::<Result<_, String>>()
+                .map(Value::Object)
+        }
+        b'[' => {
+            let items: Vec<&RawValue> = serde_json::from_str(json).map_err(|e| e.to_string())?;
+            items
+                .into_iter()
+                .map(|raw| json_value(raw, depth + 1))
+                .collect::<Result<_, _>>()
+                .map(Value::Array)
+        }
+        _ => serde_json::from_str(json).map_err(|e| e.to_string()),
+    }
+}
+
 fn validate(value: &Value) -> Result<(), String> {
     if !value.is_object() {
         return Err("notebook must be an object".into());
@@ -215,6 +250,48 @@ mod tests {
 
     fn fixture(name: &str) -> Notebook {
         Notebook::parse(&std::fs::read(format!("tests/notebooks/{name}.ipynb")).unwrap()).unwrap()
+    }
+
+    #[test]
+    fn private_serde_keys_remain_objects() {
+        for key in [
+            "$serde_json::private::Number",
+            "$serde_json::private::RawValue",
+        ] {
+            for value in ["123", "text"] {
+                let input = format!(
+                    r#"{{"nbformat":4,"nbformat_minor":5,"metadata":{{"signature":"dirty"}},"cells":[],"extension":{{"{key}":"{value}","other":true}}}}"#
+                );
+                let mut notebook = Notebook::parse(input.as_bytes()).unwrap();
+                notebook.clean(&notebook.changes(&Options::default()));
+                assert_eq!(notebook.0["extension"][key], value);
+                assert_eq!(notebook.0["extension"]["other"], true);
+                let output = notebook.to_bytes().unwrap();
+                let reparsed = Notebook::parse(&output).unwrap();
+                assert_eq!(reparsed.0["extension"], notebook.0["extension"]);
+                assert!(
+                    !reparsed.0["metadata"]
+                        .as_object()
+                        .unwrap()
+                        .contains_key("signature")
+                );
+            }
+        }
+        let escaped = br#"{"nbformat":4,"nbformat_minor":5,"metadata":{},"cells":[],"extension":[{"\u0024serde_json::private::Number":"123"}]}"#;
+        let notebook = Notebook::parse(escaped).unwrap();
+        assert_eq!(
+            notebook.0["extension"][0]["$serde_json::private::Number"],
+            "123"
+        );
+    }
+
+    #[test]
+    fn excessive_json_nesting_is_rejected() {
+        let input = format!("{}\"\\u0024\"{}", "[".repeat(128), "]".repeat(128));
+        assert_eq!(
+            Notebook::parse(input.as_bytes()).err().unwrap(),
+            "JSON nesting limit exceeded"
+        );
     }
 
     #[test]
