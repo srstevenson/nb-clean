@@ -106,7 +106,7 @@ def remove_filter() -> None:
 
 
 def check(
-    inputs: Iterable[Path],
+    inputs: Collection[Path],
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
@@ -156,7 +156,7 @@ def check(
 
 
 def clean(
-    inputs: Iterable[Path],
+    inputs: Collection[Path],
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,

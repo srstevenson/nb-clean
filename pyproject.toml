@@ -6,7 +6,7 @@ authors = [{ name = "Scott Stevenson", email = "scott@stevenson.io" }]
 readme = "README.md"
 license = "ISC"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["jupyter", "notebook", "clean", "filter", "git"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -30,7 +30,6 @@ dev = [
   "pytest-mock>=3.11.1",
   "ruff>=0.1.6",
   "ty>=0.0.19",
-  "typing-extensions>=4.14.1",
 ]
 
 [build-system]
@@ -41,7 +40,7 @@ build-backend = "uv_build"
 exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -50,8 +49,9 @@ skip-magic-trailing-comma = true
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "COM812",  # Trailing comma missing
   "C901",    # Function is too complex
+  "COM812",  # Trailing comma missing
+  "CPY001",  # Missing copyright notice
   "E501",    # Line too long
   "PLR0912", # Too many branches
   "PLR0913", # Too many arguments in function definition
