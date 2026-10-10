@@ -9,6 +9,10 @@ permissions:
   contents: read
 
 jobs:
+  wheels:
+    name: Verify wheels
+    uses: ./.github/workflows/wheels.yml
+
   checks:
     name: Check Rust
     runs-on: ubuntu-22.04

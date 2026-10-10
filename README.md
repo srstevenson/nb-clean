@@ -10,6 +10,23 @@ notebooks in CI, clean files in place, or run as a Git filter or pre-commit hook
 
 ## Installation
 
+Install a published release from PyPI with uv:
+
+```sh
+uv tool install nb-clean
+```
+
+For a single invocation:
+
+```sh
+uvx nb-clean check notebooks/
+```
+
+Wheels contain the native executable and require Python 3.10 or later for
+installation. They are built for macOS and Linux on ARM64 and x86-64, and Windows
+on x86-64. Linux wheels require glibc 2.17 or later. Use Cargo or binary archives
+on other platforms.
+
 Install a published release from crates.io with Cargo:
 
 ```sh
@@ -166,8 +183,9 @@ check findings go to stdout.
 
 ## Migrating from nb-clean 4
 
-nb-clean 5 is a Rust CLI. The Python library API is removed.
-PyPI publishing is not yet configured; use Cargo or binary archives for releases.
+nb-clean 5 is a Rust CLI. PyPI wheels install the native executable; the Python
+library API is removed. The installed command supports Git filters and
+pre-commit as before.
 
 Use `nb-clean --version` instead of `nb-clean version`. To preserve selected
 metadata, replace `--preserve-cell-metadata tags slideshow --` with

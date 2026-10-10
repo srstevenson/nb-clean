@@ -52,6 +52,18 @@ environment with `uv pip install --python /path/to/venv/bin/python /path/to/nb_c
 and put that environment's scripts directory on `PATH`. On Windows, the directory
 is `Scripts` instead of `bin`.
 
+Run the same installation and CLI checks used in CI with Python 3.10 or later:
+
+```sh
+python3 tests/test_wheel.py dist
+```
+
+The directory must contain exactly one wheel for the current platform. The
+script creates a temporary environment, installs the wheel without accessing
+an index, and checks notebook cleaning, exit statuses, and Git staging.
+
+CI runs these wheel checks on Linux, macOS, and Windows.
+
 ## Releases
 
 Maintainer setup and publishing instructions are in [Releasing](RELEASING.md).
