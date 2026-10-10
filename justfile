@@ -1,19 +1,20 @@
-# show this help message (default)
+# show available recipes
 help:
     @just -l
 
-# format with ruff
+# format Rust code
 fmt:
-    uv run ruff check --fix
-    uv run ruff format
+    cargo fmt
 
-# lint with ruff and type-check with ty
+# check formatting and lint Rust code
 lint:
-    uv run ruff check
-    uv run ruff format --check
-    uv run ty check
+    cargo fmt --check
+    cargo clippy --all-targets --locked -- -D warnings
 
-# run tests with pytest and report coverage
+# run unit and integration tests
 test:
-    uv run coverage run -m pytest
-    uv run coverage report
+    cargo test --locked
+
+# build the release binary
+build:
+    cargo build --release --locked

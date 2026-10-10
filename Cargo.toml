@@ -10,7 +10,16 @@ repository = "https://github.com/srstevenson/nb-clean"
 authors = ["Scott Stevenson <scott@stevenson.io>"]
 keywords = ["jupyter", "notebook", "clean", "git"]
 categories = ["command-line-utilities", "development-tools"]
-include = ["src/**/*.rs", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE"]
+include = [
+  "/src/**/*.rs",
+  "/tests/**/*.rs",
+  "/tests/notebooks/*.ipynb",
+  "/Cargo.toml",
+  "/Cargo.lock",
+  "/README.md",
+  "/LICENSE",
+  "/images/nb-clean.png",
+]
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }

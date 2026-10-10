@@ -1,0 +1,82 @@
+name: Prepare release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+          - os: macos-15
+            target: aarch64-apple-darwin
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+          - os: windows-2022
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Check tag matches crate version
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "nb-clean") | .version')
+          test "$GITHUB_REF_NAME" = "v$version"
+      - run: cargo test --locked --target ${{ matrix.target }}
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Create archive
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          mkdir -p dist
+          executable=nb-clean
+          if [[ "$TARGET" == *windows* ]]; then
+            executable=nb-clean.exe
+          fi
+          cp "target/$TARGET/release/$executable" dist/
+          cp LICENSE dist/
+          if [[ "$TARGET" == *windows* ]]; then
+            7z a "nb-clean-$GITHUB_REF_NAME-$TARGET.zip" ./dist/*
+          else
+            tar -czf "nb-clean-$GITHUB_REF_NAME-$TARGET.tar.gz" -C dist "$executable" LICENSE
+          fi
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ${{ matrix.target }}
+          path: nb-clean-v*.*
+          if-no-files-found: error
+
+  draft:
+    name: Create draft release
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Add checksums and draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        working-directory: assets
+        run: |
+          sha256sum nb-clean-* > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" --draft --verify-tag --title "nb-clean $GITHUB_REF_NAME" --generate-notes ./*
