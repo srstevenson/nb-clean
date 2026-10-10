@@ -23,7 +23,7 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
                 match entry {
                     Ok(entry)
                         if entry.path().extension().is_some_and(|ext| ext == "ipynb")
-                            && !entry.file_type().is_dir() =>
+                            && !entry.path().is_dir() =>
                     {
                         candidates.push((entry.into_path(), None));
                     }

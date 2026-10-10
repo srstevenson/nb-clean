@@ -274,6 +274,17 @@ mod tests {
     }
 
     #[test]
+    fn default_output_matches_nbformat() {
+        let mut notebook = fixture("dirty");
+        notebook.clean(&notebook.changes(&Options::default()));
+        // Checked against nbformat 5.10.4's writer.
+        assert_eq!(
+            notebook.to_bytes().unwrap(),
+            std::fs::read("tests/notebooks/clean.ipynb").unwrap()
+        );
+    }
+
+    #[test]
     fn empty_cells() {
         let options = Options {
             remove_empty_cells: true,
