@@ -5,7 +5,7 @@ mod git;
 mod notebook;
 
 use std::{
-    io::{self, Read, Write},
+    io::{self, BufWriter, Read, Write},
     process::ExitCode,
 };
 
@@ -39,7 +39,7 @@ fn main() -> ExitCode {
 }
 
 fn process(inputs: Inputs, clean: bool) -> Result<u8, Error> {
-    let mut stdout = io::stdout().lock();
+    let mut stdout = BufWriter::new(io::stdout().lock());
     if inputs.paths.is_empty() {
         let mut bytes = Vec::new();
         io::stdin()

@@ -19,7 +19,7 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
     let mut candidates = Vec::new();
     for path in paths {
         if path.is_dir() {
-            for entry in WalkDir::new(path).sort_by_file_name() {
+            for entry in WalkDir::new(path) {
                 match entry {
                     Ok(entry)
                         if entry.path().extension().is_some_and(|ext| ext == "ipynb")
