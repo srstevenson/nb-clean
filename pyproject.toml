@@ -1,0 +1,23 @@
+[build-system]
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
+[project]
+name = "nb-clean"
+dynamic = ["version"]
+description = "Clean Jupyter notebooks for versioning"
+authors = [{ name = "Scott Stevenson", email = "scott@stevenson.io" }]
+readme = "README.md"
+license = "ISC"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+
+[project.urls]
+Homepage = "https://github.com/srstevenson/nb-clean"
+Repository = "https://github.com/srstevenson/nb-clean"
+Issues = "https://github.com/srstevenson/nb-clean/issues"
+
+[tool.maturin]
+bindings = "bin"
+locked = true
+strip = true

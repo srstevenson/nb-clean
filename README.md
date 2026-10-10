@@ -166,8 +166,8 @@ check findings go to stdout.
 
 ## Migrating from nb-clean 4
 
-nb-clean 5 is a Rust CLI. The Python library API is removed. PyPI and `uvx`
-distribution are deferred; use Cargo or binary archives for this release.
+nb-clean 5 is a Rust CLI. The Python library API is removed.
+PyPI publishing is not yet configured; use Cargo or binary archives for releases.
 
 Use `nb-clean --version` instead of `nb-clean version`. To preserve selected
 metadata, replace `--preserve-cell-metadata tags slideshow --` with
@@ -182,6 +182,8 @@ versions are rejected.
 ## Development
 
 See [the contribution instructions](.github/CONTRIBUTING.md).
+Instructions for building and testing local wheels are in
+[Local Python wheels](.github/CONTRIBUTING.md#local-python-wheels).
 
 ## Copyright
 

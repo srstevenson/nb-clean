@@ -10,4 +10,8 @@ results and draft assets before publishing the GitHub release.
 
 Publish the crate with `cargo publish --locked` using the maintainer's crates.io
 credentials. Publishing and pushing release tags are separate maintainer actions.
-PyPI distribution is planned for a later release.
+PyPI publishing is not yet configured.
+
+Wheel builds are a local prototype. Linux and Windows wheel validation, the
+manylinux baseline, and PyPI publishing are still to be configured. The GitHub
+release workflow currently builds standalone archives only.
