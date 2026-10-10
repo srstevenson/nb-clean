@@ -58,7 +58,7 @@ pub fn add(options: &Options) -> Result<(), Error> {
     let command = options
         .filter_args()
         .into_iter()
-        .map(quote)
+        .map(|arg| quote(&arg))
         .collect::<Vec<_>>()
         .join(" ");
     git(&["config", "--local", "filter.nb-clean.clean", &command])?;

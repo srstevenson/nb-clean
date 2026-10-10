@@ -91,7 +91,7 @@ fn installation_and_removal_preserve_unrelated_settings() {
     );
     let configured = git_ok(root, &["config", "--get", "filter.nb-clean.clean"]);
     assert!(configured.contains("--remove-empty-cells"));
-    assert!(configured.contains("--preserve-cell-metadata-field tags"));
+    assert!(configured.contains("--preserve-cell-metadata-field=tags"));
     for _ in 0..2 {
         assert!(nb(root, &["remove-filter"]).status.success());
     }
@@ -113,9 +113,14 @@ fn installation_and_removal_preserve_unrelated_settings() {
 
 #[test]
 fn git_filter_cleans_the_index_and_quotes_metadata_fields() {
+    for field in ["owner's $(echo injected)", "-tags", "", "a=b"] {
+        check_filter_field(field);
+    }
+}
+
+fn check_filter_field(field: &str) {
     let dir = repository();
     let root = dir.path();
-    let field = "owner's $(echo injected)";
     let input = serde_json::json!({"nbformat":4,"nbformat_minor":4,"metadata":{},"cells":[{
         "cell_type":"code","source":["x"],"metadata":{field:true,"remove":true},
         "execution_count":9,"outputs":[]} ]});
@@ -124,7 +129,10 @@ fn git_filter_cleans_the_index_and_quotes_metadata_fields() {
     assert!(
         nb(
             root,
-            &["add-filter", "--preserve-cell-metadata-field", field]
+            &[
+                "add-filter",
+                &format!("--preserve-cell-metadata-field={field}")
+            ]
         )
         .status
         .success()
@@ -143,6 +151,11 @@ fn git_filter_cleans_the_index_and_quotes_metadata_fields() {
         .unwrap();
     assert!(
         output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(
+        output.stderr.is_empty(),
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );

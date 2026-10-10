@@ -60,8 +60,8 @@ impl Options {
         self.preserve_cell_metadata || self.preserve_cell_metadata_field.iter().any(|f| f == field)
     }
 
-    pub fn filter_args(&self) -> Vec<&str> {
-        let mut args = vec!["nb-clean", "clean"];
+    pub fn filter_args(&self) -> Vec<String> {
+        let mut args = vec!["nb-clean".into(), "clean".into()];
         for (enabled, flag) in [
             (self.remove_empty_cells, "--remove-empty-cells"),
             (
@@ -80,11 +80,11 @@ impl Options {
             ),
         ] {
             if enabled {
-                args.push(flag);
+                args.push(flag.into());
             }
         }
         for field in &self.preserve_cell_metadata_field {
-            args.extend(["--preserve-cell-metadata-field", field]);
+            args.push(format!("--preserve-cell-metadata-field={field}"));
         }
         args
     }
