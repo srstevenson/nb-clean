@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, Any, Final, cast
 
 if TYPE_CHECKING:
     from collections.abc import Collection
+    from typing import Self
 
     import nbformat
-    from typing_extensions import Self
 
 VERSION: Final = "4.0.1"
 GIT_ATTRIBUTES_LINE: Final = "*.ipynb filter=nb-clean"

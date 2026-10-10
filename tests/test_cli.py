@@ -13,7 +13,7 @@ import nb_clean
 import nb_clean.cli
 
 if TYPE_CHECKING:
-    from collections.abc import Collection, Iterable
+    from collections.abc import Collection
 
     from pytest import CaptureFixture  # noqa: PT013
 
@@ -265,7 +265,7 @@ def test_clean_stdin(
 )
 def test_parse_args(
     argv: str,
-    inputs: Iterable[str],
+    inputs: Collection[str],
     *,
     remove_empty_cells: bool,
     remove_all_notebook_metadata: bool,
