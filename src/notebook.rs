@@ -51,7 +51,12 @@ impl Notebook {
 
     pub fn changes(&self, options: &Options) -> Vec<Change> {
         let mut changes = Vec::new();
-        for (i, cell) in self.0["cells"].as_array().unwrap().iter().enumerate() {
+        for (i, cell) in self.0["cells"]
+            .as_array()
+            .expect("validated notebook cells must be an array")
+            .iter()
+            .enumerate()
+        {
             let empty = match &cell["source"] {
                 Value::String(s) => s.is_empty(),
                 Value::Array(lines) => lines.iter().all(|line| line.as_str() == Some("")),
@@ -61,7 +66,11 @@ impl Notebook {
                 changes.push(Change::EmptyCell(i));
                 continue;
             }
-            for field in cell["metadata"].as_object().unwrap().keys() {
+            for field in cell["metadata"]
+                .as_object()
+                .expect("validated cell metadata must be an object")
+                .keys()
+            {
                 if field == "trusted" || !options.preserves_cell_field(field) {
                     changes.push(Change::CellMetadata(i, field.clone()));
                 }
@@ -72,7 +81,9 @@ impl Notebook {
             if !options.preserve_execution_counts && !cell["execution_count"].is_null() {
                 changes.push(Change::ExecutionCount(i));
             }
-            let outputs = cell["outputs"].as_array().unwrap();
+            let outputs = cell["outputs"]
+                .as_array()
+                .expect("validated code cell outputs must be an array");
             if !options.preserve_cell_outputs {
                 if !outputs.is_empty() {
                     changes.push(Change::Outputs(i));
@@ -88,7 +99,9 @@ impl Notebook {
                 }
             }
         }
-        let metadata = self.0["metadata"].as_object().unwrap();
+        let metadata = self.0["metadata"]
+            .as_object()
+            .expect("validated notebook metadata must be an object");
         for field in metadata.keys() {
             if options.remove_all_notebook_metadata || TRANSIENT_METADATA.contains(&field.as_str())
             {
@@ -113,7 +126,7 @@ impl Notebook {
                 Change::CellMetadata(i, field) => {
                     self.0["cells"][i]["metadata"]
                         .as_object_mut()
-                        .unwrap()
+                        .expect("validated cell metadata must be an object")
                         .remove(field);
                 }
                 Change::ExecutionCount(i) => self.0["cells"][i]["execution_count"] = Value::Null,
@@ -122,19 +135,25 @@ impl Notebook {
                     self.0["cells"][i]["outputs"][j]["execution_count"] = Value::Null;
                 }
                 Change::NotebookMetadata(field) => {
-                    self.0["metadata"].as_object_mut().unwrap().remove(field);
+                    self.0["metadata"]
+                        .as_object_mut()
+                        .expect("validated notebook metadata must be an object")
+                        .remove(field);
                 }
                 Change::LanguageVersion => {
                     self.0["metadata"]["language_info"]
                         .as_object_mut()
-                        .unwrap()
+                        .expect("validated language_info must be an object")
                         .remove("version");
                 }
             }
         }
         for change in changes.iter().rev() {
             if let Change::EmptyCell(i) = change {
-                self.0["cells"].as_array_mut().unwrap().remove(*i);
+                self.0["cells"]
+                    .as_array_mut()
+                    .expect("validated notebook cells must be an array")
+                    .remove(*i);
             }
         }
     }

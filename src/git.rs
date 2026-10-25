@@ -52,7 +52,11 @@ pub fn add(options: &Options) -> Result<(), Error> {
         }
         contents.push_str(ATTRIBUTE);
         contents.push('\n');
-        fs::create_dir_all(path.parent().unwrap()).map_err(|e| Error::new(78, e))?;
+        fs::create_dir_all(
+            path.parent()
+                .expect("absolute Git attributes path must have a parent"),
+        )
+        .map_err(|e| Error::new(78, e))?;
         files::replace(&path, contents.as_bytes())?;
     }
     let command = options
