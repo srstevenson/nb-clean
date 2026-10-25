@@ -3,23 +3,6 @@
 nb-clean is distributed through crates.io, PyPI wheels, and GitHub binary
 archives. Publishing requires maintainer access to these services.
 
-## Initial setup
-
-Before the first PyPI release, configure these settings:
-
-1. Create the `pypi` environment in the GitHub repository settings. Restrict it
-   to `v*` tags and require maintainer approval for publishing.
-2. In the existing `nb-clean` project's PyPI publishing settings, add a GitHub
-   trusted publisher with owner `srstevenson`, repository `nb-clean`, workflow
-   filename `release.yml`, and environment `pypi`.
-3. Protect the release tags against unauthorised creation or modification.
-
-GitHub environment protection and the PyPI trusted publisher are account
-settings; committing the workflow does not configure them. PyPI uses
-[Trusted Publishing](https://docs.pypi.org/trusted-publishers/), so no PyPI API
-token is needed. Configure crates.io credentials separately for manual crate
-publication.
-
 ## Distribution builds
 
 The release workflow tests and builds five native targets: Linux and macOS on
