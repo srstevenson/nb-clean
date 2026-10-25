@@ -30,12 +30,16 @@ strip = true
 
 [tool.ruff.lint]
 select = ["ALL"]
-# These docstring rules conflict with D211 and D212.
-ignore = ["D203", "D213"]
+ignore = [
+  "D203", # Blank line before class docstring (conflicts with D211)
+  "D213", # Multi-line docstring summary on second line (conflicts with D212)
+]
 
 [tool.ruff.lint.per-file-ignores]
-# This is a standalone test script, with assertions rather than a package API.
-"tests/test_wheel.py" = ["INP001", "S101"]
+"tests/test_wheel.py" = [
+  "INP001", # Implicit namespace package (standalone test script)
+  "S101",   # Use of assert (test assertions)
+]
 
 [tool.ty.rules]
 all = "error"
