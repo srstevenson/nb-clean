@@ -11,6 +11,12 @@ readme = "README.md"
 license = "ISC"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
+keywords = ["jupyter", "notebook", "clean", "filter", "git"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+]
 
 [project.urls]
 Homepage = "https://github.com/srstevenson/nb-clean"
