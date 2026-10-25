@@ -127,16 +127,17 @@ fn check_filter_field(field: &str) {
         "execution_count":9,"outputs":[]} ]});
     let original = serde_json::to_vec(&input).unwrap();
     fs::write(root.join("notebook.ipynb"), &original).unwrap();
+    let installed = nb(
+        root,
+        &[
+            "add-filter",
+            &format!("--preserve-cell-metadata-field={field}"),
+        ],
+    );
     assert!(
-        nb(
-            root,
-            &[
-                "add-filter",
-                &format!("--preserve-cell-metadata-field={field}")
-            ]
-        )
-        .status
-        .success()
+        installed.status.success(),
+        "field {field:?}: {}",
+        String::from_utf8_lossy(&installed.stderr)
     );
     let binary_dir = Path::new(env!("CARGO_BIN_EXE_nb-clean")).parent().unwrap();
     let mut paths = vec![binary_dir.to_path_buf()];
@@ -152,22 +153,30 @@ fn check_filter_field(field: &str) {
         .unwrap();
     assert!(
         output.status.success(),
-        "{}",
+        "field {field:?}: {}",
         String::from_utf8_lossy(&output.stderr)
     );
     assert!(
         output.stderr.is_empty(),
-        "{}",
+        "field {field:?}: {}",
         String::from_utf8_lossy(&output.stderr)
     );
     let staged: serde_json::Value =
         serde_json::from_str(&git_ok(root, &["show", ":notebook.ipynb"])).unwrap();
     assert_eq!(
         staged["cells"][0]["metadata"],
-        serde_json::json!({field:true})
+        serde_json::json!({field:true}),
+        "field: {field:?}"
     );
-    assert!(staged["cells"][0]["execution_count"].is_null());
-    assert_eq!(fs::read(root.join("notebook.ipynb")).unwrap(), original);
+    assert!(
+        staged["cells"][0]["execution_count"].is_null(),
+        "field: {field:?}, staged notebook: {staged}"
+    );
+    assert_eq!(
+        fs::read(root.join("notebook.ipynb")).unwrap(),
+        original,
+        "field: {field:?}"
+    );
 }
 
 #[test]

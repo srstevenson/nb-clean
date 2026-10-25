@@ -40,10 +40,15 @@ fn clean_value(value: &Value, flags: &[&str]) -> Value {
     let output = run(&args, &serde_json::to_vec(value).unwrap());
     assert!(
         output.status.success(),
-        "{}",
+        "{args:?}: {}",
         String::from_utf8_lossy(&output.stderr)
     );
-    serde_json::from_slice(&output.stdout).unwrap()
+    serde_json::from_slice(&output.stdout).unwrap_or_else(|error| {
+        panic!(
+            "{args:?}: invalid JSON output: {error}: {:?}",
+            output.stdout
+        )
+    })
 }
 
 #[test]
@@ -80,31 +85,40 @@ fn option_combinations_agree_with_check() {
             .collect();
         let value = clean_value(&notebook(), &selected);
         let cell = &value["cells"][0];
-        assert_eq!(cell["execution_count"].is_null(), bits & 16 == 0);
+        assert_eq!(
+            cell["execution_count"].is_null(),
+            bits & 16 == 0,
+            "options: {selected:?}"
+        );
         assert_eq!(
             cell["outputs"].as_array().unwrap().is_empty(),
-            bits & 8 == 0
+            bits & 8 == 0,
+            "options: {selected:?}"
         );
         assert_eq!(
             cell["metadata"].as_object().unwrap().is_empty(),
-            bits & 4 == 0
+            bits & 4 == 0,
+            "options: {selected:?}"
         );
         if bits & 8 != 0 {
             assert_eq!(
                 cell["outputs"][0]["execution_count"].is_null(),
-                bits & 16 == 0
+                bits & 16 == 0,
+                "options: {selected:?}"
             );
         }
         assert_eq!(
             value["metadata"].as_object().unwrap().is_empty(),
-            bits & 2 != 0
+            bits & 2 != 0,
+            "options: {selected:?}"
         );
         let mut args = vec!["check"];
         args.extend_from_slice(&selected);
+        let output = run(&args, &serde_json::to_vec(&value).unwrap());
         assert!(
-            run(&args, &serde_json::to_vec(&value).unwrap())
-                .status
-                .success()
+            output.status.success(),
+            "{args:?}: {}",
+            String::from_utf8_lossy(&output.stderr)
         );
     }
 }
