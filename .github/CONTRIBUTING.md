@@ -10,10 +10,10 @@ small enough to review, and add tests for behaviour that could regress.
 
 ## Development
 
-Install Rust 1.85 or later and Git, then clone the repository and create a branch.
-Run `make` to list the available targets. `make fmt`, `make lint`, `make test`,
-and `make build` provide shortcuts for formatting, checks, tests, and release
-builds. You can also run the commands directly:
+Install Rust 1.85 or later and Git, then clone the repository and create a
+branch. Run `make` to list the available targets. `make fmt`, `make lint`,
+`make test`, and `make build` provide shortcuts for formatting, checks, tests,
+and release builds. You can also run the commands directly:
 
 ```sh
 cargo fmt --check
@@ -38,9 +38,9 @@ Install uv and Rust, then build a wheel for the current platform:
 uv build --wheel
 ```
 
-The wheel is written to `dist/`. Maturin packages the native executable directly;
-there is no Python wrapper or runtime package dependency. The version comes from
-`Cargo.toml`. Installation requires Python 3.10 or later.
+The wheel is written to `dist/`. Maturin packages the native executable
+directly; there is no Python wrapper or runtime package dependency. The version
+comes from `Cargo.toml`. Installation requires Python 3.10 or later.
 
 Run the built wheel in an isolated environment, replacing the path below with
 the wheel's filename:
@@ -50,9 +50,10 @@ uvx --no-index --from /path/to/nb_clean.whl nb-clean --version
 ```
 
 For checks involving files or Git filters, install the wheel into a virtual
-environment with `uv pip install --python /path/to/venv/bin/python /path/to/nb_clean.whl`
-and put that environment's scripts directory on `PATH`. On Windows, the directory
-is `Scripts` instead of `bin`.
+environment with
+`uv pip install --python /path/to/venv/bin/python /path/to/nb_clean.whl` and put
+that environment's scripts directory on `PATH`. On Windows, the directory is
+`Scripts` instead of `bin`.
 
 Run the same installation and CLI checks used in CI with Python 3.10 or later:
 

@@ -6,7 +6,8 @@
 
 nb-clean cleans Jupyter notebooks for version control. It removes cell metadata,
 execution counts, outputs, and the notebook's language version. It can check
-notebooks in CI, clean files in place, or run as a Git filter or pre-commit hook.
+notebooks in CI, clean files in place, or run as a Git filter or pre-commit
+hook.
 
 ## Installation
 
@@ -23,9 +24,9 @@ uvx nb-clean check notebooks/
 ```
 
 Wheels contain the native executable and require Python 3.10 or later for
-installation. They are built for macOS and Linux on ARM64 and x86-64, and Windows
-on x86-64. Linux wheels require glibc 2.17 or later. Use Cargo or binary archives
-on other platforms.
+installation. They are built for macOS and Linux on ARM64 and x86-64, and
+Windows on x86-64. Linux wheels require glibc 2.17 or later. Use Cargo or binary
+archives on other platforms.
 
 Install a published release from crates.io with Cargo:
 
@@ -39,11 +40,12 @@ Building requires Rust 1.85 or later. To install from a local checkout:
 cargo install --path . --locked
 ```
 
-Download binary archives from [GitHub releases](https://github.com/srstevenson/nb-clean/releases)
-for macOS (Apple Silicon and Intel), Linux (ARM64 and x86-64), and Windows
-(x86-64). Extract the archive and put `nb-clean` or `nb-clean.exe` on your `PATH`.
-Linux archives are built on Ubuntu 22.04 and use glibc. Build from source for
-systems incompatible with those binaries. Running nb-clean requires no Python
+Download binary archives from
+[GitHub releases](https://github.com/srstevenson/nb-clean/releases) for macOS
+(Apple Silicon and Intel), Linux (ARM64 and x86-64), and Windows (x86-64).
+Extract the archive and put `nb-clean` or `nb-clean.exe` on your `PATH`. Linux
+archives are built on Ubuntu 22.04 and use glibc. Build from source for systems
+incompatible with those binaries. Running nb-clean requires no Python
 installation. Git is needed only for filter configuration.
 
 ## Checking and cleaning
@@ -63,9 +65,9 @@ preserving the links.
 
 `check` reports unwanted content and exits with status 1 if any notebooks are
 dirty. Cells are numbered from zero. `clean` updates changed files through a
-temporary file in the same directory, preserving their permissions. Already-clean
-files are left untouched. If a file fails, remaining files are still processed
-and the command returns an error status.
+temporary file in the same directory, preserving their permissions.
+Already-clean files are left untouched. If a file fails, remaining files are
+still processed and the command returns an error status.
 
 With no paths, both commands read stdin. Cleaning writes the notebook to stdout:
 
@@ -76,9 +78,9 @@ nb-clean clean < original.ipynb > cleaned.ipynb
 
 Clean stdin is passed through unchanged. Changed notebooks are written with
 sorted keys, one-space indentation, Unicode text, and a trailing newline,
-following `nbformat`'s JSON layout. Source text, attachments, and retained outputs
-keep their string or array representations. Numeric values are retained without
-rounding; their spelling can differ from Python's writer.
+following `nbformat`'s JSON layout. Source text, attachments, and retained
+outputs keep their string or array representations. Numeric values are retained
+without rounding; their spelling can differ from Python's writer.
 
 nb-clean supports nbformat 4. It checks the structure needed for cleaning, keeps
 unknown fields, and does not upgrade notebooks or repair cell IDs. Empty source
@@ -89,15 +91,15 @@ cells are retained.
 
 These options work with `check`, `clean`, and `add-filter`:
 
-| Option | Effect |
-| --- | --- |
-| `-e`, `--remove-empty-cells` | Remove empty cells, or report them in checks |
-| `-M`, `--remove-all-notebook-metadata` | Remove all notebook metadata |
-| `-m`, `--preserve-cell-metadata` | Preserve all cell metadata except transient fields |
+| Option                                 | Effect                                                          |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `-e`, `--remove-empty-cells`           | Remove empty cells, or report them in checks                    |
+| `-M`, `--remove-all-notebook-metadata` | Remove all notebook metadata                                    |
+| `-m`, `--preserve-cell-metadata`       | Preserve all cell metadata except transient fields              |
 | `--preserve-cell-metadata-field FIELD` | Preserve a selected cell metadata field; repeat for more fields |
-| `-o`, `--preserve-cell-outputs` | Preserve cell outputs |
-| `-c`, `--preserve-execution-counts` | Preserve cell and output execution counts |
-| `-n`, `--preserve-notebook-metadata` | Preserve notebook metadata except transient fields |
+| `-o`, `--preserve-cell-outputs`        | Preserve cell outputs                                           |
+| `-c`, `--preserve-execution-counts`    | Preserve cell and output execution counts                       |
+| `-n`, `--preserve-notebook-metadata`   | Preserve notebook metadata except transient fields              |
 
 By default, notebook metadata is retained except `language_info.version` and
 transient fields. Preserving outputs with `-o` still clears output execution
@@ -111,12 +113,13 @@ nb-clean clean --preserve-cell-metadata-field tags \
 ```
 
 Following `nbformat`, nb-clean always removes notebook metadata `orig_nbformat`,
-`orig_nbformat_minor`, and `signature`, and cell metadata `trusted`. Preservation
-options do not override this rule. Their presence makes a notebook dirty.
+`orig_nbformat_minor`, and `signature`, and cell metadata `trusted`.
+Preservation options do not override this rule. Their presence makes a notebook
+dirty.
 
 `-M` conflicts with `-n`. Preserving all cell metadata conflicts with selecting
-individual fields. Use `nb-clean --help` or `nb-clean clean --help` for help, and
-`nb-clean --version` for the version.
+individual fields. Use `nb-clean --help` or `nb-clean clean --help` for help,
+and `nb-clean --version` for the version.
 
 ## Git filter
 
@@ -147,9 +150,9 @@ repos:
         args: [--preserve-cell-metadata-field, tags]
 ```
 
-The hook uses `language: rust`. Pre-commit builds the binary and can install Rust
-if needed. Its first installation includes compilation time. The hook cleans
-notebooks in the working directory, so their outputs are removed on disk.
+The hook uses `language: rust`. Pre-commit builds the binary and can install
+Rust if needed. Its first installation includes compilation time. The hook
+cleans notebooks in the working directory, so their outputs are removed on disk.
 
 ## Jujutsu
 
@@ -165,17 +168,17 @@ Append cleaning options to the command array as needed.
 
 ## Exit statuses
 
-| Status | Meaning |
-| --- | --- |
-| `0` | Success, or all checked notebooks are clean |
-| `1` | At least one checked notebook is dirty |
-| `64` | Invalid command-line arguments |
-| `65` | Malformed notebook or unsupported format version |
-| `66` | Input cannot be opened or a directory cannot be traversed |
-| `69` | Git executable is unavailable |
-| `73` | Output cannot be created or replaced |
-| `74` | Other read or write failure |
-| `78` | Git repository or configuration error |
+| Status | Meaning                                                   |
+| ------ | --------------------------------------------------------- |
+| `0`    | Success, or all checked notebooks are clean               |
+| `1`    | At least one checked notebook is dirty                    |
+| `64`   | Invalid command-line arguments                            |
+| `65`   | Malformed notebook or unsupported format version          |
+| `66`   | Input cannot be opened or a directory cannot be traversed |
+| `69`   | Git executable is unavailable                             |
+| `73`   | Output cannot be created or replaced                      |
+| `74`   | Other read or write failure                               |
+| `78`   | Git repository or configuration error                     |
 
 Errors take precedence over dirty results. If several files fail, the status
 corresponds to the first error in sorted processing order. Errors go to stderr;
@@ -199,8 +202,8 @@ versions are rejected.
 
 ## Development
 
-See [the contribution instructions](.github/CONTRIBUTING.md).
-Instructions for building and testing local wheels are in
+See [the contribution instructions](.github/CONTRIBUTING.md). Instructions for
+building and testing local wheels are in
 [Local Python wheels](.github/CONTRIBUTING.md#local-python-wheels).
 
 ## Copyright

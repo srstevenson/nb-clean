@@ -22,8 +22,8 @@ have read-only permissions and cannot request that token.
 
 ## Release procedure
 
-1. Update the version in `Cargo.toml` and `Cargo.lock`, and update the pre-commit
-   example in the README.
+1. Update the version in `Cargo.toml` and `Cargo.lock`, and update the
+   pre-commit example in the README.
 2. Run the [development checks](CONTRIBUTING.md#development) and
    `cargo publish --dry-run --locked`. Build and test a local wheel using the
    [wheel instructions](CONTRIBUTING.md#local-python-wheels), and confirm GitHub
