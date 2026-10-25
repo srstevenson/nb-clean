@@ -86,7 +86,7 @@ jobs:
         working-directory: assets
         run: |
           sha256sum nb-clean-* > SHA256SUMS
-          gh release create "$GITHUB_REF_NAME" --draft --verify-tag --title "nb-clean $GITHUB_REF_NAME" --generate-notes ./*
+          gh release create "$GITHUB_REF_NAME" --draft --verify-tag --title "$GITHUB_REF_NAME" --generate-notes ./*
 
   pypi:
     name: Publish wheels to PyPI
