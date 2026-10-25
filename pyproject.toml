@@ -21,3 +21,15 @@ Issues = "https://github.com/srstevenson/nb-clean/issues"
 bindings = "bin"
 locked = true
 strip = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+# These docstring rules conflict with D211 and D212.
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+# This is a standalone test script, with assertions rather than a package API.
+"tests/test_wheel.py" = ["INP001", "S101"]
+
+[tool.ty.rules]
+all = "error"
