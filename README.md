@@ -34,18 +34,14 @@ Install a published release from crates.io with Cargo:
 cargo install nb-clean --locked
 ```
 
-Building requires Rust 1.85 or later. To install from a local checkout:
-
-```sh
-cargo install --path . --locked
-```
+Building requires Rust 1.85 or later.
 
 Download binary archives from
 [GitHub releases](https://github.com/srstevenson/nb-clean/releases) for macOS
 (Apple Silicon and Intel), Linux (ARM64 and x86-64), and Windows (x86-64).
 Extract the archive and put `nb-clean` or `nb-clean.exe` on your `PATH`. Linux
 archives are built on Ubuntu 22.04 and use glibc. Build from source for systems
-incompatible with those binaries. Running nb-clean requires no Python
+incompatible with those binaries. Running nb-clean does not require a Python
 installation. Git is needed only for filter configuration.
 
 ## Checking and cleaning
@@ -64,10 +60,10 @@ Notebook file symlinks are followed, and cleaning updates their targets while
 preserving the links.
 
 `check` reports unwanted content and exits with status 1 if any notebooks are
-dirty. Cells are numbered from zero. `clean` updates changed files through a
-temporary file in the same directory, preserving their permissions.
-Already-clean files are left untouched. If a file fails, remaining files are
-still processed and the command returns an error status.
+dirty. Cells are numbered from zero. `clean` updates changed files while
+preserving their permissions. Already-clean files are left untouched. If a file
+fails, remaining files are still processed and the command returns an error
+status.
 
 With no paths, both commands read stdin. Cleaning writes the notebook to stdout:
 
@@ -78,9 +74,7 @@ nb-clean clean < original.ipynb > cleaned.ipynb
 
 Clean stdin is passed through unchanged. Changed notebooks are written with
 sorted keys, one-space indentation, Unicode text, and a trailing newline,
-following `nbformat`'s JSON layout. Source text, attachments, and retained
-outputs keep their string or array representations. Numeric values are retained
-without rounding; their spelling can differ from Python's writer.
+following `nbformat`'s JSON layout.
 
 nb-clean supports nbformat 4. It checks the structure needed for cleaning, keeps
 unknown fields, and does not upgrade notebooks or repair cell IDs. Empty source
@@ -132,10 +126,11 @@ nb-clean add-filter --preserve-cell-metadata-field tags
 nb-clean remove-filter
 ```
 
-The filter is configured in local Git configuration and `info/attributes`.
-Staging cleans the notebook in the index; the working copy keeps its outputs.
-Installation and removal are idempotent and preserve unrelated settings and
-attributes. The executable must be on `PATH` when Git stages notebooks.
+The filter is configured in the local Git configuration and
+`.git/info/attributes`. Staging cleans the notebook in the index; the working
+copy keeps its outputs. Installation and removal are idempotent and preserve
+unrelated settings and attributes. The executable must be on `PATH` when Git
+stages notebooks.
 
 ## Pre-commit
 
@@ -150,9 +145,8 @@ repos:
         args: [--preserve-cell-metadata-field, tags]
 ```
 
-The hook uses `language: rust`. Pre-commit builds the binary and can install
-Rust if needed. Its first installation includes compilation time. The hook
-cleans notebooks in the working directory, so their outputs are removed on disk.
+Pre-commit builds the executable. The hook cleans notebooks in the working
+directory, so their outputs are removed on disk.
 
 ## Jujutsu
 
@@ -186,9 +180,9 @@ check findings go to stdout.
 
 ## Migrating from nb-clean 4
 
-nb-clean 5 is a Rust CLI. PyPI wheels install the native executable; the Python
-library API is removed. The installed command supports Git filters and
-pre-commit as before.
+nb-clean was ported from Python to Rust in version 5. PyPI wheels install the
+native executable; the Python library API is removed. The installed command
+supports Git filters and pre-commit as before.
 
 Use `nb-clean --version` instead of `nb-clean version`. To preserve selected
 metadata, replace `--preserve-cell-metadata tags slideshow --` with
@@ -202,9 +196,7 @@ versions are rejected.
 
 ## Development
 
-See [the contribution instructions](.github/CONTRIBUTING.md). Instructions for
-building and testing local wheels are in
-[Local Python wheels](.github/CONTRIBUTING.md#local-python-wheels).
+See [the contribution instructions](.github/CONTRIBUTING.md).
 
 ## Copyright
 

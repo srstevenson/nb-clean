@@ -22,6 +22,12 @@ cargo test --locked
 cargo build --release --locked
 ```
 
+To install the executable from your checkout:
+
+```sh
+cargo install --path . --locked
+```
+
 Use `cargo fmt` to format changes. Tests exercise notebook cleaning, the CLI,
 and real Git repositories, including linked worktrees. Keep notebook fixtures
 small and give each one a clear purpose.
