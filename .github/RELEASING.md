@@ -22,21 +22,52 @@ have read-only permissions and cannot request that token.
 
 ## Release procedure
 
-1. Update the version in `Cargo.toml` and `Cargo.lock`, and update the
-   pre-commit example in the README. Commit these changes before running the
-   publish dry run.
-2. Run the [development checks](CONTRIBUTING.md#development) and
-   `cargo publish --dry-run --locked`. Build and test a local wheel using the
-   [wheel instructions](CONTRIBUTING.md#local-python-wheels), and confirm GitHub
-   CI passes on all supported platforms.
-3. After review and merging to `main`, tag the exact commit that passed CI as
-   `vVERSION`. Push the tag to trigger the release workflow.
-4. Inspect the build results and draft assets, then approve the `pypi` job to
-   publish the wheels.
-5. Check out the release tag with `git switch --detach vVERSION` and confirm
-   there are no uncommitted package changes. Publish the crate with
-   `cargo publish --locked` using the maintainer's crates.io credentials, and
-   publish the draft GitHub release after reviewing its assets.
+Replace `VERSION` below with the release version, such as `5.0.0`.
 
-PyPI publication, crate publication, and publishing the draft GitHub release
-are separate actions.
+1. Update the version in `Cargo.toml` and `Cargo.lock`, and update the
+   pre-commit example in the README. Commit these changes. Run the
+   [development checks](CONTRIBUTING.md#development), and build and test a local
+   wheel using the [wheel instructions](CONTRIBUTING.md#local-python-wheels).
+2. Once CI passes on all supported platforms, approve and merge the pull
+   request into `main`. Update your local checkout:
+
+   ```sh
+   git switch main
+   git pull --ff-only
+   ```
+
+3. Confirm the merged commit passes CI, its version matches the intended
+   release, and there are no uncommitted package changes. Run the publishing
+   checks without uploading:
+
+   ```sh
+   cargo publish --dry-run --locked
+   ```
+
+4. Tag that commit and push the tag to start the release workflow:
+
+   ```sh
+   git tag -a vVERSION -m "Release nb-clean VERSION"
+   git push origin vVERSION
+   ```
+
+5. Wait for the release workflow to build and test the binaries and wheels.
+   It creates a draft GitHub release and waits for approval of the `pypi`
+   environment.
+6. Inspect the workflow results, draft release assets, checksums, and generated
+   release notes. Edit the notes as needed. Approve the `pypi` job, then confirm
+   publication to PyPI succeeds.
+7. Publish to crates.io from the same tagged source, using the maintainer's
+   crates.io credentials. Confirm there are no uncommitted package changes:
+
+   ```sh
+   git switch --detach vVERSION
+   cargo publish --locked
+   ```
+
+8. Publish the draft GitHub release once PyPI and crates.io publication have
+   succeeded.
+
+Merging the pull request does not publish a release. Pushing the tag starts
+release preparation; approving the `pypi` job authorises the PyPI upload.
+Crate publication and publication of the draft GitHub release are manual steps.
