@@ -11,7 +11,9 @@ small enough to review, and add tests for behaviour that could regress.
 ## Development
 
 Install Rust 1.85 or later and Git, then clone the repository and create a branch.
-The optional `just` recipes run the same commands below:
+Run `make` to list the available targets. `make fmt`, `make lint`, `make test`,
+and `make build` provide shortcuts for formatting, checks, tests, and release
+builds. You can also run the commands directly:
 
 ```sh
 cargo fmt --check
