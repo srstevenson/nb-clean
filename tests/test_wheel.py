@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tempfile
 import venv
+from collections.abc import Mapping, Sequence
 from email.parser import BytesParser
 from functools import partial
 from pathlib import Path
@@ -20,31 +21,32 @@ def check_metadata(wheel: Path) -> str:
     with ZipFile(wheel) as archive:
         names = archive.namelist()
         metadata_path = next(name for name in names if name.endswith("/METADATA"))
-        metadata = BytesParser().parsebytes(archive.read(metadata_path))
-        assert metadata["Name"] == "nb-clean"
-        assert not metadata.get_all("Requires-Dist", [])
-        assert not any(name.endswith(".py") for name in names)
-        wheel_metadata = BytesParser().parsebytes(
-            archive.read(metadata_path.removesuffix("METADATA") + "WHEEL"),
-        )
-        tags = wheel_metadata.get_all("Tag", [])
-        assert tags
-        assert all(tag.startswith("py3-none-") for tag in tags)
-        version = metadata["Version"]
-        assert isinstance(version, str)
-        return version
+        metadata_bytes = archive.read(metadata_path)
+        wheel_bytes = archive.read(metadata_path.removesuffix("METADATA") + "WHEEL")
+
+    metadata = BytesParser().parsebytes(metadata_bytes)
+    assert metadata["Name"] == "nb-clean"
+    assert not metadata.get_all("Requires-Dist", [])
+    assert not any(name.endswith(".py") for name in names)
+    wheel_metadata = BytesParser().parsebytes(wheel_bytes)
+    tags = wheel_metadata.get_all("Tag", [])
+    assert tags
+    assert all(tag.startswith("py3-none-") for tag in tags)
+    version = metadata["Version"]
+    assert isinstance(version, str)
+    return version
 
 
 def run_command(
-    command: list[str | Path],
+    command: Sequence[str | Path],
     data: bytes | None = None,
     *,
     root: Path,
-    env: dict[str, str],
+    env: Mapping[str, str],
     expected_status: int = 0,
 ) -> subprocess.CompletedProcess[bytes]:
     """Run a test command and report its output if the exit status differs."""
-    result = subprocess.run(  # noqa: S603 -- Test commands use argument lists, without a shell.
+    result = subprocess.run(  # noqa: S603
         command,
         input=data,
         capture_output=True,
@@ -61,7 +63,7 @@ def run_command(
     return result
 
 
-def check_cli(binary: Path, version: str, root: Path, env: dict[str, str]) -> None:
+def check_cli(binary: Path, version: str, root: Path, env: Mapping[str, str]) -> None:
     """Check command statuses, stdin cleaning, and file cleaning."""
     run = partial(run_command, root=root, env=env)
     assert run([binary, "--version"]).stdout == f"nb-clean {version}\n".encode()
@@ -82,7 +84,7 @@ def check_cli(binary: Path, version: str, root: Path, env: dict[str, str]) -> No
     assert notebook.read_bytes() == expected
 
 
-def check_git_filter(binary: Path, root: Path, env: dict[str, str]) -> None:
+def check_git_filter(binary: Path, root: Path, env: Mapping[str, str]) -> None:
     """Check staging, metadata option quoting, and filter removal."""
     git_path = shutil.which("git")
     assert git_path is not None
@@ -130,7 +132,7 @@ def check_wheel(wheel: Path, root: Path) -> None:
     venv.EnvBuilder(with_pip=True, symlinks=os.name != "nt").create(environment)
     scripts = environment / ("Scripts" if os.name == "nt" else "bin")
     python = scripts / ("python.exe" if os.name == "nt" else "python")
-    subprocess.run(  # noqa: S603 -- Run pip from the temporary environment without a shell.
+    subprocess.run(  # noqa: S603
         [
             python,
             "-m",
@@ -152,7 +154,7 @@ def check_wheel(wheel: Path, root: Path) -> None:
     }
     check_cli(binary, version, root, env)
     check_git_filter(binary, root, env)
-    print(f"Wheel checks passed: {wheel.name}")  # noqa: T201 -- CLI success message.
+    print(f"Wheel checks passed: {wheel.name}")  # noqa: T201
 
 
 def main() -> None:
