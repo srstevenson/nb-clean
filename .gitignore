@@ -1,7 +1,5 @@
-*.egg-info/
 .ipynb_checkpoints/
-/.coverage
-/build/
-/coverage.xml
+/.venv/
 /dist/
+/target/
 __pycache__/

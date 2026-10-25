@@ -1,6 +1,10 @@
+[build-system]
+requires = ["maturin>=1.9,<2"]
+build-backend = "maturin"
+
 [project]
 name = "nb-clean"
-version = "4.0.1"
+dynamic = ["version"]
 description = "Clean Jupyter notebooks for versioning"
 authors = [{ name = "Scott Stevenson", email = "scott@stevenson.io" }]
 readme = "README.md"
@@ -13,69 +17,29 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Natural Language :: English",
 ]
-dependencies = ["nbformat>=5.9.2"]
 
 [project.urls]
 Homepage = "https://github.com/srstevenson/nb-clean"
 Repository = "https://github.com/srstevenson/nb-clean"
 Issues = "https://github.com/srstevenson/nb-clean/issues"
 
-[project.scripts]
-nb-clean = "nb_clean.cli:main"
-
-[dependency-groups]
-dev = [
-  "coverage>=7.6.10",
-  "pytest>=7.2.1",
-  "pytest-mock>=3.11.1",
-  "ruff>=0.1.6",
-  "ty>=0.0.19",
-  "typing-extensions>=4.14.1",
-]
-
-[build-system]
-requires = ["uv_build>=0.7.19,<0.13"]
-build-backend = "uv_build"
-
-[tool.coverage.report]
-exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
-
-[tool.ruff]
-target-version = "py310"
-
-[tool.ruff.format]
-docstring-code-format = true
-skip-magic-trailing-comma = true
+[tool.maturin]
+bindings = "bin"
+locked = true
+strip = true
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "COM812",  # Trailing comma missing
-  "C901",    # Function is too complex
-  "E501",    # Line too long
-  "PLR0912", # Too many branches
-  "PLR0913", # Too many arguments in function definition
-  "PLR2004", # Magic value used in comparison
-  "S603",    # subprocess call: check for execution of untrusted input
-  "S607",    # Starting a process with a partial executable path
-  "T201",    # print found
+  "D203", # Blank line before class docstring (conflicts with D211)
+  "D213", # Multi-line docstring summary on second line (conflicts with D212)
 ]
-
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all"
-
-[tool.ruff.lint.isort]
-split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**.py" = [
-  "D",      # pydocstyle
-  "INP001", # Implicit namespace package
-  "S101",   # Magic value used in comparison
+"tests/test_wheel.py" = [
+  "INP001", # Implicit namespace package (standalone test script)
+  "S101",   # Use of assert (test assertions)
 ]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
 
 [tool.ty.rules]
 all = "error"

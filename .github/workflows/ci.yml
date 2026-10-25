@@ -5,45 +5,61 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
+  wheels:
+    name: Verify wheels
+    uses: ./.github/workflows/wheels.yml
+
   checks:
-    name: Run checks
-    runs-on: ubuntu-slim
-    strategy:
-      matrix:
-        python:
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          - "3.13"
-          - "3.14"
-    env:
-      UV_PYTHON: ${{ matrix.python }}
+    name: Check Rust
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v7.0.1
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Setup Python
-        uses: actions/setup-python@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: ${{ matrix.python }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets --locked -- -D warnings
 
-      - name: Install dependencies
-        run: uv sync --dev
+  tests:
+    name: Test (${{ matrix.os }}, Rust ${{ matrix.rust }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            rust: stable
+          - os: ubuntu-22.04-arm
+            rust: stable
+          - os: macos-15
+            rust: stable
+          - os: macos-15-intel
+            rust: stable
+          - os: windows-2022
+            rust: stable
+          - os: ubuntu-22.04
+            rust: "1.85.0"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f # master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - run: cargo test --locked
 
-      - name: Run formatter
-        run: uv run ruff format --check .
-
-      - name: Run linter
-        run: uv run ruff check .
-
-      - name: Run type checker
-        run: uv run ty check .
-
-      - name: Run tests
-        run: uv run coverage run -m pytest
-
-      - name: Print test coverage report
-        run: uv run coverage report
+  package:
+    name: Verify crate
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - run: cargo package --locked
