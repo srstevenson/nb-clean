@@ -49,6 +49,7 @@ fn nb(root: &Path, args: &[&str]) -> Output {
 fn repository() -> TempDir {
     let dir = TempDir::new().unwrap();
     git_ok(dir.path(), &["init", "-q"]);
+    git_ok(dir.path(), &["config", "core.autocrlf", "false"]);
     git_ok(dir.path(), &["config", "user.name", "nb-clean tests"]);
     git_ok(dir.path(), &["config", "user.email", "tests@example.com"]);
     dir
