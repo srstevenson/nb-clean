@@ -14,6 +14,12 @@ use cli::{Cli, Command, Inputs};
 use error::Error;
 use notebook::Notebook;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Mode {
+    Check,
+    Clean,
+}
+
 fn main() -> ExitCode {
     let cli = match Cli::try_parse() {
         Ok(cli) => cli,
@@ -24,8 +30,8 @@ fn main() -> ExitCode {
         }
     };
     let result = match cli.command {
-        Command::Check(inputs) => process(inputs, false),
-        Command::Clean(inputs) => process(inputs, true),
+        Command::Check(inputs) => process(inputs, Mode::Check),
+        Command::Clean(inputs) => process(inputs, Mode::Clean),
         Command::AddFilter(options) => git::add(&options).map(|()| 0),
         Command::RemoveFilter => git::remove().map(|()| 0),
     };
@@ -38,7 +44,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn process(inputs: Inputs, clean: bool) -> Result<u8, Error> {
+fn process(inputs: Inputs, mode: Mode) -> Result<u8, Error> {
     let mut stdout = BufWriter::new(io::stdout().lock());
     if inputs.paths.is_empty() {
         let mut bytes = Vec::new();
@@ -46,14 +52,14 @@ fn process(inputs: Inputs, clean: bool) -> Result<u8, Error> {
             .lock()
             .read_to_end(&mut bytes)
             .map_err(|e| Error::new(74, e))?;
-        let (output, dirty) = transform(&bytes, "stdin", &inputs.options, clean, &mut stdout)?;
-        if clean {
+        let (output, dirty) = transform(&bytes, "stdin", &inputs.options, mode, &mut stdout)?;
+        if mode == Mode::Clean {
             stdout
                 .write_all(output.as_deref().unwrap_or(&bytes))
                 .map_err(|e| Error::new(74, e))?;
         }
         stdout.flush().map_err(|e| Error::new(74, e))?;
-        return Ok(u8::from(!clean && dirty));
+        return Ok(u8::from(mode == Mode::Check && dirty));
     }
     let mut dirty = false;
     let mut error_code = None;
@@ -64,7 +70,7 @@ fn process(inputs: Inputs, clean: bool) -> Result<u8, Error> {
                 &bytes,
                 &input.name.to_string_lossy(),
                 &inputs.options,
-                clean,
+                mode,
                 &mut stdout,
             )?;
             if let Some(output) = output {
@@ -81,14 +87,14 @@ fn process(inputs: Inputs, clean: bool) -> Result<u8, Error> {
         }
     }
     stdout.flush().map_err(|e| Error::new(74, e))?;
-    Ok(error_code.unwrap_or(u8::from(!clean && dirty)))
+    Ok(error_code.unwrap_or(u8::from(mode == Mode::Check && dirty)))
 }
 
 fn transform(
     bytes: &[u8],
     name: &str,
     options: &cli::Options,
-    clean: bool,
+    mode: Mode,
     stdout: &mut impl Write,
 ) -> Result<(Option<Vec<u8>>, bool), Error> {
     let mut notebook =
@@ -97,7 +103,7 @@ fn transform(
     if changes.is_empty() {
         return Ok((None, false));
     }
-    if clean {
+    if mode == Mode::Clean {
         notebook.clean(&changes);
         let output = notebook
             .to_bytes()
