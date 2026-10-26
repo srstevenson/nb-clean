@@ -287,6 +287,46 @@ fn files_directories_and_error_continuation() {
 }
 
 #[test]
+fn hidden_and_ignored_paths_are_skipped_during_recursion() {
+    let dir = TempDir::new().unwrap();
+    assert!(
+        Command::new("git")
+            .arg("init")
+            .arg("-q")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .success()
+    );
+    fs::write(dir.path().join(".gitignore"), "ignored/\n").unwrap();
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    for name in [".ipynb_checkpoints", "ignored"] {
+        fs::create_dir(dir.path().join(name)).unwrap();
+        fs::write(dir.path().join(name).join("dirty.ipynb"), &dirty).unwrap();
+    }
+    assert!(
+        command()
+            .arg("check")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .success()
+    );
+    for name in [".ipynb_checkpoints", "ignored"] {
+        assert_eq!(
+            command()
+                .arg("check")
+                .arg(dir.path().join(name))
+                .status()
+                .unwrap()
+                .code(),
+            Some(1),
+            "{name}"
+        );
+    }
+}
+
+#[test]
 fn overlapping_paths_are_processed_once() {
     let dir = TempDir::new().unwrap();
     let path = dir.path().join("dirty.ipynb");
