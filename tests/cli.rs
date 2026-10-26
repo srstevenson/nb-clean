@@ -327,6 +327,34 @@ fn hidden_and_ignored_paths_are_skipped_during_recursion() {
 }
 
 #[test]
+fn reports_are_ordered_by_path() {
+    let dir = TempDir::new().unwrap();
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    let mut names: Vec<_> = (0..50).map(|i| format!("{i:02}.ipynb")).collect();
+    for name in &names {
+        fs::write(dir.path().join(name), &dirty).unwrap();
+    }
+    let output = command().arg("check").arg(dir.path()).output().unwrap();
+    let reported: Vec<_> = String::from_utf8(output.stdout)
+        .unwrap()
+        .lines()
+        .map(|line| {
+            line.split(' ')
+                .next()
+                .unwrap()
+                .rsplit(['/', '\\'])
+                .next()
+                .unwrap()
+                .to_owned()
+        })
+        .collect();
+    names.sort();
+    let mut deduplicated = reported.clone();
+    deduplicated.dedup();
+    assert_eq!(deduplicated, names);
+}
+
+#[test]
 fn overlapping_paths_are_processed_once() {
     let dir = TempDir::new().unwrap();
     let path = dir.path().join("dirty.ipynb");
