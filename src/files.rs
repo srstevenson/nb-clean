@@ -19,8 +19,7 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
     let mut candidates = Vec::new();
     for path in paths {
         if path.is_dir() {
-            // Skip hidden entries (such as .ipynb_checkpoints) and Git-ignored paths below the root.
-            for entry in WalkBuilder::new(path).build() {
+            for entry in WalkBuilder::new(path).ignore(false).build() {
                 match entry {
                     Ok(entry)
                         if entry.path().extension().is_some_and(|ext| ext == "ipynb")

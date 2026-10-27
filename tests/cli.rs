@@ -324,18 +324,31 @@ fn hidden_and_ignored_paths_are_skipped_during_recursion() {
             "{name}"
         );
     }
+    // Only Git ignore rules apply, not ripgrep-style .ignore files.
+    fs::write(dir.path().join(".ignore"), "kept/\n").unwrap();
+    fs::create_dir(dir.path().join("kept")).unwrap();
+    fs::write(dir.path().join("kept/dirty.ipynb"), &dirty).unwrap();
+    assert_eq!(
+        command()
+            .arg("check")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .code(),
+        Some(1)
+    );
 }
 
 #[test]
 fn reports_are_ordered_by_path() {
     let dir = TempDir::new().unwrap();
     let dirty = serde_json::to_vec(&notebook()).unwrap();
-    let mut names: Vec<_> = (0..50).map(|i| format!("{i:02}.ipynb")).collect();
+    let names: Vec<_> = (0..50).map(|i| format!("{i:02}.ipynb")).collect();
     for name in &names {
         fs::write(dir.path().join(name), &dirty).unwrap();
     }
     let output = command().arg("check").arg(dir.path()).output().unwrap();
-    let reported: Vec<_> = String::from_utf8(output.stdout)
+    let mut reported: Vec<_> = String::from_utf8(output.stdout)
         .unwrap()
         .lines()
         .map(|line| {
@@ -348,10 +361,8 @@ fn reports_are_ordered_by_path() {
                 .to_owned()
         })
         .collect();
-    names.sort();
-    let mut deduplicated = reported.clone();
-    deduplicated.dedup();
-    assert_eq!(deduplicated, names);
+    reported.dedup();
+    assert_eq!(reported, names);
 }
 
 #[test]

@@ -62,7 +62,7 @@ fn process(inputs: Inputs, mode: Mode) -> Result<u8, Error> {
         stdout.flush().map_err(|e| Error::new(74, e))?;
         return Ok(u8::from(mode == Mode::Check && dirty));
     }
-    // Process files in parallel, buffering each report so output order matches discovery order.
+
     let results: Vec<Result<_, Error>> = files::discover(&inputs.paths)
         .into_par_iter()
         .map(|input| {
