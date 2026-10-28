@@ -2,7 +2,7 @@
 name = "nb-clean"
 version = "5.0.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.88"
 description = "Clean Jupyter notebooks for versioning"
 license = "ISC"
 readme = "README.md"
@@ -23,8 +23,7 @@ include = [
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
-# ignore 0.4.30 needs Rust 1.88 but doesn't declare a rust-version.
-ignore = ">=0.4, <0.4.30"
+ignore = "0.4"
 rayon = "1"
 serde = "1.0"
 serde_json = { version = "1.0", features = ["arbitrary_precision", "raw_value"] }

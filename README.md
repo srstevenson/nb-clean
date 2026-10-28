@@ -34,7 +34,7 @@ Install a published release from crates.io with Cargo:
 cargo install nb-clean --locked
 ```
 
-Building requires Rust 1.85 or later.
+Building requires Rust 1.88 or later.
 
 Download binary archives from
 [GitHub releases](https://github.com/srstevenson/nb-clean/releases) for macOS
