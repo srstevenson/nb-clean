@@ -198,6 +198,25 @@ Errors take precedence over dirty results. If several files fail, the status
 corresponds to the first error in sorted processing order. Errors go to stderr;
 check findings go to stdout.
 
+## Migrating from nb-clean 5
+
+`check` and `clean` now skip hidden files and directories, including
+`.ipynb_checkpoints`, and Git-ignored paths when searching directories.
+Previously, these notebooks were included.
+
+To retain the version 5 directory search behaviour, add both `--no-ignore` and
+`--hidden`:
+
+```sh
+nb-clean check --no-ignore --hidden notebooks/
+nb-clean clean --no-ignore --hidden notebooks/
+```
+
+The flags are independent: `--no-ignore` disables Git ignore rules, while
+`--hidden` includes hidden files and directories. Explicitly supplied files are
+still processed regardless of either restriction. Stdin, Git filters, and the
+standard pre-commit hook need no changes.
+
 ## Migrating from nb-clean 4
 
 nb-clean was ported from Python to Rust in version 5. PyPI wheels install the
