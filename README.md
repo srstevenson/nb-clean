@@ -55,11 +55,18 @@ nb-clean clean notebooks/ another.ipynb
 
 Directories are searched recursively for `.ipynb` files, skipping hidden files
 and directories (such as `.ipynb_checkpoints`) and paths ignored by Git. Paths
-supplied explicitly are always processed. Overlapping inputs and
-symlink aliases are processed once. Directory symlinks encountered during
-recursion are skipped; an explicitly supplied directory symlink is traversed.
-Notebook file symlinks are followed, and cleaning updates their targets while
-preserving the links.
+supplied explicitly are always processed. Use `--no-ignore` to disregard Git
+ignore rules, or `--hidden` to include hidden files and directories. Pass both
+to search all directories without either restriction:
+
+```sh
+nb-clean clean --no-ignore --hidden notebooks/
+```
+
+Overlapping inputs and symlink aliases are processed once. Directory symlinks
+encountered during recursion are skipped; an explicitly supplied directory
+symlink is traversed. Notebook file symlinks are followed, and cleaning updates
+their targets while preserving the links.
 
 `check` reports unwanted content and exits with status 1 if any notebooks are
 dirty. Cells are numbered from zero. `clean` updates changed files while
@@ -84,6 +91,17 @@ means an empty string or an array whose strings are all empty. Whitespace-only
 cells are retained.
 
 ## Options
+
+These directory search options work with `check` and `clean`:
+
+| Option        | Effect                               |
+| ------------- | ------------------------------------ |
+| `--no-ignore` | Disregard Git ignore rules           |
+| `--hidden`    | Include hidden files and directories |
+
+The flags are independent: `--no-ignore` still skips hidden paths, and
+`--hidden` still respects Git ignore rules. Neither flag affects explicitly
+supplied files or stdin.
 
 These options work with `check`, `clean`, and `add-filter`:
 

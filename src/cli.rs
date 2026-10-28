@@ -26,6 +26,12 @@ pub struct Inputs {
     /// Files or directories to process (stdin when omitted)
     #[arg(value_name = "PATH")]
     pub paths: Vec<PathBuf>,
+    /// Disregard Git ignore rules when searching directories
+    #[arg(long)]
+    pub no_ignore: bool,
+    /// Include hidden files and directories when searching directories
+    #[arg(long)]
+    pub hidden: bool,
     #[command(flatten)]
     pub options: Options,
 }
