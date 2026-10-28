@@ -42,7 +42,7 @@ opportunity to help you.
 Changes are managed using GitHub pull requests. If you're new to pull requests,
 read the [documentation][pr docs] to learn how they work.
 
-Install Rust 1.85 or later with rustfmt and Clippy, and install Git. Python,
+Install Rust 1.88 or later with rustfmt and Clippy, and install Git. Python,
 [uv], Ruff, and ty are needed when working on Python wheel packaging or its
 smoke test.
 

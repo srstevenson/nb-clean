@@ -43,7 +43,7 @@ jobs:
           - os: windows-2022
             rust: stable
           - os: ubuntu-22.04
-            rust: "1.85.0"
+            rust: "1.88.0"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
