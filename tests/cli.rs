@@ -436,6 +436,45 @@ fn reports_are_ordered_by_path() {
 }
 
 #[test]
+fn multiple_directories_keep_separate_ignore_rules() {
+    let dir = TempDir::new().unwrap();
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    let mut paths = Vec::new();
+    for (name, ignored) in [("a", "first.ipynb"), ("b", "second.ipynb")] {
+        let root = dir.path().join(name);
+        fs::create_dir(&root).unwrap();
+        assert!(
+            Command::new("git")
+                .arg("init")
+                .arg("-q")
+                .arg(&root)
+                .status()
+                .unwrap()
+                .success()
+        );
+        fs::write(root.join(".gitignore"), format!("{ignored}\n")).unwrap();
+        for file in ["first.ipynb", "second.ipynb"] {
+            fs::write(root.join(file), &dirty).unwrap();
+        }
+        paths.push(root);
+    }
+    let output = command().arg("check").args(&paths).output().unwrap();
+    assert_eq!(output.status.code(), Some(1));
+    let report = String::from_utf8(output.stdout).unwrap();
+    for (root, ignored) in paths.iter().zip(["first.ipynb", "second.ipynb"]) {
+        for name in ["first.ipynb", "second.ipynb"] {
+            let path = root.join(name);
+            assert_eq!(
+                report.contains(path.to_str().unwrap()),
+                name != ignored,
+                "{}",
+                path.display()
+            );
+        }
+    }
+}
+
+#[test]
 fn overlapping_paths_are_processed_once() {
     let dir = TempDir::new().unwrap();
     let path = dir.path().join("dirty.ipynb");

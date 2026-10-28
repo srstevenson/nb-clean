@@ -15,34 +15,38 @@ pub struct Input {
     pub target: PathBuf,
 }
 
-pub fn discover(paths: &[PathBuf], no_ignore: bool, hidden: bool) -> Vec<Result<Input, Error>> {
+pub fn discover(paths: Vec<PathBuf>, no_ignore: bool, hidden: bool) -> Vec<Result<Input, Error>> {
     let mut candidates = Vec::new();
+    let mut directories = Vec::new();
     for path in paths {
         if path.is_dir() {
-            for entry in WalkBuilder::new(path)
-                .ignore(false)
-                .hidden(!hidden)
-                .git_ignore(!no_ignore)
-                .git_global(!no_ignore)
-                .git_exclude(!no_ignore)
-                .build()
-            {
-                match entry {
-                    Ok(entry)
-                        if entry.path().extension().is_some_and(|ext| ext == "ipynb")
-                            && !entry.path().is_dir() =>
-                    {
-                        candidates.push((entry.into_path(), None));
-                    }
-                    Ok(_) => {}
-                    Err(error) => {
-                        let name = error_path(&error).unwrap_or(path).to_path_buf();
-                        candidates.push((name, Some(Error::new(66, error))));
-                    }
+            directories.push(path);
+        } else {
+            candidates.push((path, None));
+        }
+    }
+    if let Some(first_directory) = directories.first() {
+        for entry in WalkBuilder::from_iter(&directories)
+            .ignore(false)
+            .hidden(!hidden)
+            .git_ignore(!no_ignore)
+            .git_global(!no_ignore)
+            .git_exclude(!no_ignore)
+            .build()
+        {
+            match entry {
+                Ok(entry)
+                    if entry.path().extension().is_some_and(|ext| ext == "ipynb")
+                        && !entry.path().is_dir() =>
+                {
+                    candidates.push((entry.into_path(), None));
+                }
+                Ok(_) => {}
+                Err(error) => {
+                    let name = error_path(&error).unwrap_or(first_directory).to_path_buf();
+                    candidates.push((name, Some(Error::new(66, error))));
                 }
             }
-        } else {
-            candidates.push((path.clone(), None));
         }
     }
     candidates.sort_by(|a, b| a.0.cmp(&b.0));
