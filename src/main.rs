@@ -13,6 +13,7 @@ use clap::Parser;
 use cli::{Cli, Command, Inputs};
 use error::Error;
 use notebook::Notebook;
+use rayon::prelude::*;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Mode {
@@ -61,25 +62,34 @@ fn process(inputs: Inputs, mode: Mode) -> Result<u8, Error> {
         stdout.flush().map_err(|e| Error::new(74, e))?;
         return Ok(u8::from(mode == Mode::Check && dirty));
     }
-    let mut dirty = false;
-    let mut error_code = None;
-    for input in files::discover(&inputs.paths) {
-        let result = input.and_then(|input| {
+
+    let results: Vec<Result<_, Error>> = files::discover(&inputs.paths)
+        .into_par_iter()
+        .map(|input| {
+            let input = input?;
             let bytes = files::read(&input.target)?;
+            let mut report = Vec::new();
             let (output, changed) = transform(
                 &bytes,
                 &input.name.to_string_lossy(),
                 &inputs.options,
                 mode,
-                &mut stdout,
+                &mut report,
             )?;
             if let Some(output) = output {
                 files::replace(&input.target, &output)?;
             }
-            Ok(changed)
-        });
+            Ok((changed, report))
+        })
+        .collect();
+    let mut dirty = false;
+    let mut error_code = None;
+    for result in results {
         match result {
-            Ok(changed) => dirty |= changed,
+            Ok((changed, report)) => {
+                stdout.write_all(&report).map_err(|e| Error::new(74, e))?;
+                dirty |= changed;
+            }
             Err(error) => {
                 eprintln!("nb-clean: error: {error}");
                 error_code.get_or_insert(error.code);

@@ -53,7 +53,9 @@ nb-clean clean notebook.ipynb
 nb-clean clean notebooks/ another.ipynb
 ```
 
-Directories are searched recursively for `.ipynb` files. Overlapping inputs and
+Directories are searched recursively for `.ipynb` files, skipping hidden files
+and directories (such as `.ipynb_checkpoints`) and paths ignored by Git. Paths
+supplied explicitly are always processed. Overlapping inputs and
 symlink aliases are processed once. Directory symlinks encountered during
 recursion are skipped; an explicitly supplied directory symlink is traversed.
 Notebook file symlinks are followed, and cleaning updates their targets while

@@ -287,6 +287,85 @@ fn files_directories_and_error_continuation() {
 }
 
 #[test]
+fn hidden_and_ignored_paths_are_skipped_during_recursion() {
+    let dir = TempDir::new().unwrap();
+    assert!(
+        Command::new("git")
+            .arg("init")
+            .arg("-q")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .success()
+    );
+    fs::write(dir.path().join(".gitignore"), "ignored/\n").unwrap();
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    for name in [".ipynb_checkpoints", "ignored"] {
+        fs::create_dir(dir.path().join(name)).unwrap();
+        fs::write(dir.path().join(name).join("dirty.ipynb"), &dirty).unwrap();
+    }
+    assert!(
+        command()
+            .arg("check")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .success()
+    );
+    for name in [".ipynb_checkpoints", "ignored"] {
+        assert_eq!(
+            command()
+                .arg("check")
+                .arg(dir.path().join(name))
+                .status()
+                .unwrap()
+                .code(),
+            Some(1),
+            "{name}"
+        );
+    }
+    // Only Git ignore rules apply, not ripgrep-style .ignore files.
+    fs::write(dir.path().join(".ignore"), "kept/\n").unwrap();
+    fs::create_dir(dir.path().join("kept")).unwrap();
+    fs::write(dir.path().join("kept/dirty.ipynb"), &dirty).unwrap();
+    assert_eq!(
+        command()
+            .arg("check")
+            .arg(dir.path())
+            .status()
+            .unwrap()
+            .code(),
+        Some(1)
+    );
+}
+
+#[test]
+fn reports_are_ordered_by_path() {
+    let dir = TempDir::new().unwrap();
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    let names: Vec<_> = (0..50).map(|i| format!("{i:02}.ipynb")).collect();
+    for name in &names {
+        fs::write(dir.path().join(name), &dirty).unwrap();
+    }
+    let output = command().arg("check").arg(dir.path()).output().unwrap();
+    let mut reported: Vec<_> = String::from_utf8(output.stdout)
+        .unwrap()
+        .lines()
+        .map(|line| {
+            line.split(' ')
+                .next()
+                .unwrap()
+                .rsplit(['/', '\\'])
+                .next()
+                .unwrap()
+                .to_owned()
+        })
+        .collect();
+    reported.dedup();
+    assert_eq!(reported, names);
+}
+
+#[test]
 fn overlapping_paths_are_processed_once() {
     let dir = TempDir::new().unwrap();
     let path = dir.path().join("dirty.ipynb");

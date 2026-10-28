@@ -5,8 +5,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use ignore::WalkBuilder;
 use tempfile::NamedTempFile;
-use walkdir::WalkDir;
 
 use crate::error::Error;
 
@@ -19,7 +19,7 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
     let mut candidates = Vec::new();
     for path in paths {
         if path.is_dir() {
-            for entry in WalkDir::new(path) {
+            for entry in WalkBuilder::new(path).ignore(false).build() {
                 match entry {
                     Ok(entry)
                         if entry.path().extension().is_some_and(|ext| ext == "ipynb")
@@ -29,7 +29,7 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
                     }
                     Ok(_) => {}
                     Err(error) => {
-                        let name = error.path().unwrap_or(path).to_path_buf();
+                        let name = error_path(&error).unwrap_or(path).to_path_buf();
                         candidates.push((name, Some(Error::new(66, error))));
                     }
                 }
@@ -56,6 +56,16 @@ pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
         }
     }
     inputs
+}
+
+fn error_path(error: &ignore::Error) -> Option<&Path> {
+    match error {
+        ignore::Error::WithPath { path, .. } => Some(path),
+        ignore::Error::WithDepth { err, .. } | ignore::Error::WithLineNumber { err, .. } => {
+            error_path(err)
+        }
+        _ => None,
+    }
 }
 
 pub fn read(path: &Path) -> Result<Vec<u8>, Error> {
