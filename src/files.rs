@@ -15,11 +15,18 @@ pub struct Input {
     pub target: PathBuf,
 }
 
-pub fn discover(paths: &[PathBuf]) -> Vec<Result<Input, Error>> {
+pub fn discover(paths: &[PathBuf], no_ignore: bool, hidden: bool) -> Vec<Result<Input, Error>> {
     let mut candidates = Vec::new();
     for path in paths {
         if path.is_dir() {
-            for entry in WalkBuilder::new(path).ignore(false).build() {
+            for entry in WalkBuilder::new(path)
+                .ignore(false)
+                .hidden(!hidden)
+                .git_ignore(!no_ignore)
+                .git_global(!no_ignore)
+                .git_exclude(!no_ignore)
+                .build()
+            {
                 match entry {
                     Ok(entry)
                         if entry.path().extension().is_some_and(|ext| ext == "ipynb")

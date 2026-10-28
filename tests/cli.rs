@@ -1,6 +1,7 @@
 use std::{
     fs,
     io::Write,
+    path::PathBuf,
     process::{Command, Output, Stdio},
 };
 
@@ -337,6 +338,75 @@ fn hidden_and_ignored_paths_are_skipped_during_recursion() {
             .code(),
         Some(1)
     );
+}
+
+#[test]
+fn directory_filters_can_be_disabled_independently() {
+    let dirty = serde_json::to_vec(&notebook()).unwrap();
+    for mode in ["check", "clean"] {
+        for (flags, include_ignored, include_hidden) in [
+            (vec![], false, false),
+            (vec!["--no-ignore"], true, false),
+            (vec!["--hidden"], false, true),
+            (vec!["--no-ignore", "--hidden"], true, true),
+        ] {
+            let dir = TempDir::new().unwrap();
+            assert!(
+                Command::new("git")
+                    .arg("init")
+                    .arg("-q")
+                    .arg(dir.path())
+                    .status()
+                    .unwrap()
+                    .success()
+            );
+            fs::write(
+                dir.path().join(".gitignore"),
+                "ignored/\n.hidden-ignored/\n",
+            )
+            .unwrap();
+            fs::write(dir.path().join(".git/info/exclude"), "excluded/\n").unwrap();
+            fs::write(dir.path().join(".ignore"), "visible/\n").unwrap();
+            let cases = [
+                ("visible/dirty.ipynb", true),
+                ("ignored/dirty.ipynb", include_ignored),
+                ("excluded/dirty.ipynb", include_ignored),
+                (".hidden/dirty.ipynb", include_hidden),
+                (".hidden.ipynb", include_hidden),
+                (
+                    ".hidden-ignored/dirty.ipynb",
+                    include_ignored && include_hidden,
+                ),
+            ];
+            for (name, _) in cases {
+                let path = dir.path().join(name);
+                fs::create_dir_all(path.parent().unwrap()).unwrap();
+                fs::write(path, &dirty).unwrap();
+            }
+            let output = command()
+                .arg(mode)
+                .args(&flags)
+                .arg(dir.path())
+                .output()
+                .unwrap();
+            assert_eq!(
+                output.status.code(),
+                Some(i32::from(mode == "check")),
+                "{mode} {flags:?}: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            let report = String::from_utf8(output.stdout).unwrap();
+            for (name, included) in cases {
+                let path: PathBuf = dir.path().join(name).components().collect();
+                let processed = if mode == "check" {
+                    report.contains(path.to_str().unwrap())
+                } else {
+                    fs::read(path).unwrap() != dirty
+                };
+                assert_eq!(processed, included, "{mode} {flags:?}: {name}");
+            }
+        }
+    }
 }
 
 #[test]
