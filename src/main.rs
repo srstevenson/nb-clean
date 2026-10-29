@@ -64,7 +64,7 @@ fn process(inputs: Inputs, mode: Mode) -> Result<u8, Error> {
     }
 
     let results: Vec<Result<_, Error>> =
-        files::discover(&inputs.paths, inputs.no_ignore, inputs.hidden)
+        files::discover(inputs.paths, inputs.no_ignore, inputs.hidden)
             .into_par_iter()
             .map(|input| {
                 let input = input?;
