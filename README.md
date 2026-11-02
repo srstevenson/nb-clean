@@ -159,7 +159,7 @@ Add this to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/srstevenson/nb-clean
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: nb-clean
         args: [--preserve-cell-metadata-field, tags]
