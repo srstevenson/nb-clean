@@ -10,7 +10,7 @@ permissions:
 jobs:
   wheels:
     name: Build and verify wheels
-    uses: ./.github/workflows/wheels.yml
+    uses: $/.github/workflows/wheels.yml
 
   build:
     name: Build ${{ matrix.target }}
