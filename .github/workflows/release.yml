@@ -50,7 +50,9 @@ jobs:
       - run: cargo test --locked --target "$TARGET"
         env:
           TARGET: ${{ matrix.target }}
-      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - run: cargo build --release --locked --target "$TARGET"
+        env:
+          TARGET: ${{ matrix.target }}
       - name: Create archive
         env:
           TARGET: ${{ matrix.target }}
