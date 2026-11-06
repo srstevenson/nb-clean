@@ -1,4 +1,4 @@
-use std::fmt;
+use std::fmt::{self, Display, Formatter};
 
 pub struct Error {
     pub code: u8,
@@ -6,7 +6,7 @@ pub struct Error {
 }
 
 impl Error {
-    pub fn new(code: u8, message: impl fmt::Display) -> Self {
+    pub fn new(code: u8, message: impl Display) -> Self {
         Self {
             code,
             message: message.to_string(),
@@ -14,8 +14,8 @@ impl Error {
     }
 }
 
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str(&self.message)
     }
 }

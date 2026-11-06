@@ -1,9 +1,10 @@
 use std::{
-    fs,
+    env, fs,
     path::{Path, PathBuf},
     process::{Command, Output},
 };
 
+use serde_json::Value;
 use tempfile::TempDir;
 
 fn git(root: &Path, args: &[&str]) -> Output {
@@ -141,14 +142,12 @@ fn check_filter_field(field: &str) {
     );
     let binary_dir = Path::new(env!("CARGO_BIN_EXE_nb-clean")).parent().unwrap();
     let mut paths = vec![binary_dir.to_path_buf()];
-    paths.extend(std::env::split_paths(
-        &std::env::var_os("PATH").unwrap_or_default(),
-    ));
+    paths.extend(env::split_paths(&env::var_os("PATH").unwrap_or_default()));
     let output = Command::new("git")
         .arg("-C")
         .arg(root)
         .args(["add", "notebook.ipynb"])
-        .env("PATH", std::env::join_paths(paths).unwrap())
+        .env("PATH", env::join_paths(paths).unwrap())
         .output()
         .unwrap();
     assert!(
@@ -161,8 +160,7 @@ fn check_filter_field(field: &str) {
         "field {field:?}: {}",
         String::from_utf8_lossy(&output.stderr)
     );
-    let staged: serde_json::Value =
-        serde_json::from_str(&git_ok(root, &["show", ":notebook.ipynb"])).unwrap();
+    let staged: Value = serde_json::from_str(&git_ok(root, &["show", ":notebook.ipynb"])).unwrap();
     assert_eq!(
         staged["cells"][0]["metadata"],
         serde_json::json!({field:true}),

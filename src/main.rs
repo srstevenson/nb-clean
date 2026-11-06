@@ -10,7 +10,7 @@ use std::{
 };
 
 use clap::Parser;
-use cli::{Cli, Command, Inputs};
+use cli::{Cli, Command, Inputs, Options};
 use error::Error;
 use notebook::Notebook;
 use rayon::prelude::*;
@@ -104,7 +104,7 @@ fn process(inputs: Inputs, mode: Mode) -> Result<u8, Error> {
 fn transform(
     bytes: &[u8],
     name: &str,
-    options: &cli::Options,
+    options: &Options,
     mode: Mode,
     stdout: &mut impl Write,
 ) -> Result<(Option<Vec<u8>>, bool), Error> {
