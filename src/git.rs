@@ -1,4 +1,9 @@
-use std::{fs, path::PathBuf, process::Command};
+use std::{
+    fs,
+    io::ErrorKind,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use crate::{cli::Options, error::Error, files};
 
@@ -7,7 +12,7 @@ const ATTRIBUTE: &str = "*.ipynb filter=nb-clean";
 fn git(args: &[&str]) -> Result<String, Error> {
     let output = Command::new("git").args(args).output().map_err(|e| {
         Error::new(
-            if e.kind() == std::io::ErrorKind::NotFound {
+            if e.kind() == ErrorKind::NotFound {
                 69
             } else {
                 78
@@ -35,10 +40,10 @@ fn attributes_path() -> Result<PathBuf, Error> {
     Ok(PathBuf::from(path.trim_end_matches(['\r', '\n'])))
 }
 
-fn attributes(path: &std::path::Path) -> Result<String, Error> {
+fn attributes(path: &Path) -> Result<String, Error> {
     match fs::read_to_string(path) {
         Ok(contents) => Ok(contents),
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(String::new()),
+        Err(e) if e.kind() == ErrorKind::NotFound => Ok(String::new()),
         Err(e) => Err(Error::new(78, format!("{}: {e}", path.display()))),
     }
 }

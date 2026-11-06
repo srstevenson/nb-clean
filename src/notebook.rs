@@ -1,6 +1,11 @@
-use std::fmt;
+use std::{
+    collections::BTreeMap,
+    fmt::{self, Display, Formatter},
+    str,
+};
 
-use serde_json::{Value, ser::PrettyFormatter, value::RawValue};
+use serde::Serialize;
+use serde_json::{Error, Serializer, Value, ser::PrettyFormatter, value::RawValue};
 
 use crate::cli::Options;
 
@@ -17,8 +22,8 @@ pub enum Change {
     LanguageVersion,
 }
 
-impl fmt::Display for Change {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Display for Change {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::EmptyCell(i) => write!(f, "cell {i}: empty cell"),
             Self::CellMetadata(i, field) => write!(f, "cell {i}: metadata {field}"),
@@ -37,7 +42,7 @@ const TRANSIENT_METADATA: [&str; 3] = ["orig_nbformat", "orig_nbformat_minor", "
 
 impl Notebook {
     pub fn parse(bytes: &[u8]) -> Result<Self, String> {
-        let json = std::str::from_utf8(bytes).map_err(|e| e.to_string())?;
+        let json = str::from_utf8(bytes).map_err(|e| e.to_string())?;
         // Unicode escapes can spell a private key, so these also need explicit object parsing.
         let value = if json.contains("$serde_json::private::") || json.contains("\\u") {
             let raw: &RawValue = serde_json::from_str(json).map_err(|e| e.to_string())?;
@@ -158,10 +163,10 @@ impl Notebook {
         }
     }
 
-    pub fn to_bytes(&self) -> Result<Vec<u8>, serde_json::Error> {
+    pub fn to_bytes(&self) -> Result<Vec<u8>, Error> {
         let mut bytes = Vec::new();
         let mut serializer =
-            serde_json::Serializer::with_formatter(&mut bytes, PrettyFormatter::with_indent(b" "));
+            Serializer::with_formatter(&mut bytes, PrettyFormatter::with_indent(b" "));
         self.0.serialize(&mut serializer)?;
         bytes.push(b'\n');
         Ok(bytes)
@@ -176,7 +181,7 @@ fn json_value(raw: &RawValue, depth: usize) -> Result<Value, String> {
     let json = raw.get();
     match json.as_bytes()[0] {
         b'{' => {
-            let fields: std::collections::BTreeMap<String, &RawValue> =
+            let fields: BTreeMap<String, &RawValue> =
                 serde_json::from_str(json).map_err(|e| e.to_string())?;
             fields
                 .into_iter()
@@ -261,14 +266,14 @@ fn valid_count(value: &Value) -> bool {
     value.is_null() || value.is_i64() || value.is_u64()
 }
 
-use serde::Serialize;
-
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
 
     fn fixture(name: &str) -> Notebook {
-        Notebook::parse(&std::fs::read(format!("tests/notebooks/{name}.ipynb")).unwrap()).unwrap()
+        Notebook::parse(&fs::read(format!("tests/notebooks/{name}.ipynb")).unwrap()).unwrap()
     }
 
     #[test]
@@ -376,7 +381,7 @@ mod tests {
         // Checked against nbformat 5.10.4's writer.
         assert_eq!(
             notebook.to_bytes().unwrap(),
-            std::fs::read("tests/notebooks/clean.ipynb").unwrap()
+            fs::read("tests/notebooks/clean.ipynb").unwrap()
         );
     }
 

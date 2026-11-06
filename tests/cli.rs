@@ -493,7 +493,10 @@ fn overlapping_paths_are_processed_once() {
 #[cfg(unix)]
 #[test]
 fn symlinks_and_permissions() {
-    use std::os::unix::fs::{PermissionsExt, symlink};
+    use std::{
+        fs::Permissions,
+        os::unix::fs::{PermissionsExt, symlink},
+    };
     let dir = TempDir::new().unwrap();
     let real = dir.path().join("real");
     let inputs = dir.path().join("inputs");
@@ -501,7 +504,7 @@ fn symlinks_and_permissions() {
     fs::create_dir(&inputs).unwrap();
     let target = real.join("dirty.ipynb");
     fs::write(&target, serde_json::to_vec(&notebook()).unwrap()).unwrap();
-    fs::set_permissions(&target, fs::Permissions::from_mode(0o640)).unwrap();
+    fs::set_permissions(&target, Permissions::from_mode(0o640)).unwrap();
     symlink(&real, inputs.join("directory-link")).unwrap();
     assert!(
         command()

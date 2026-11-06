@@ -1,7 +1,7 @@
 use std::{
     collections::BTreeSet,
     fs::{self, File},
-    io::{Read, Write},
+    io::{ErrorKind, Read, Write},
     path::{Path, PathBuf},
 };
 
@@ -100,7 +100,7 @@ pub fn replace(path: &Path, bytes: &[u8]) -> Result<(), Error> {
             }
             Some(metadata.permissions())
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => None,
+        Err(e) if e.kind() == ErrorKind::NotFound => None,
         Err(e) => return Err(failure(e)),
     };
     let parent = path

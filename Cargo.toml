@@ -31,3 +31,6 @@ tempfile = "3.20"
 
 [lints.rust]
 unsafe_code = "forbid"
+
+[lints.clippy]
+absolute_paths = "warn"
