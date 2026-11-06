@@ -47,7 +47,9 @@ jobs:
         run: |
           version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "nb-clean") | .version')
           test "$GITHUB_REF_NAME" = "v$version"
-      - run: cargo test --locked --target ${{ matrix.target }}
+      - run: cargo test --locked --target "$TARGET"
+        env:
+          TARGET: ${{ matrix.target }}
       - run: cargo build --release --locked --target ${{ matrix.target }}
       - name: Create archive
         env:
